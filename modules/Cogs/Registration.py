@@ -8,6 +8,8 @@ from rethinkdb import r
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
 
+# TODO: Make registration great again
+
 roles = [
     "He/Him", "She/Her", "They/Them", "Mention", "No Mention", "18+", "<18",
     "Registered", "DMs NOT Allowed", "DMs Allowed", "Ask to DM"
@@ -126,13 +128,17 @@ class Registration(commands.Cog):
         author = ctx.author
         db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
         if not db["enabled"]:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("Registration isn't currently enabled here!")
         if not db["channel"]:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("No channel is set for the introduction to be sent to!")
         channel = self.bot.get_channel(int(db["channel"]))
         if not channel:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("I can't find the output channel!")
         if not can_manage_user(ctx, author):
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("I don't have a role above you which means I can't manage your roles,"
                                   " please have someone with permissions move my role up!")
         no_role = 0
@@ -141,10 +147,12 @@ class Registration(commands.Cog):
             if check not in guild.roles:
                 no_role += 1
         if no_role > 0:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"It looks like you haven't set up the roles here, you must have all roles in the"
                                   f" server to use this function:\n{await ctx.bot.get_prefix(ctx.message)}setreg roles")
         registered_role = discord.utils.get(guild.roles, name="Registered")
         if registered_role in author.roles:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send(f"It looks like you've already registered on this server!"
                                   f" Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
                                   f" if you wish to re-register.")
@@ -154,6 +162,7 @@ class Registration(commands.Cog):
         try:
             await author.send("What is your preferred pronoun? Please choose from:\n`He/Him`, `She/Her`, `They/Them`.")
         except discord.Forbidden:
+            ctx.command.reset_cooldown(ctx)
             return await ctx.send("It looks like you have your DMs disabled! Please enable them so I can register you.")
 
         def check(m):
@@ -170,9 +179,10 @@ class Registration(commands.Cog):
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
                 try:
+                    ctx.command.reset_cooldown(ctx)
                     return await author.send("Registration has timed out.")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             if response.content.lower() not in options:
                 try:
                     await author.send("Invalid response.")
@@ -200,11 +210,12 @@ class Registration(commands.Cog):
                 await author.send("Are you okay with being Directly Messaged? Please chose from:\n"
                                   "`Yes`, `No`, or `Ask`.")
             except discord.Forbidden:
-                return
+                return ctx.command.reset_cooldown(ctx)
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
                 try:
+                    ctx.command.reset_cooldown(ctx)
                     return await author.send("Registration has timed out.")
                 except discord.Forbidden:
                     return
@@ -212,7 +223,7 @@ class Registration(commands.Cog):
                 try:
                     await author.send("Invalid response.")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             else:
                 if response.content.lower() == "yes":
                     role = discord.utils.get(guild.roles, name="DMs Allowed")
@@ -234,19 +245,20 @@ class Registration(commands.Cog):
             try:
                 await author.send("Are you okay with being mentioned? Please chose from:\n`Yes` or `No`.")
             except discord.Forbidden:
-                return
+                return ctx.command.reset_cooldown(ctx)
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
                 try:
+                    ctx.command.reset_cooldown(ctx)
                     return await author.send("Registration has timed out.")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             if response.content.lower() not in options:
                 try:
                     await author.send("Invalid response.")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             else:
                 if response.content.lower() == "yes":
                     role = discord.utils.get(guild.roles, name="Mention")
@@ -263,14 +275,15 @@ class Registration(commands.Cog):
             try:
                 await author.send("What is your age? Please be truthful! Lying will get your account BANNED!")
             except discord.Forbidden:
-                return
+                return ctx.command.reset_cooldown(ctx)
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
                 try:
+                    ctx.command.reset_cooldown(ctx)
                     return await author.send("Registration has timed out.")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             autoban_age = await r.table("Registration").get(str(guild.id)).get_field("autoban_age").run(self.bot.conn)
             if response.content.isdigit():
                 if int(response.content) < autoban_age:
@@ -283,7 +296,7 @@ class Registration(commands.Cog):
                     try:
                         await author.send("Please enter a real age.")
                     except discord.Forbidden:
-                        return
+                        return ctx.command.reset_cooldown(ctx)
                 else:
                     if int(response.content) >= 18:
                         role = discord.utils.get(guild.roles, name="18+")
@@ -298,13 +311,13 @@ class Registration(commands.Cog):
                 try:
                     await author.send("Age must be a number!")
                 except discord.Forbidden:
-                    return
+                    return ctx.command.reset_cooldown(ctx)
             if not response:
                 break
         try:
             await author.send("Introduce yourself!")
         except discord.Forbidden:
-            return
+            return ctx.command.reset_cooldown(ctx)
         try:
             response = await ctx.bot.wait_for("message", timeout=300, check=check)
         except asyncio.TimeoutError:
