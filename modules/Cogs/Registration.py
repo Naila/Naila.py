@@ -146,7 +146,7 @@ class Registration(commands.Cog):
         registered_role = discord.utils.get(guild.roles, name="Registered")
         if registered_role in author.roles:
             return await ctx.send(f"It looks like you've already registered on this server!"
-                                  f" Please run `{await ctx.bot.get_prefix(ctx.message)(self.bot, ctx, True)}unregister`"
+                                  f" Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
                                   f" if you wish to re-register.")
         em = discord.Embed(description=f"**{author.mention}**,\nI will DM you to collect your info!",
                            color=await ctx.guildcolor(str(guild.id)))
