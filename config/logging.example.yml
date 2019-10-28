@@ -1,0 +1,43 @@
+---
+# Formatting various elements of the output https://humanfriendly.readthedocs.io/en/latest/_images/ansi-demo.png
+formats:
+  file: "[%(asctime)-3s][%(name)-2s][%(levelname)-1s][%(message)s][%(filename)s:%(lineno)d]"
+  console: "[%(asctime)s][%(name)s][%(levelname)s][%(message)s][%(filename)s:%(lineno)d]"
+  datetime: "%m-%d-%Y %H:%M:%S"
+
+levels:
+  critical:
+    color: "red"
+    bold: true
+  debug:
+    color: "green"
+  error:
+    color: "red"
+    bright: true
+  info:
+    color: "cyan"
+  notice:
+    color: "magenta"
+  spam:
+    color: "green"
+    faint: true
+  success:
+    color: "green"
+    bold: true
+  verbose:
+    color: "blue"
+  warning:
+    color: "yellow"
+
+fields:
+  asctime:
+    color: "green"
+  hostname:
+    color: "magenta"
+  levelname:
+    color: "black"
+    bold: true
+  name:
+    color: "blue"
+  programname:
+    color: "cyan"

@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+discord-py = "*"
+psutil = "*"
+coloredlogs = "*"
+pyyaml = "*"
+python-dotenv = "*"
+python-dateutil = "*"
+asyncpg = "*"
+requests = "*"
+rethinkdb = "*"
+pytz = "*"
+
+[requires]
+python_version = "3.7"
