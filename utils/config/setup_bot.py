@@ -20,7 +20,7 @@ logger = logging.getLogger()
 
 
 def setup_logger():
-    with open("config/logging.yml", "r") as log_config:
+    with open("/config/logging.yml", "r") as log_config:
         config = yaml.safe_load(log_config)
 
     coloredlogs.install(
