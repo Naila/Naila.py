@@ -34,7 +34,7 @@ class ReadyHandler(commands.Cog):
                f"Python version: {self.bot.version['python']}"
         self.bot.log.info(info)
         await self.bot.change_presence(
-            activity=discord.Game(name="Being worked on..", type=discord.ActivityType.playing,
+            activity=discord.Game(name="n!help | Mid rewrite.. please be patient", type=discord.ActivityType.playing,
                                   status=discord.Status.dnd))
         self.bot.log.info("Logged in and ready!")
 
