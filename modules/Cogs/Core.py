@@ -1,10 +1,12 @@
 import os
+import subprocess
 
 import discord
 import requests
 from discord.ext import commands
 
 from utils.checks import checks
+from utils.functions import pagify
 
 
 class Core(commands.Cog):
@@ -61,7 +63,7 @@ class Core(commands.Cog):
     async def load(self, ctx):
         """{"permissions": {"user": ["bot_owner"], "bot": []}}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help(ctx)
+            return await ctx.group_help()
 
     @load.command(name="cog", aliases=["c"], description="Load a cog")
     async def load_cog(self, ctx, cog_name: str):
@@ -70,9 +72,9 @@ class Core(commands.Cog):
         try:
             self.bot.load_extension(f"modules.Cogs.{cog_name}")
         except commands.ExtensionAlreadyLoaded:
-            return await ctx.send_error(ctx, f"Cog {cog_name} is already loaded!")
+            return await ctx.send_error(f"Cog {cog_name} is already loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Cog {cog_name} could not be found!")
+            return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} has now been loaded!")
 
     @load.command(name="event", aliases=["e"], description="Load an event")
@@ -82,9 +84,9 @@ class Core(commands.Cog):
         try:
             self.bot.load_extension(f"modules.Events.{event_name}")
         except commands.ExtensionAlreadyLoaded:
-            return await ctx.send_error(ctx, f"Event {event_name} is already loaded!")
+            return await ctx.send_error(f"Event {event_name} is already loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Event {event_name} could not be found!")
+            return await ctx.send_error(f"Event {event_name} could not be found!")
         await ctx.send(f"Event {event_name} has now been loaded!")
 
     @checks.is_owner()
@@ -92,7 +94,7 @@ class Core(commands.Cog):
     async def unload(self, ctx):
         """{"permissions": {"user": ["bot_owner"], "bot": []}}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help(ctx)
+            return await ctx.group_help()
 
     @unload.command(name="cog", aliases=["c"], description="Unload a cog")
     async def unload_cog(self, ctx, cog_name: str):
@@ -101,9 +103,9 @@ class Core(commands.Cog):
         try:
             self.bot.unload_extension(f"modules.Cogs.{cog_name}")
         except commands.ExtensionNotLoaded:
-            return await ctx.send_error(ctx, f"Cog {cog_name} is not loaded!")
+            return await ctx.send_error(f"Cog {cog_name} is not loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Cog {cog_name} could not be found!")
+            return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} is now unloaded!")
 
     @unload.command(name="event", aliases=["e"], description="Unload an event")
@@ -113,9 +115,9 @@ class Core(commands.Cog):
         try:
             self.bot.unload_extension(f"modules.Events.{event_name}")
         except commands.ExtensionNotLoaded:
-            return await ctx.send_error(ctx, f"Event {event_name} is not loaded!")
+            return await ctx.send_error(f"Event {event_name} is not loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Event {event_name} could not be found!")
+            return await ctx.send_error(f"Event {event_name} could not be found!")
         await ctx.send(f"Event {event_name} is now unloaded!")
 
     @checks.is_owner()
@@ -123,7 +125,7 @@ class Core(commands.Cog):
     async def reload(self, ctx):
         """{"permissions": {"user": ["bot_owner"], "bot": []}}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help(ctx)
+            return await ctx.group_help()
 
     @reload.command(name="cog", aliases=["c"], description="Reload a cog")
     async def reload_cog(self, ctx, cog_name: str):
@@ -132,9 +134,9 @@ class Core(commands.Cog):
         try:
             self.bot.reload_extension(f"modules.Cogs.{cog_name}")
         except commands.ExtensionNotLoaded:
-            return await ctx.send_error(ctx, f"Cog {cog_name} is not loaded!")
+            return await ctx.send_error(f"Cog {cog_name} is not loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Cog {cog_name} could not be found!")
+            return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} has been reloaded!")
 
     @reload.command(name="event", aliases=["e"], description="Reload an event")
@@ -144,10 +146,32 @@ class Core(commands.Cog):
         try:
             self.bot.reload_extension(f"modules.Events.{event_name}")
         except commands.ExtensionNotLoaded:
-            return await ctx.send_error(ctx, f"Event {event_name} is not loaded!")
+            return await ctx.send_error(f"Event {event_name} is not loaded!")
         except commands.ExtensionNotFound:
-            return await ctx.send_error(ctx, f"Event {event_name} could not be found!")
+            return await ctx.send_error(f"Event {event_name} could not be found!")
         await ctx.send(f"Event {event_name} has been reloaded!")
+
+    @checks.is_owner()
+    @commands.command(hidden=True, description="Pull updates from git")
+    async def pull(self, ctx):
+        """{"permissions": {"user": ["bot_owner"], "bot": []}}"""
+        paged = pagify(
+            subprocess.Popen(
+                ["git", "pull"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            ).stdout.read().decode()
+        )
+        for page in paged:
+            p = f"```css\n{page}```"
+            await ctx.send(p)
+
+    @checks.is_owner()
+    @commands.command(name="raise", hidden=True, description="Raise a test exception")
+    async def _raise(self, ctx):
+        """{"permissions": {"user": ["bot_owner"], "bot": []}}"""
+        await ctx.send("Raising a test exception..")
+        raise Exception(f"Exception raised by {ctx.author}")
 
     @checks.is_owner()
     @commands.command(hidden=True, description="Force a user to run a command")

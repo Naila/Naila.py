@@ -8,6 +8,7 @@ import aiohttp
 import coloredlogs
 import discord
 import psutil
+import sentry_sdk as sentry
 import yaml
 # import asyncpg
 from rethinkdb import RethinkDB
@@ -17,6 +18,11 @@ from utils.config.config import get_icon, get_config
 r = RethinkDB()
 r.set_loop_type("asyncio")
 logger = logging.getLogger()
+sentry.init(
+    os.getenv("SENTRY_URL"),
+    attach_stacktrace=True,
+    max_breadcrumbs=100
+)
 
 
 def setup_logger():
@@ -44,6 +50,7 @@ def setup_bot(bot):
     discord_log.setLevel(logging.CRITICAL)
     bot.log = log
     log.info(f"\n{get_icon()}\nLoading....")
+    bot.sentry = sentry
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
     starter_modules(bot)
     bot.conn = bot.loop.run_until_complete(r.connect("localhost", db="Naila", port=28015))

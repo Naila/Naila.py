@@ -24,7 +24,7 @@ class Welcomer(commands.Cog):
     async def welcomer(self, ctx):
         """Welcomer management"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help(ctx)
+            return await ctx.group_help()
 
     @welcomer.command()
     async def toggle(self, ctx):

@@ -7,6 +7,7 @@ from rethinkdb import r
 
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
+from utils.functions import pagify
 
 # TODO: Make registration great again
 
@@ -26,7 +27,7 @@ class Registration(commands.Cog):
     async def setreg(self, ctx):
         """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links"]}}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help(ctx)
+            return await ctx.group_help()
 
     @setreg.command(description="Set the output channel")
     async def channel(self, ctx, channel: discord.TextChannel = None):
@@ -324,7 +325,7 @@ class Registration(commands.Cog):
             em.add_field(name="Info:", value="A mysterious person...")
         else:
             pagenum = 0
-            pages = self.pagify(response.content, None, 0, 1000)
+            pages = pagify(response.content, None, 0, 1000)
             for page in pages:
                 pagenum += 1
                 em.add_field(name=f"About{' (continued):' if pagenum > 1 else ':'}", value=page, inline=False)
@@ -341,20 +342,6 @@ class Registration(commands.Cog):
         em = discord.Embed(color=await ctx.guildcolor(str(guild.id)),
                            description=f"Thank you for registering, {author.mention}!")
         return await ctx.send(embed=em)
-
-    @staticmethod
-    def pagify(text, delims=None, shorten_by=8, page_length=1900):
-        if delims is None:
-            delims = ["\n"]
-        in_text = text
-        page_length -= shorten_by
-        while len(in_text) > page_length:
-            closest_delim = max([in_text.rfind(d, 0, page_length) for d in delims])
-            closest_delim = closest_delim if closest_delim != -1 else page_length
-            to_send = in_text[:closest_delim]
-            yield to_send
-            in_text = in_text[closest_delim:]
-        yield in_text
 
 
 def setup(bot):

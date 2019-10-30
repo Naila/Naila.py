@@ -1,4 +1,3 @@
-import traceback
 from datetime import timedelta
 
 import discord
@@ -37,7 +36,7 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.missing_argument(ctx)
         if isinstance(error, (commands.BadArgument, commands.BadUnionArgument)):
-            return await ctx.bad_argument(ctx, error)
+            return await ctx.bad_argument(error)
         if isinstance(error, commands.CommandInvokeError):
             if not isinstance(ctx.channel, discord.DMChannel):
                 if not can_send(ctx) or not can_embed(ctx):
@@ -49,10 +48,8 @@ class ErrorHandler(commands.Cog):
                         return self.bot.log.error("Could not respond to command, all checks failed!")
         if isinstance(error, commands.CheckFailure):
             return await ctx.send_error(ctx, "You don't have permission to use this command!")
-        long = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-        print(long)
-        self.bot.log.error(error)
-        return await ctx.send_error(ctx, error)
+        self.bot.sentry.capture_exception(error)
+        return await ctx.send_error(error)
 
 
 def setup(bot):

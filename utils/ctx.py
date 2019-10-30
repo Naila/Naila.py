@@ -17,7 +17,6 @@ class CustomContext(commands.Context):
         color = await r.table("guilds").get(gid).get_field("color").run(self.bot.conn)
         return color
 
-    @staticmethod
     async def missing_argument(self):
         channel = self.channel
         prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
@@ -27,23 +26,20 @@ class CustomContext(commands.Context):
         em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
         await channel.send(embed=em)
 
-    @staticmethod
     async def send_error(self, content):
         channel = self.channel
         em = discord.Embed(color=self.bot.error_color, title="Error ❌")
         em.description = str(content)
         await channel.send(embed=em)
 
-    @staticmethod
     async def bad_argument(self, content):
         channel = self.channel
         em = discord.Embed(color=self.bot.error_color, title="Invalid argument ❌")
         em.description = str(content)
         await channel.send(embed=em)
 
-    @staticmethod
-    async def group_help(ctx):
-        message = ctx.message
-        prefix = await ctx.bot.get_prefix(message)
-        message.content = f"{prefix}help {ctx.command.name}"
-        await ctx.bot.invoke(await ctx.bot.get_context(message, cls=CustomContext))
+    async def group_help(self):
+        message = self.message
+        prefix = await self.bot.get_prefix(message)
+        message.content = f"{prefix}help {self.command.name}"
+        await self.bot.invoke(await self.bot.get_context(message, cls=CustomContext))

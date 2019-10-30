@@ -19,6 +19,7 @@ asyncpg = "*"
 requests = "*"
 rethinkdb = "*"
 pytz = "*"
+sentry-sdk = "*"
 
 [requires]
 python_version = "3.7"
