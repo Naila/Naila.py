@@ -18,8 +18,9 @@ from utils.config.config import get_icon, get_config
 r = RethinkDB()
 r.set_loop_type("asyncio")
 logger = logging.getLogger()
+sentry_url = os.getenv("SENTRY_URL")
 sentry.init(
-    os.getenv("SENTRY_URL"),
+    sentry_url,
     attach_stacktrace=True,
     max_breadcrumbs=100
 )
