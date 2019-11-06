@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+      - run:
+          command: |  # use pipenv to install dependencies
+            sudo pip install pipenv
+            pipenv install
+
+      - save_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ./venv
+
+      - run:
+        name: run tests
+        command: |
+          pipenv run python manage.py test
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-reports
