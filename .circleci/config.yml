@@ -23,7 +23,7 @@ jobs:
 
       - run:
           command: |
-            pipenv run python manage.py test
+            pipenv run python main.py test
 
       - store_artifacts:
           path: test-reports
