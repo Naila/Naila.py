@@ -23,6 +23,7 @@ jobs:
 
       - run:
           command: |
+            pipenv shell
             python -m compileall main.py modules utils
 
       - store_test_results:
