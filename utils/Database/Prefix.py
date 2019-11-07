@@ -35,7 +35,7 @@ async def add_prefix(bot, guild_id: str, prefix: str):
 
 
 async def get_prefixes(bot, msg):
-    if msg.channel.id != 483061332766097419:
+    if bot.testing:
         return "n!"
     prefixes = [bot.user.mention + " "]
     prefixes.extend(bot.config()["prefixes"]["debug"] if bot.debug else bot.config()["prefixes"]["main"])
