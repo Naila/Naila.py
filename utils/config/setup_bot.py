@@ -43,18 +43,6 @@ def setup_logger():
 def setup_bot(bot):
     # Argument Handling
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
-    bot.testing = any("test" in arg.lower() for arg in sys.argv)
-
-    # Manage testing
-    if bot.testing:
-        bot.sentry = sentry
-        discord_log = logging.getLogger("discord")
-        discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
-        log = logging.getLogger("bot")
-        bot.log = log
-        log.info(f"\n{get_icon()}\nLoading....")
-        starter_modules(bot)
-        return
 
     # Logging
     bot.sentry = sentry

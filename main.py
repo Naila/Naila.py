@@ -1,7 +1,6 @@
 import asyncio
 import atexit
 import os
-import sys
 from os.path import join, dirname
 
 import discord
@@ -13,8 +12,6 @@ from utils.config.setup_bot import setup_bot, setup_logger
 from utils.ctx import CustomContext
 
 description = "Naila Bot"
-
-test = any("test" in arg.lower() for arg in sys.argv)
 
 
 class Bot(DiscordBot):
@@ -35,11 +32,9 @@ class Bot(DiscordBot):
         return await super().get_context(message, cls=cls or CustomContext)
 
     if __name__ != "__main__":
-        if not test:
-            setup_logger()
+        setup_logger()
 
 
 if __name__ == "__main__":
-    if not test:
-        setup_logger()
+    setup_logger()
     Bot()
