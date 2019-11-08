@@ -22,7 +22,7 @@ class Bot(DiscordBot):
         setup_bot(self)
         try:
             self.loop.run_until_complete(self.start(os.getenv("TOKEN")))
-        except discord.errors.LoginFailure or discord.errors.HTTPException as e:
+        except (discord.errors.LoginFailure, discord.errors.HTTPException) as e:
             self.log.error(f"Shit: {repr(e)}", exc_info=False)
         except KeyboardInterrupt:
             self.loop.run_until_complete(self.pool.close())
