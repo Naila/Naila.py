@@ -4,6 +4,7 @@
 Naila.py
 -----------------
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=NailaBot/Naila.py)](https://dependabot.com)
 
 [![Support-Server](https://discordapp.com/api/guilds/365260338851086346/widget.png?style=banner2)](https://discord.gg/the-den)
 
