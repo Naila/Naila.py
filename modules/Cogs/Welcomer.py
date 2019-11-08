@@ -73,13 +73,13 @@ class Welcomer(commands.Cog):
         await ctx.send("Text set!")
 
     @welcomer.command()
-    async def settype(self, ctx, *, type: [1, 2]):
+    async def settype(self, ctx, *, image_type: [1, 2]):
         """Set the type of the image, 1 or 2 are acceptable"""
-        if type not in [1, 2]:
+        if image_type not in [1, 2]:
             return await ctx.send("Type must be 1 or 2!")
         guild = ctx.guild
         db = await r.table("welcomer").get(str(guild.id)).run(self.bot.conn)
-        db["type"] = type
+        db["type"] = image_type
         await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)
         await ctx.send("Type set!")
 
