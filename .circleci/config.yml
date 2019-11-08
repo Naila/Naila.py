@@ -12,8 +12,22 @@ jobs:
           key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       - run:
+          name: Install Python 3.8
           command: |
-            sudo pip install pipenv
+            sudo apt-get install build-essential checkinstall
+            sudo apt-get install libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+                libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev
+            cd /opt
+            sudo wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
+            sudo tar xzf Python-3.8.0.tgz
+            cd Python-3.8.0
+            sudo ./configure --enable-optimizations
+            sudo make altinstall
+
+      - run:
+          name: Set up pipenv and install requirements
+          command: |
+            sudo python3.8 -m pip install pipenv
             pipenv install
 
       - save_cache:
@@ -22,6 +36,7 @@ jobs:
             - ./venv
 
       - run:
+          name: Compile files
           command: |
             pipenv run python -m compileall main.py modules utils -fq
 
