@@ -21,11 +21,12 @@ jobs:
             cd /opt
             sudo wget https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
             sudo tar xzf Python-3.8.0.tgz
+            ls
 
       - run:
           name: Set up pipenv and install requirements
           command: |
-            sudo python3.8 -m pip install pipenv
+            sudo python -m pip install pipenv
             pipenv install
 
       - save_cache:
@@ -36,7 +37,7 @@ jobs:
       - run:
           name: Compile files
           command: |
-            pipenv run python3.8 -m compileall main.py modules utils -fq
+            pipenv run python -m compileall main.py modules utils -fq
 
       - store_test_results:
           path: test-results
