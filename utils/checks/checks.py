@@ -27,11 +27,10 @@ def is_staff():
 async def check_nsfw(ctx):
     if isinstance(ctx.channel, discord.DMChannel):
         return True
-    elif ctx.channel.is_nsfw():
+    if ctx.channel.is_nsfw():
         return True
-    else:
-        await nsfw_not_permitted(ctx)
-        return False
+    await nsfw_not_permitted(ctx)
+    return False
 
 
 async def nsfw_not_permitted(ctx):
@@ -48,7 +47,7 @@ def is_nsfw():
 def check_permissions(ctx, perms):
     if is_owner_check(ctx):
         return True
-    elif not perms:
+    if not perms:
         return False
     author, channel = ctx.author, ctx.channel
     resolved = channel.permissions_for(author)
