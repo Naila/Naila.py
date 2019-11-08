@@ -226,11 +226,11 @@
         },
         "rethinkdb": {
             "hashes": [
-                "sha256:7b069d3a6dc77adb0c1bc9a82238f478ab866e81a5791e2f39bb033e1e37fb53",
-                "sha256:d01b39c1921498e22e3c9cae1adb39c37b68e4438ef77218abc0166fdfd2ea7a"
+                "sha256:e1c1f8ad93bc1c6f2aaa73afc333c57d505d8cc08c437d78a5c1eb8dc4b7e8c2",
+                "sha256:e5d06a7eae79c94654c19cdacb0fa581c72dd60536cb81465cfebfd236096402"
             ],
             "index": "pypi",
-            "version": "==2.4.4"
+            "version": "==2.4.4.post1"
         },
         "sentry-sdk": {
             "hashes": [
