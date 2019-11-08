@@ -13,7 +13,7 @@ import yaml
 # import asyncpg
 from rethinkdb import RethinkDB
 
-from utils.config.config import get_icon, get_config
+from utils.config.config import get_banner, get_config
 
 r = RethinkDB()
 r.set_loop_type("asyncio")
@@ -50,7 +50,7 @@ def setup_bot(bot):
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
     log = logging.getLogger("bot")
     bot.log = log
-    log.info(f"\n{get_icon()}\nLoading....")
+    log.info(f"\n{get_banner()}\nLoading....")
 
     # Load modules
     starter_modules(bot)

@@ -1,9 +1,9 @@
 import yaml
 
 
-def get_icon():
-    file = open("res/banner.txt")
-    return file.read()
+def get_banner():
+    banner = open("res/banner.txt")
+    return banner.read()
 
 
 def get_config():
