@@ -86,7 +86,7 @@ class Registration(commands.Cog):
                 await ctx.send(f"All done! Created {created} roles.")
             else:
                 await ctx.send("You have entered an invalid response. Valid responses include `yes` and `no`.")
-        except discord.HTTPException or discord.Forbidden:
+        except (discord.HTTPException, discord.Forbidden):
             await ctx.send("Creation of roles has failed, The most common problem is that I do not have Manage Roles "
                            "Permissions on the server. Please check this and try again.")
 
