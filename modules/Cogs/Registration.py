@@ -17,13 +17,14 @@ roles = [
 ]
 
 default = {
-    "enabled": True,
+    "enabled": False,
     "role": "Registered",
     "age": {"enabled": True, "ban_age": 12, "roles": {"over": "18+", "under": "<18"}},
-    "output": 483061332766097419,
+    "output": 0000000000,
     "questions": [
         {
             "question": "What is your preferred pronoun?",
+            "short": "Pronoun:",
             "options": {
                 "he/him": {"aliases": ["male", "he", "him"], "role": "He/Him"},
                 "they/them": {"aliases": ["they", "them"], "role": "They/Them"},
@@ -32,6 +33,7 @@ default = {
         },
         {
             "question": "Are you okay with being Directly Messaged?",
+            "short": "DMs open:",
             "options": {
                 "yes": {"aliases": [], "role": "DMs Allowed"},
                 "no": {"aliases": [], "role": "DMs NOT Allowed"},
@@ -40,6 +42,7 @@ default = {
         },
         {
             "question": "Are you okay with being mentioned?",
+            "short": "Mentions:",
             "options": {
                 "yes": {"aliases": [], "role": "Mention"},
                 "no": {"aliases": [], "role": "No Mention"}
