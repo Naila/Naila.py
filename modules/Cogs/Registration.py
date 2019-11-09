@@ -16,10 +16,43 @@ roles = [
     "Registered", "DMs NOT Allowed", "DMs Allowed", "Ask to DM"
 ]
 
+default = {
+    "enabled": True,
+    "role": "Registered",
+    "age": {"enabled": True, "ban_age": 12, "roles": {"over": "18+", "under": "<18"}},
+    "output": 483061332766097419,
+    "questions": [
+        {
+            "question": "What is your preferred pronoun?",
+            "options": {
+                "he/him": {"aliases": ["male", "he", "him"], "role": "He/Him"},
+                "they/them": {"aliases": ["they", "them"], "role": "They/Them"},
+                "she/her": {"aliases": ["female", "she", "her"], "role": "She/Her"}
+            }
+        },
+        {
+            "question": "Are you okay with being Directly Messaged?",
+            "options": {
+                "yes": {"aliases": [], "role": "DMs Allowed"},
+                "no": {"aliases": [], "role": "DMs NOT Allowed"},
+                "ask": {"aliases": [], "role": "Ask to DM"}
+            }
+        },
+        {
+            "question": "Are you okay with being mentioned?",
+            "options": {
+                "yes": {"aliases": [], "role": "Mention"},
+                "no": {"aliases": [], "role": "No Mention"}
+            }
+        }
+    ]
+}
+
 
 class Registration(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
 
     @commands.guild_only()
     @checks.admin_or_permissions(manage_guild=True)
@@ -107,8 +140,7 @@ class Registration(commands.Cog):
     @commands.command(description="Unregister, allowing you to register again!")
     async def unregister(self, ctx):
         """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
-        guild = ctx.guild
-        author = ctx.author
+        guild, author = ctx.guild, ctx.author
         if not can_manage_user(ctx, author):
             return await ctx.send("I don't have a role above you which means I can't manage your roles,"
                                   " please have someone with permissions move my role up!")
@@ -117,7 +149,7 @@ class Registration(commands.Cog):
             check = discord.utils.get(guild.roles, name=role)
             if check in author.roles:
                 remove.append(check)
-        await author.remove_roles(*remove, reason="User ran unregister command")
+        await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
         await ctx.send("Done, you may now register again!")
 
     @commands.guild_only()
@@ -125,8 +157,7 @@ class Registration(commands.Cog):
     @commands.command(description="Register in this guild!")
     async def register(self, ctx):
         """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
-        guild = ctx.guild
-        author = ctx.author
+        guild, author = ctx.guild, ctx.author
         db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
         if not db["enabled"]:
             ctx.command.reset_cooldown(ctx)
@@ -342,6 +373,168 @@ class Registration(commands.Cog):
         em = discord.Embed(color=await ctx.guildcolor(str(guild.id)),
                            description=f"Thank you for registering, {author.mention}!")
         return await ctx.send(embed=em)
+
+    @commands.guild_only()
+    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.command(description="Register in this guild!", hidden=True)
+    async def register2(self, ctx):
+        """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
+        guild, author = ctx.guild, ctx.author
+        # TODO: postgres
+        db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
+
+        # Few checks to make sure registration will work properly
+        if not db["enabled"]:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("Registration is not enabled here!")
+
+        if not db["channel"] or not guild.get_channel(int(db["channel"])):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("Either you don't have a channel set up or I could not find it!")
+        ch = guild.get_channel(db["channel"])
+
+        if not can_manage_user(ctx, author):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("I don't have a role above you which means I can't manage your roles,"
+                                        " please have someone with permissions move my role up!")
+
+        roles_found = 0
+        for role in roles:
+            check = discord.utils.get(guild.roles, name=role)
+            if check in guild.roles:
+                roles_found += 1
+        if roles_found < len(roles):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error(f"It looks like you haven't set up the roles here, you must have all roles in"
+                                        f" the server to use this function:\n"
+                                        f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
+
+        registered_role = discord.utils.get(guild.roles, name="Registered")
+        if registered_role in author.roles:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error(f"It looks like you've already registered on this server!"
+                                        f"Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
+                                        f" if you wish to re-register.")
+
+        # Setting default embeds and creating role list
+        out = discord.Embed(color=await ctx.guildcolor(str(guild.id)))
+        out.set_author(name=f"Introduction for {author}:",
+                       icon_url=author.avatar_url if author.avatar else author.default_avatar_url)
+        out.set_footer(text=f"ID: {author.id} | {datetime.now().strftime(self.bot.config()['time_format'])}")
+        em = discord.Embed(color=await ctx.guildcolor(str(guild.id)))
+        roles_to_add = []
+        x = 0
+        questions = len(default["questions"]) + 2 if default["age"]["enabled"] else + 1
+        try:
+            # Should we check the user's age?
+            if default["age"]["enabled"]:
+                x += 1
+
+                # Update question embed and send it
+                em.set_author(name=f"Question #{x}/{questions}:")
+                em.description = "How old are you?"
+                em.add_field(name="Options:", value="Whole number: keep in mind that lying about your age is bannable!")
+                await author.send(embed=em)
+
+                # Manage answer and role parsing/banning for underage users
+                answer = int(await self.ask_question(ctx, "age"))
+                if answer < db["autoban_age"]:
+                    await author.send("You are under this guilds auto ban age, therefore I have to ban you!")
+                    await guild.ban(author, reason="[ Registration ] Underage")
+                    return await ctx.send(f"🇫 | {author} was too young to be in the server")
+
+                role = default["age"]["roles"]["over"] if answer >= 18 else default["age"]["roles"]["under"]
+                roles_to_add.append(self.get_role(ctx, role))
+                out.add_field(name="Age:", value=str(answer))
+
+            # Loop through questions
+            for question in default["questions"]:
+                x += 1
+
+                # Update question embed and send it
+                em.clear_fields()
+                em.set_author(name=f"Question #{x}/{questions}:")
+                em.description = question["question"]
+                options = [x for x in question["options"]]
+                em.add_field(
+                    name="Options:",
+                    value=f"{', '.join(options[:-1])}, or {options[-1]}" if len(options) > 2 else " or ".join(options)
+                )
+                await author.send(embed=em)
+
+                # Manage answer and role parsing
+                answer = await self.ask_question(ctx, question)
+                out.add_field(name=question["short"], value=answer.capitalize())
+
+                role = question["options"][answer]["role"]
+                roles_to_add.append(self.get_role(ctx, role))
+
+            # Allow the user to introduce themselves
+            x += 1
+            em.clear_fields()
+            em.set_author(name=f"Question #{x}/{questions}:")
+            em.description = "Introduce yourself!"
+            em.add_field(name="Options:", value="Long intro or `no` if you would rather not")
+            await author.send(embed=em)
+            answer = await self.ask_question(ctx, "intro")
+            if answer:
+                out.description = answer
+
+            # Registration complete, add roles and do all of that stuff
+            await author.add_roles(*roles_to_add, reason="[ Registration ] User has registered")
+
+            await author.send("Thank you for registering!")
+            await ch.send(embed=out)
+
+        # Handle exceptions
+        except discord.Forbidden:
+            return await ctx.send_error(f"{author.mention} I cannot DM you!")
+        except asyncio.TimeoutError:
+            ctx.command.reset_cooldown(ctx)
+            return await author.send("Timed out!")
+        except discord.NotFound:
+            return await ctx.send_error(f"I could not find {author}! Perhaps they left?")
+        except Exception as e:
+            return await ctx.send(e)
+
+    @staticmethod
+    def get_role(ctx, role):
+        guild = ctx.guild
+        if isinstance(role, int):
+            return guild.get_role(role)
+        return discord.utils.get(guild.roles, name=role)
+
+    @staticmethod
+    async def ask_question(ctx, question):
+        guild, author = ctx.guild, ctx.author
+        answer = ""
+
+        def check(m):
+            return m.channel == author.dm_channel and m.author == author
+
+        while True:
+            answered = False
+            response = await ctx.bot.wait_for("message", timeout=300 if question == "intro" else 10, check=check)
+            resp = response.content.lower()
+            if question == "intro":
+                if resp == "no":
+                    return None
+                answer = response.content
+                answered = True
+            elif question == "age":
+                if response.content.isdigit():
+                    answer = response.content
+                    answered = True
+            else:
+                for option, data in question["options"].items():
+                    if resp == option or resp in data["aliases"]:
+                        answer = option
+                        answered = True
+                        break
+            if answered:
+                return answer
+            else:
+                await author.send("Invalid response!")
 
 
 def setup(bot):

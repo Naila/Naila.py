@@ -4,9 +4,9 @@
 #main {alignment: center}
 </style>
 
-<img src="https://cdn.discordapp.com/avatars/337481187419226113/d25e291017c57ae198fcd175b2ad552f.png?size=256" height=200></img>\
-Naila.py
------------------
+<img src="https://cdn.discordapp.com/avatars/337481187419226113/d25e291017c57ae198fcd175b2ad552f.png?size=256" height=200></img>
+<h1>Naila.py</h1>
+
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
 [![CodeFactor](https://www.codefactor.io/repository/github/nailabot/naila.py/badge)](https://www.codefactor.io/repository/github/nailabot/naila.py)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=NailaBot/Naila.py)](https://dependabot.com)
