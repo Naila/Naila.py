@@ -1,8 +1,4 @@
-<div id="main">
-
-<style>
-#main {alignment: center}
-</style>
+<div align="center">
 
 <img src="https://cdn.discordapp.com/avatars/337481187419226113/d25e291017c57ae198fcd175b2ad552f.png?size=256" height=200></img>
 <h1>Naila.py</h1>
