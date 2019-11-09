@@ -394,7 +394,7 @@ class Registration(commands.Cog):
         if not db["channel"] or not guild.get_channel(int(db["channel"])):
             ctx.command.reset_cooldown(ctx)
             return await ctx.send_error("Either you don't have a channel set up or I could not find it!")
-        ch = guild.get_channel(db["channel"])
+        ch = guild.get_channel(int(db["channel"]))
 
         if not can_manage_user(ctx, author):
             ctx.command.reset_cooldown(ctx)
