@@ -1,4 +1,8 @@
-<div align="center">
+<div id="main">
+
+<style>
+#main {alignment: center}
+</style>
 
 <img src="https://cdn.discordapp.com/avatars/337481187419226113/d25e291017c57ae198fcd175b2ad552f.png?size=256" height=200></img>\
 Naila.py
@@ -11,5 +15,5 @@ Naila.py
 
 </div>
 
-Naila Bot written in discord.py
+Naila Bot written in discord.py\
 None of this is meant to be used by anyone but me, it's a mess atm and I don't expect anyone to understand it. :)
