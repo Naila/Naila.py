@@ -517,7 +517,7 @@ class Registration(commands.Cog):
 
         while True:
             answered = False
-            response = await ctx.bot.wait_for("message", timeout=300 if question == "intro" else 10, check=check)
+            response = await ctx.bot.wait_for("message", timeout=300 if question == "intro" else 60, check=check)
             resp = response.content.lower()
             if question == "intro":
                 if resp == "no":
