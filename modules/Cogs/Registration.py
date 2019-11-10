@@ -160,40 +160,11 @@ class Registration(commands.Cog):
         """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
         guild, author = ctx.guild, ctx.author
         # TODO: postgres
-        db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
+        db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
 
         # Few checks to make sure registration will work properly
-        if not db["enabled"]:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("Registration is not enabled here!")
-
-        if not db["channel"] or not guild.get_channel(int(db["channel"])):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("Either you don't have a channel set up or I could not find it!")
+        await self.registration_checks(ctx)
         ch = guild.get_channel(int(db["channel"]))
-
-        if not can_manage_user(ctx, author):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("I don't have a role above you which means I can't manage your roles,"
-                                        " please have someone with permissions move my role up!")
-
-        roles_found = 0
-        for role in roles:
-            check = discord.utils.get(guild.roles, name=role)
-            if check in guild.roles:
-                roles_found += 1
-        if roles_found < len(roles):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error(f"It looks like you haven't set up the roles here, you must have all roles in"
-                                        f" the server to use this function:\n"
-                                        f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
-
-        registered_role = discord.utils.get(guild.roles, name="Registered")
-        if registered_role in author.roles:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error(f"It looks like you've already registered on this server!"
-                                        f"Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
-                                        f" if you wish to re-register.")
 
         # Setting default embeds and creating role list
         out = discord.Embed(color=await ctx.guildcolor(str(guild.id)))
@@ -276,6 +247,40 @@ class Registration(commands.Cog):
         except Exception as e:
             return await ctx.send(e)
 
+    async def registration_checks(self, ctx):
+        guild, author = ctx.guild, ctx.author
+        # TODO: postgres
+        db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
+        if not db["enabled"]:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("Registration is not enabled here!")
+
+        if not db["channel"] or not guild.get_channel(int(db["channel"])):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("Either you don't have a channel set up or I could not find it!")
+
+        if not can_manage_user(ctx, author):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error("I don't have a role above you which means I can't manage your roles,"
+                                        " please have someone with permissions move my role up!")
+        roles_found = 0
+        for role in roles:
+            check = discord.utils.get(guild.roles, name=role)
+            if check in guild.roles:
+                roles_found += 1
+        if roles_found < len(roles):
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error(f"It looks like you haven't set up the roles here, you must have all roles in"
+                                        f" the server to use this function:\n"
+                                        f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
+
+        registered_role = discord.utils.get(guild.roles, name="Registered")
+        if registered_role in author.roles:
+            ctx.command.reset_cooldown(ctx)
+            return await ctx.send_error(f"It looks like you've already registered on this server!"
+                                        f"Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
+                                        f" if you wish to re-register.")
+
     @staticmethod
     def get_role(ctx, role):
         guild = ctx.guild
@@ -312,8 +317,7 @@ class Registration(commands.Cog):
                         break
             if answered:
                 return answer
-            else:
-                await author.send("Invalid response!")
+            await author.send("Invalid response!")
 
 
 def setup(bot):
