@@ -191,7 +191,7 @@ class Registration(commands.Cog):
                 if answer < db["autoban_age"]:
                     await author.send("You are under this guilds auto ban age, therefore I have to ban you!")
                     await guild.ban(author, reason="[ Registration ] Underage")
-                    return await ctx.send(f"🇫 | {author} was too young to be in the server")
+                    # return await ctx.send(f"🇫 | {author} was too young to be in the server")
 
                 role = default["age"]["roles"]["over"] if answer >= 18 else default["age"]["roles"]["under"]
                 roles_to_add.append(self.get_role(ctx, role))
