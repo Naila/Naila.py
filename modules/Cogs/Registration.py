@@ -231,6 +231,7 @@ class Registration(commands.Cog):
                 out.description = answer
 
             # Registration complete, add roles and do all of that stuff
+            roles_to_add.append(discord.utils.get(guild.roles, name="Registered"))
             await author.add_roles(*roles_to_add, reason="[ Registration ] User has registered")
 
             await author.send("Thank you for registering!")
