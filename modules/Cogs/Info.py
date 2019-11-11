@@ -11,19 +11,6 @@ key_perms = ["kick_members", "ban_members", "administrator", "manage_channels", 
 voice_perms = ["connect", "deafen_members", "move_members", "mute_members", "priority_speaker", "speak", "stream",
                "use_voice_activation"]
 
-statuses = {
-    "idle":
-        "<:IDLE:591344823622041600>",
-    "dnd":
-        "<:DND:591344889384534036>",
-    "online":
-        "<:ON:591344804307402793>",
-    "streaming":
-        "<:STRE:591345161766961178>",
-    "offline":
-        "<:OFF:591344910905376779>"
-}
-
 
 def get_relative_delta(time):
     delta = relativedelta(datetime.now(), time)
@@ -52,69 +39,92 @@ class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @staticmethod
+    def get_member_status(ctx, member):
+        path = "status.mobile." if member.is_on_mobile() else "status."
+        status = f"{ctx.emojis(path + str(member.status))} {str(member.status).capitalize()}\n\n"
+        if not member.activity:
+            pass
+        elif member.activity.type == discord.ActivityType.playing:
+            activity = member.activity.to_dict()
+            status += f"Playing **{member.activity.name}**"
+            if "details" in activity:
+                status += f"\n{activity['details']}"
+            if "state" in activity:
+                status += f"\n{activity['state']}"
+        elif member.activity.type == discord.ActivityType.watching:
+            status += f"Watching {member.activity.name}"
+        elif member.activity.type == discord.ActivityType.listening:
+            status += f"Listening to {member.activity.title}\n" \
+                    f"By {', '.join([x for x in member.activity.artists])}\n" \
+                    f"On {member.activity.name}"
+        else:
+            status += f"Streaming **[{member.activity.name}]({member.activity.url})**"
+        return status
+
     @commands.guild_only()
-    @commands.group(aliases=["whois"], invoke_without_command=True, description="Check a users information!")
-    async def user(self, ctx, *, user: discord.Member = None):
+    @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
+                    invoke_without_command=True, description="Check a members information!")
+    async def user(self, ctx, *, member: discord.Member = None):
         """{"permissions": {"user": [], "bot": ["embed_links"]}}"""
         if not ctx.invoked_subcommand:
-            author, server, message = ctx.author, ctx.guild, ctx.message
-            if not user:
-                user = author
-            em = discord.Embed(color=user.color)
-            game = f"{'📱' if user.is_on_mobile() else ''}{statuses[str(user.status)]}" \
-                   f" {str(user.status).capitalize()}\n\n"
-            if user.activity is None:
-                pass
-            elif user.activity.type == discord.ActivityType.playing:
-                activity = user.activity.to_dict()
-                game += f"Playing **{user.activity.name}**"
-                if "details" in activity:
-                    game += f"\n{activity['details']}"
-                if "state" in activity:
-                    game += f"\n{activity['state']}"
-            elif user.activity.type == discord.ActivityType.watching:
-                game += f"Watching {user.activity.name}"
-            elif user.activity.type == discord.ActivityType.listening:
-                game += f"Listening to {user.activity.title}\n" \
-                        f"By {', '.join([x for x in author.activity.artists])}\n" \
-                        f"On {user.activity.name}"
-            else:
-                game += f"Streaming **[{user.activity.name}]({user.activity.url})**"
-            em.add_field(name="Status:", value=game, inline=False)
+            guild, message, member = ctx.guild, ctx.message, member or ctx.author
+            em = discord.Embed(color=member.color)
+            em.set_thumbnail(url=member.avatar_url)
+            em.set_author(
+                name=f"{'BOT: ' if member.bot else ''}"
+                     f"{' ~ '.join((str(member), member.nick)) if member.nick else str(member)}"
+            )
 
-            if user.voice:
-                other_people = len(user.voice.channel.members) - 1
-                voice = f"In {user.voice.channel.mention}"
-                voice += f" with {other_people} others" if other_people else " alone"
-            else:
-                voice = "Not connected"
-            em.add_field(name='Voice:', value=voice, inline=False)
+            em.add_field(
+                name="Status:",
+                value=self.get_member_status(ctx, member),
+                inline=False
+            )
 
-            if len(user.roles) <= 41:
-                roles = " ".join([x.mention for x in user.roles if x.name != "@everyone"][::-1])
-                roles = roles if roles else "None"
-                em.add_field(name=f"Roles [{len(user.roles) - 1}]:", value=roles, inline=False)
-            else:
-                em.add_field(name=f"Roles [{len(user.roles) - 1}]:", value="Too many to display", inline=False)
+            vc = "Not connected"
+            if member.voice:
+                other_people = len(member.voice.channel.members) - 1
+                vc = f"In {member.voice.channel.mention}"
+                vc += f" with {other_people} others" if other_people else " alone"
+            em.add_field(
+                name='Voice:',
+                value=vc,
+                inline=False
+            )
 
-            perms = [x[0] for x in iter(ctx.channel.permissions_for(user)) if x[1]]
-            permissions = ", ".join([str(x).replace("_", " ").title() for x in perms if x in key_perms])
-            permissions = permissions if permissions else "None"
-            em.add_field(name="Key Permissions:", value=permissions)
+            em.add_field(
+                name=f"Roles [{len(member.roles) - 1}]:",
+                value=" ".join([x.mention for x in member.roles if x is not guild.default_role][::-1]) or "None"
+                if len(member.roles) <= 41 else "Too many to display",
+                inline=False
+            )
 
-            member_number = sorted(server.members, key=lambda m: m.joined_at).index(user) + 1
-            em.set_footer(text=f"Member #{member_number} • User ID: {user.id}")
+            em.add_field(
+                name="Key Permissions:",
+                value=", ".join(
+                    [str(x).replace("_", " ").title()
+                     for x in [x[0] for x in iter(ctx.channel.permissions_for(member))
+                               if x[1]] if x in key_perms]
+                ) or "None",
+                inline=False
+            )
 
-            name = "BOT: " if user.bot else ""
-            name += " ~ ".join((str(user), user.nick)) if user.nick else str(user)
+            em.add_field(
+                name="Joined Discord on:",
+                value=get_relative_delta(member.created_at),
+                inline=False
+            )
+            em.add_field(
+                name="Joined this server on:",
+                value=get_relative_delta(member.joined_at),
+                inline=False
+            )
 
-            if user.avatar_url:
-                em.set_thumbnail(url=user.avatar_url)
-            em.set_author(name=name)
-
-            em.add_field(name="Joined Discord on:", value=get_relative_delta(user.created_at), inline=False)
-            em.add_field(name="Joined this server on:", value=get_relative_delta(user.joined_at), inline=False)
-
+            em.set_footer(
+                text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1}"
+                     f" • ID: {member.id}"
+            )
             return await ctx.send(embed=em)
 
     @user.command(name="permissions", aliases=["perms"],
@@ -124,10 +134,7 @@ class Info(commands.Cog):
         """
         {"permissions": {"user": [], "bot": ["embed_links"]}}
         """
-        if not user:
-            user = ctx.author
-        if not channel:
-            channel = ctx.channel
+        user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
         perms_we_have = ""
         perms_we_dont = ""
@@ -135,18 +142,12 @@ class Info(commands.Cog):
             for perm in perms:
                 if perm[0] not in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
-                    if perm[1]:
-                        perms_we_have += f"+\t{perm_name}\n"
-                    else:
-                        perms_we_dont += f"-\t{perm_name}\n"
+                    perms_we_have += f"+\t{perm_name}\n" if perm[1] else f"-\t{perm_name}\n"
         elif isinstance(channel, discord.VoiceChannel):
             for perm in perms:
                 if perm[0] in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
-                    if perm[1]:
-                        perms_we_have += f"+\t{perm_name}\n"
-                    else:
-                        perms_we_dont += f"-\t{perm_name}\n"
+                    perms_we_have += f"+\t{perm_name}\n" if perm[1] else f"-\t{perm_name}\n"
         desc = f"```diff\n{perms_we_have}{perms_we_dont}\n```"
         em = discord.Embed(color=user.color, description=desc)
         em.set_author(name=f"{user.name}'s permissions in {channel}:")

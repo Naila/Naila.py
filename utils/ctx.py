@@ -1,6 +1,8 @@
 import discord
+import yaml
 from discord.ext import commands
 from rethinkdb import r
+from dictor import dictor
 
 from modules.Cogs.Help import command_signature
 
@@ -16,6 +18,11 @@ class CustomContext(commands.Context):
     async def guildcolor(self, gid: str):
         color = await r.table("guilds").get(gid).get_field("color").run(self.bot.conn)
         return color
+
+    def emojis(self, emoji: str):
+        with open("config/emojis.yml", "r") as emojis:
+            emojis = yaml.safe_load(emojis)
+        return self.bot.get_emoji(dictor(emojis, emoji))
 
     async def missing_argument(self):
         channel = self.channel
