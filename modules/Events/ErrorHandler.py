@@ -28,11 +28,11 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandNotFound):
+            return
         if isinstance(error, commands.CommandOnCooldown):
             return await ctx.send(self.format_retry_after(error.retry_after))
         ctx.command.reset_cooldown(ctx)
-        if isinstance(error, commands.CommandNotFound):
-            return
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.missing_argument()
         if isinstance(error, (commands.BadArgument, commands.BadUnionArgument)):
