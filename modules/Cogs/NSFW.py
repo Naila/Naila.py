@@ -380,13 +380,13 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
+    @checks.is_nsfw()
     @commands.group(case_insensitive=True, description="NSFW images from neko.life")
     async def nneko(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
             await ctx.group_help()
 
-    @checks.is_nsfw()
     @nneko.command(name="neko", description="Nekos")
     async def nneko_neko(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
@@ -396,7 +396,6 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @checks.is_nsfw()
     @nneko.command(name="ngif", description="Neko gifs")
     async def nneko_ngif(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
