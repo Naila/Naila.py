@@ -53,6 +53,7 @@ def setup_bot(bot):
     log.info(f"\n{get_banner()}\nLoading....")
 
     # Load modules
+    bot.session = aiohttp.ClientSession(loop=bot.loop)
     starter_modules(bot)
 
     # Database
@@ -78,7 +79,6 @@ def setup_bot(bot):
     bot.counter = Counter()
     bot.commands_used = Counter()
     bot.process = psutil.Process()
-    bot.session = aiohttp.ClientSession(loop=bot.loop)
     bot.color = bot.config()["colors"]["main"]
     bot.error_color = bot.config()["colors"]["error"]
 

@@ -2,6 +2,10 @@ import discord
 from discord.ext import commands
 
 
+class NoNSFW(commands.CommandError):
+    pass
+
+
 def is_owner_check(ctx):
     return ctx.author.id in ctx.bot.config()["owners"]
 
@@ -23,13 +27,7 @@ async def check_nsfw(ctx):
         return True
     if ctx.channel.is_nsfw():
         return True
-    await ctx.send(
-        embed=discord.Embed(
-            color=ctx.bot.error_color,
-            description=f"I can't give you the command {ctx.command.name} in a sfw environment."
-        )
-    )
-    return False
+    raise NoNSFW
 
 
 def is_nsfw():

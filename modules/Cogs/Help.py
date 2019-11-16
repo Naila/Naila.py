@@ -93,7 +93,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         if command.help:
             try:
                 docs = json.loads(command.help)
-                permissions = self.generate_perm_docs(docs["permissions"])
+                permissions = self.generate_perm_docs(docs)
                 line = "```ml\n"
                 line += f"{permissions}"
                 line += "\n```"

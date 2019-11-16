@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 
 from utils.checks.bot_checks import can_send, can_embed, can_react
+from utils.checks import checks
 
 
 class ErrorHandler(commands.Cog):
@@ -46,8 +47,10 @@ class ErrorHandler(commands.Cog):
                         return await ctx.author.send("Missing permissions to `Send Messages` and/or `Embed Links`!")
                     except discord.Forbidden:
                         return self.bot.log.error("Could not respond to command, all checks failed!")
+        if isinstance(error, checks.NoNSFW):
+            return await ctx.send_error(f"I can't give you the command {ctx.command} in a sfw environment.")
         if isinstance(error, commands.CheckFailure):
-            return await ctx.send_error(ctx, "You don't have permission to use this command!")
+            return await ctx.send_error("You don't have permission to use this command!")
         self.bot.sentry.capture_exception(error)
         return await ctx.send_error(error)
 

@@ -4,7 +4,7 @@ from requests.exceptions import HTTPError
 
 
 # https://docs.weeb.sh/
-async def weeb_api(ctx, endpoint):
+async def weeb(ctx, endpoint):
     async with ctx.session.get(
             url=f"https://api.weeb.sh/images/random?nsfw=False&type={endpoint}",
             headers={"Authorization": os.getenv("WEEB")}
@@ -12,6 +12,37 @@ async def weeb_api(ctx, endpoint):
         if resp.status == 200:
             return (await resp.json())["url"]
         return raise_for_status(resp)
+
+
+async def boobbot(ctx, endpoint):
+    async with ctx.session.get(
+            url=f"https://boob.bot/api/v2/img/{endpoint}",
+            headers={"key": os.getenv("BOOBBOT")}
+    ) as resp:
+        if resp.status == 200:
+            return (await resp.json())["url"]
+        return raise_for_status(resp)
+
+
+# https://sheri.bot/api/
+async def sheri(ctx, endpoint):
+    async with ctx.session.get(
+            url=f"https://sheri.bot/api/{endpoint}",
+            headers={"Authorization": os.getenv("SHERI")}
+    ) as resp:
+        if resp.status == 200:
+            return (await resp.json())["url"]
+    return raise_for_status(resp)
+
+
+# https://nekos.life/api/v2/endpoints
+async def nekos(ctx, endpoint):
+    async with ctx.session.get(
+            url=f"https://nekos.life/api/v2/img/{endpoint}",
+    ) as resp:
+        if resp.status == 200:
+            return (await resp.json())["url"]
+    return raise_for_status(resp)
 
 
 # Modified from https://3.python-requests.org/_modules/requests/models/#Response.raise_for_status

@@ -56,16 +56,16 @@ class Registration(commands.Cog):
         self.bot = bot
 
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_guild=True)
+    @checks.admin_or_permissions()
     @commands.group(case_insensitive=True, description="Registration management")
     async def setreg(self, ctx):
-        """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links"]}}"""
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
             return await ctx.group_help()
 
     @setreg.command(description="Set the output channel")
     async def channel(self, ctx, channel: discord.TextChannel = None):
-        """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links"]}}"""
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if not channel:
             channel = ctx.channel
         db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
@@ -75,7 +75,7 @@ class Registration(commands.Cog):
 
     @setreg.command(description="Toggle registration")
     async def toggle(self, ctx):
-        """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links"]}}"""
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
         db["enabled"] = not db["enabled"]
         await r.table("Registration").insert(db, conflict="update").run(self.bot.conn)
@@ -86,7 +86,7 @@ class Registration(commands.Cog):
 
     @setreg.command(description="Create the roles required for registration")
     async def roles(self, ctx):
-        """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links", "manage_roles"]}}"""
+        """{"user": ["manage_guild"], "bot": ["embed_links", "manage_roles"]}"""
         guild = ctx.guild
 
         def check(m):
@@ -127,7 +127,7 @@ class Registration(commands.Cog):
     @setreg.command(name="autoban",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
     async def setreg_autoban(self, ctx, age: int):
-        """{"permissions": {"user": ["manage_guild"], "bot": ["embed_links", "ban_members"]}}"""
+        """{"user": ["manage_guild"], "bot": ["embed_links", "ban_members"]}"""
         guild = ctx.guild
         db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
         if age < 13:
@@ -140,7 +140,7 @@ class Registration(commands.Cog):
     @commands.guild_only()
     @commands.command(description="Unregister, allowing you to register again!")
     async def unregister(self, ctx):
-        """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
+        """{"user": [], "bot": ["embed_links", "manage_roles]}"""
         guild, author = ctx.guild, ctx.author
         if not can_manage_user(ctx, author):
             return await ctx.send("I don't have a role above you which means I can't manage your roles,"
@@ -157,7 +157,7 @@ class Registration(commands.Cog):
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
     async def register(self, ctx):
-        """{"permissions": {"user": [], "bot": ["embed_links", "manage_roles"]}}"""
+        """{"user": [], "bot": ["embed_links", "manage_roles]}"""
         guild, author = ctx.guild, ctx.author
         # TODO: postgres
         db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)

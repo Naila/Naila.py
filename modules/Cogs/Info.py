@@ -66,7 +66,7 @@ class Info(commands.Cog):
     @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
                     invoke_without_command=True, description="Check a members information!")
     async def user(self, ctx, *, member: discord.Member = None):
-        """{"permissions": {"user": [], "bot": ["embed_links"]}}"""
+        """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
             guild, message, member = ctx.guild, ctx.message, member or ctx.author
             em = discord.Embed(color=member.color)
@@ -131,9 +131,7 @@ class Info(commands.Cog):
                   description="Check a users permissions for a given Text/Voice channel")
     async def user_permissions(self, ctx, user: discord.Member = None, *,
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
-        """
-        {"permissions": {"user": [], "bot": ["embed_links"]}}
-        """
+        """{"user": [], "bot": ["embed_links"]}"""
         user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
         perms_we_have = ""
@@ -155,9 +153,7 @@ class Info(commands.Cog):
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
     async def user_avatar(self, ctx, user: discord.Member = None):
-        """
-        {"permissions": {"user": [], "bot": ["embed_links"]}}
-        """
+        """{"user": [], "bot": ["embed_links"]}"""
         if not user:
             user = ctx.author
         url = user.avatar_url_as(static_format="png", size=1024)

@@ -92,9 +92,7 @@ async def func():
     @checks.is_owner()
     @commands.command(hidden=True, description="Evaluate code in a REPL like environment")
     async def eval(self, ctx, *, code: str):
-        """
-        {"permissions": {"user": ["bot_owner"], "bot": []}}
-        """
+        """{"user": ["bot_owner"], "bot": []}"""
         code = code.strip("`")
         if code.startswith("py\n"):
             code = "\n".join(code.split("\n")[1:])
