@@ -237,7 +237,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} pats {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb_api(ctx, "poke"))
+            em.set_image(url=await weeb_api(ctx, "pat"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Why would you want to do something like that?")
