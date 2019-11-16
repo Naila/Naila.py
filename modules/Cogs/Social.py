@@ -189,7 +189,7 @@ class Social(commands.Cog):
             em.set_image(url=await weeb(ctx, "insult"))
             await ctx.send(embed=em)
         except UsedOnSelf:
-            await ctx.send_error("You cannot hug yourself!")
+            await ctx.send_error("You cannot insult yourself!")
         except MissingArgument:
             await ctx.missing_argument()
         except TooManyUsers:
