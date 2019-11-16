@@ -42,6 +42,8 @@ class Evaluate(commands.Cog):
         if code == "exit()":
             self.env = {}
             return await ctx.send(f"```Reset history!```")
+        if "config/config.yml" in code:
+            return await ctx.send_error("You cannot write to the config, please use `bot.config()` to read it.")
 
         env = {
             "message": ctx.message,
@@ -55,18 +57,19 @@ class Evaluate(commands.Cog):
 
         self.env.update(env)
 
-        _code = """
+        _code =\
+            f"""
 async def func():
     try:
         with contextlib.redirect_stdout(self.stdout):
-{}
+            {code}
         if '_' in locals():
             if inspect.isawaitable(_):
                 _ = await _
             return _
     finally:
         self.env.update(locals())
-""".format(textwrap.indent(code, '            '))
+            """
 
         start = time.time()
         try:
@@ -90,7 +93,7 @@ async def func():
     @commands.command(hidden=True, description="Evaluate code in a REPL like environment")
     async def eval(self, ctx, *, code: str):
         """
-        {"permissions": {"user": [], "bot": []}}
+        {"permissions": {"user": ["bot_owner"], "bot": []}}
         """
         code = code.strip("`")
         if code.startswith("py\n"):
@@ -119,11 +122,7 @@ async def func():
 
         # Create the input dialog
         for i, line in enumerate(lines):
-            if i == 0:
-                s = ">>> "
-
-            else:
-                s = "... "
+            s = ">>> " if i == 0 else "... "
 
             if i == len(lines) - 2:
                 if line.startswith("return"):
@@ -139,7 +138,7 @@ async def func():
         if text:
             res += text + "\n"
 
-        if out is None:
+        if not out:
             # No output, return the input statement
             return res, None
 

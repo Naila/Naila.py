@@ -1,5 +1,5 @@
 def pagify(text, delims=None, shorten_by=8, page_length=1900):
-    if delims is None:
+    if not delims:
         delims = ["\n"]
     in_text = text
     page_length -= shorten_by

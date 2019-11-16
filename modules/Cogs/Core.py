@@ -6,7 +6,7 @@ import requests
 from discord.ext import commands
 
 from utils.checks import checks
-from utils.functions import pagify
+from utils.functions.text import pagify
 
 
 class Core(commands.Cog):

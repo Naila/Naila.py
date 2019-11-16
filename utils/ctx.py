@@ -15,8 +15,8 @@ class CustomContext(commands.Context):
     def session(self):
         return self.bot.session
 
-    async def guildcolor(self, gid: str):
-        color = await r.table("guilds").get(gid).get_field("color").run(self.bot.conn)
+    async def guildcolor(self):
+        color = await r.table("guilds").get(str(self.guild.id)).get_field("color").run(self.bot.conn)
         return color
 
     def emojis(self, emoji: str):

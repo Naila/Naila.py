@@ -32,7 +32,7 @@ def clean_param(param):
     if not param.annotation:
         return param.name
 
-    clean = str(param).replace(" ", "").replace("=None", "")
+    clean = str(param).replace(" ", "").replace("=None", "").replace("*", "")
     if "Union" in clean:
         args = clean.split(":")[1].replace("Union[", "").replace("]", "")
         arg_names = [item.split(".")[-1] for item in args.split(",")]
@@ -108,17 +108,27 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     def generate_perm_docs(self, docs):
         ctx = self.context
         user, guild, channel = ctx.author, ctx.guild, ctx.channel
+        bot_owner = None
         user_needs_perms = docs["user"] + ["send_messages"]
         bot_needs_perms = docs["bot"] + ["send_messages"]
         if "bot_owner" in user_needs_perms:
-            return "You must be the bot owner to use this command"
+            bot_owner = True
+            user_needs_perms.pop(user_needs_perms.index("bot_owner"))
         user_perms = [x[0] for x in iter(channel.permissions_for(user)) if x[1]]
         bot_perms = [x[0] for x in iter(channel.permissions_for(guild.me)) if x[1]]
-        user_perms_list = ", ".join([x.replace("_", " ").title() for x in user_needs_perms if x in user_perms])
-        user_has_perms = "\"" + user_perms_list + "\"" if user_perms_list else "User missing all required permissions"
 
-        user_no_perms = ", ".join([x.replace("_", " ").title() for x in user_needs_perms if x not in user_perms])
-        user_no_perms = "'" + user_no_perms + "'" if user_no_perms else "User has all required permissions"
+        user_has_perms = [x for x in user_needs_perms if x in user_perms]
+        user_missing_perms = list(set(user_needs_perms) - set(user_has_perms))
+
+        if bot_owner:
+            user_has_perms.insert(0, "bot_owner") \
+                if user.id in ctx.bot.config()["owners"] else user_missing_perms.insert(0, "bot_owner")
+
+        user_has = '"' + ", ".join([x.replace("_", " ").title() for x in user_has_perms]) + '"' \
+            if user_has_perms else "User missing all required permissions"
+
+        user_missing = "'" + ", ".join([x.replace("_", " ").title() for x in user_missing_perms]) + "'" \
+            if user_missing_perms else "User has all required permissions"
 
         bot_perms_list = ", ".join([x.replace("_", " ").title() for x in bot_needs_perms if x in bot_perms])
         bot_has_perms = "\"" + bot_perms_list + "\"" if bot_perms_list else "Bot missing all required permissions"
@@ -126,12 +136,12 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         bot_no_perms = ", ".join([x.replace("_", " ").title() for x in bot_needs_perms if x not in bot_perms])
         bot_no_perms = "'" + bot_no_perms + "'" if bot_no_perms else "Bot has all required permissions"
         msg = f"Permissions:\n"
+        msg += f"User:\n"
+        msg += f"{user_has}\n"
+        msg += f"{user_missing}\n"
         msg += f"Bot:\n"
         msg += f"{bot_has_perms}\n"
         msg += f"{bot_no_perms}\n\n"
-        msg += f"User:\n"
-        msg += f"{user_has_perms}\n"
-        msg += f"{user_no_perms}\n"
         return msg
 
 

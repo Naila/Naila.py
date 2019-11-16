@@ -167,11 +167,11 @@ class Registration(commands.Cog):
         ch = guild.get_channel(int(db["channel"]))
 
         # Setting default embeds and creating role list
-        out = discord.Embed(color=await ctx.guildcolor(str(guild.id)))
+        out = discord.Embed(color=await ctx.guildcolor())
         out.set_author(name=f"Introduction for {author}:",
                        icon_url=author.avatar_url if author.avatar else author.default_avatar_url)
         out.set_footer(text=f"ID: {author.id} | {datetime.now().strftime(self.bot.config()['time_format'])}")
-        em = discord.Embed(color=await ctx.guildcolor(str(guild.id)))
+        em = discord.Embed(color=await ctx.guildcolor())
         roles_to_add = []
         x = 0
         questions = len(default["questions"]) + 2 if default["age"]["enabled"] else + 1

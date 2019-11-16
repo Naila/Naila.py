@@ -2,14 +2,8 @@ import discord
 from discord.ext import commands
 
 
-class NotDJ(commands.CommandError):
-    pass
-
-
 def is_owner_check(ctx):
-    return ctx.author.id in [
-        173237945149423619  # Kanin
-    ]
+    return ctx.author.id in ctx.bot.config()["owners"]
 
 
 def is_owner():
@@ -29,15 +23,13 @@ async def check_nsfw(ctx):
         return True
     if ctx.channel.is_nsfw():
         return True
-    await nsfw_not_permitted(ctx)
+    await ctx.send(
+        embed=discord.Embed(
+            color=ctx.bot.error_color,
+            description=f"I can't give you the command {ctx.command.name} in a sfw environment."
+        )
+    )
     return False
-
-
-async def nsfw_not_permitted(ctx):
-    command = ctx.command.name
-    em = discord.Embed(color=ctx.bot.error_color,
-                       description=f"I can't give you the command {command} in a sfw environment.")
-    return await ctx.send(embed=em)
 
 
 def is_nsfw():
@@ -54,6 +46,7 @@ def check_permissions(ctx, perms):
     return all(getattr(resolved, name, None) == value for name, value in perms.items())
 
 
+# TODO: Allow server owners to set mod/admin roles
 def role_or_permissions(ctx, check, **perms):
     if check_permissions(ctx, perms):
         return True
@@ -65,29 +58,24 @@ def role_or_permissions(ctx, check, **perms):
 
 def mod_or_permissions(**perms):
     def predicate(ctx):
-        return role_or_permissions(ctx, ctx.author.permissions_in(ctx.channel).manage_roles, **perms)
-
+        return role_or_permissions(ctx, ctx.author.permissions_in(ctx.channel).manage_messages, **perms)
     return commands.check(predicate)
 
 
 def admin_or_permissions(**perms):
     def predicate(ctx):
         return role_or_permissions(ctx, ctx.author.permissions_in(ctx.channel).manage_guild, **perms)
-
     return commands.check(predicate)
 
 
 def guild_owner_or_permissions(**perms):
     def predicate(ctx):
-        guild = ctx.message.guild
+        guild = ctx.guild
         if not guild:
             return False
-
-        if ctx.message.author.id == guild.owner.id:
+        if ctx.author.id == guild.owner.id:
             return True
-
         return check_permissions(ctx, perms)
-
     return commands.check(predicate)
 
 
