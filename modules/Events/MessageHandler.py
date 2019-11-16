@@ -30,8 +30,6 @@ class MessageHandler(commands.Cog):
     @commands.Cog.listener()
     async def on_command(self, ctx):
         message, command = ctx.message, ctx.command
-        if not message.author.id == 173237945149423619:
-            return
 
         cmd = command.qualified_name.replace(" ", "_")
         self.bot.commands_used[cmd] += 1
