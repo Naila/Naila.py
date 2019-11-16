@@ -10,7 +10,6 @@ from utils.functions.api import boobbot, sheri, nekos
 class NSFW(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.session = bot.session
 
     @staticmethod
     async def boobbot_embed(ctx):
