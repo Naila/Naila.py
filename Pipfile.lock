@@ -93,14 +93,6 @@
             ],
             "version": "==3.0.4"
         },
-        "colorama": {
-            "hashes": [
-                "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
-                "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
-            ],
-            "markers": "sys_platform == 'win32'",
-            "version": "==0.4.1"
-        },
         "coloredlogs": {
             "hashes": [
                 "sha256:34fad2e342d5a559c31b6c889e8d14f97cb62c47d9a2ae7b5ed14ea10a79eff8",
@@ -118,10 +110,10 @@
         },
         "discord-py": {
             "hashes": [
-                "sha256:2d5fec14b1c047b561336e969939e7f34564489851ec1a7edb8d303087127256"
+                "sha256:7c843b523bb011062b453864e75c7b675a03faf573c58d14c9f096e85984329d"
             ],
             "index": "pypi",
-            "version": "==1.2.4"
+            "version": "==1.2.5"
         },
         "humanfriendly": {
             "hashes": [
@@ -187,13 +179,6 @@
             ],
             "index": "pypi",
             "version": "==5.6.5"
-        },
-        "pyreadline": {
-            "hashes": [
-                "sha256:4530592fc2e85b25b1a9f79664433da09237c1a270e4d78ea5aa3a2c7229e2d1"
-            ],
-            "markers": "sys_platform == 'win32'",
-            "version": "==2.1"
         },
         "python-dateutil": {
             "hashes": [
@@ -271,10 +256,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:3de946ffbed6e6746608990594d08faac602528ac7015ac28d33cee6a45b7398",
-                "sha256:9a107b99a5393caf59c7aa3c1249c16e6879447533d0887f4336dde834c7be86"
+                "sha256:a8a318824cc77d1fd4b2bec2ded92646630d7fe8619497b142c84a9e6f5a7293",
+                "sha256:f3c5fd51747d450d4dcf6f923c81f78f811aab8205fda64b0aba34a4e48b0745"
             ],
-            "version": "==1.25.6"
+            "version": "==1.25.7"
         },
         "websockets": {
             "hashes": [
