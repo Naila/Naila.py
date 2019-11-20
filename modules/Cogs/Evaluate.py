@@ -62,7 +62,7 @@ class Evaluate(commands.Cog):
 async def func():
     try:
         with contextlib.redirect_stdout(self.stdout):
-            {code}
+{textwrap.indent(code, '            ')}
         if '_' in locals():
             if inspect.isawaitable(_):
                 _ = await _
