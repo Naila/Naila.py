@@ -7,7 +7,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/nailabot/naila.py/badge)](https://www.codefactor.io/repository/github/nailabot/naila.py)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=NailaBot/Naila.py)](https://dependabot.com)
 
-[![Support-Server](https://discordapp.com/api/guilds/365260338851086346/widget.png?style=banner2)](https://discord.gg/the-den)
+[![Support-Server](https://discordapp.com/api/guilds/365260338851086346/widget.png?style=banner2)](https://discord.gg/fox)
 
 </div>
 
