@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "05d7495201bd27e8b5f01ad200dc6d2b8d8003826f181bfea8ef1b22b621ee85"
+            "sha256": "0824c38a5f43f4614b464d4599fc1d2ca2864dd39b320867cee3a4b30582bcd3"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -128,6 +128,14 @@
                 "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"
             ],
             "version": "==2.8"
+        },
+        "mixpanel-api": {
+            "hashes": [
+                "sha256:37216aef57de90a7de8c626219209d0ba6fd9f5f5a05e7cdd903b2708787e5b4",
+                "sha256:ef53160c69623136406405bbe0948a9308083650b34748f8d9f4e598ee5f7f56"
+            ],
+            "index": "pypi",
+            "version": "==1.6.2"
         },
         "multidict": {
             "hashes": [

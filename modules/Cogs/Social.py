@@ -41,7 +41,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} bitten by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "bite"))
+            em.set_image(url=await weeb(ctx.session.session, "bite"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Sorry but I cannot let you do that to yourself!")
@@ -58,14 +58,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} made {ctx.author.mention} blush!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "blush"))
+            em.set_image(url=await weeb(ctx.session, "blush"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You made yourself blush?")
         except MissingArgument:
             desc = f"{ctx.author.mention} blushes!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "blush"))
+            em.set_image(url=await weeb(ctx.session, "blush"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -78,14 +78,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} made {ctx.author.mention} cry!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "cry"))
+            em.set_image(url=await weeb(ctx.session, "cry"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You made yourself cry? Don't do that!")
         except MissingArgument:
             desc = f"{ctx.author.mention} cries!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "cry"))
+            em.set_image(url=await weeb(ctx.session, "cry"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -98,7 +98,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} cuddles with {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "cuddle"))
+            em.set_image(url=await weeb(ctx.session, "cuddle"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("I'm sorry you're so lonely, you can cuddle me!")
@@ -115,14 +115,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} dances with {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "dance"))
+            em.set_image(url=await weeb(ctx.session, "dance"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("There are only one of you..")
         except MissingArgument:
             desc = f"{ctx.author.mention} dances!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "dance"))
+            em.set_image(url=await weeb(ctx.session, "dance"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -135,7 +135,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} greets {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "greet"))
+            em.set_image(url=await weeb(ctx.session, "greet"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You can't greet yourself!")
@@ -152,7 +152,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} high fives {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "highfive"))
+            em.set_image(url=await weeb(ctx.session, "highfive"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Don't be silly!")
@@ -169,7 +169,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} given a BIG hug from {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "hug"))
+            em.set_image(url=await weeb(ctx.session, "hug"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You cannot hug yourself!")
@@ -186,7 +186,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} insults {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "insult"))
+            em.set_image(url=await weeb(ctx.session, "insult"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You cannot insult yourself!")
@@ -203,7 +203,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} kissed by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "kiss"))
+            em.set_image(url=await weeb(ctx.session, "kiss"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You pervert! You cannot do that to yourself!")
@@ -220,7 +220,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} licked by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "lick"))
+            em.set_image(url=await weeb(ctx.session, "lick"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Weirdo...")
@@ -237,7 +237,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} pats {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "pat"))
+            em.set_image(url=await weeb(ctx.session, "pat"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Why would you want to do something like that?")
@@ -254,7 +254,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} poked by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "poke"))
+            em.set_image(url=await weeb(ctx.session, "poke"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Why would you want to do something like that?")
@@ -271,14 +271,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} made {ctx.author.mention} pout!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "pout"))
+            em.set_image(url=await weeb(ctx.session, "pout"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You made yourself pout? Don't do that!")
         except MissingArgument:
             desc = f"{ctx.author.mention} pouts!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "pout"))
+            em.set_image(url=await weeb(ctx.session, "pout"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -291,7 +291,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} punched by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "punch"))
+            em.set_image(url=await weeb(ctx.session, "punch"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You Masochist! You cannot do that to yourself!")
@@ -308,7 +308,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} shot by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "bang"))
+            em.set_image(url=await weeb(ctx.session, "bang"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("Calm down! I'm sure we can solve whatever problem you're having")
@@ -325,14 +325,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} made {ctx.author.mention} shrug!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "shrug"))
+            em.set_image(url=await weeb(ctx.session, "shrug"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You made yourself shrug?")
         except MissingArgument:
             desc = f"{ctx.author.mention} shrugs!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "shrug"))
+            em.set_image(url=await weeb(ctx.session, "shrug"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -345,7 +345,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} {word} slapped by {ctx.author.mention}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "slap"))
+            em.set_image(url=await weeb(ctx.session, "slap"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You masochist! I cannot let you do that to yourself!")
@@ -362,14 +362,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} tells {users} that they are sleepy!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "sleepy"))
+            em.set_image(url=await weeb(ctx.session, "sleepy"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You don't need to tell yourself..")
         except MissingArgument:
             desc = f"{ctx.author.mention} is sleepy!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "sleepy"))
+            em.set_image(url=await weeb(ctx.session, "sleepy"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -382,14 +382,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{users} made {ctx.author.mention} smile!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "smile"))
+            em.set_image(url=await weeb(ctx.session, "smile"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("You made yourself smile?")
         except MissingArgument:
             desc = f"{ctx.author.mention} smiles!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "smile"))
+            em.set_image(url=await weeb(ctx.session, "smile"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -402,14 +402,14 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} stares at {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "stare"))
+            em.set_image(url=await weeb(ctx.session, "stare"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("I don't see a mirror..?")
         except MissingArgument:
             desc = f"{ctx.author.mention} stares into space"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "stare"))
+            em.set_image(url=await weeb(ctx.session, "stare"))
             await ctx.send(embed=em)
         except TooManyUsers:
             await ctx.send_error("Too many users!")
@@ -422,7 +422,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} gives {users} a thumbs up!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "thumbsup"))
+            em.set_image(url=await weeb(ctx.session, "thumbsup"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("What's the point in that?")
@@ -439,7 +439,7 @@ class Social(commands.Cog):
             users, word = await self.process_users(ctx, users)
             desc = f"{ctx.author.mention} tickles {users}!"
             em = discord.Embed(color=await ctx.guildcolor(), description=desc)
-            em.set_image(url=await weeb(ctx, "tickle"))
+            em.set_image(url=await weeb(ctx.session, "tickle"))
             await ctx.send(embed=em)
         except UsedOnSelf:
             await ctx.send_error("That's a little weird..")

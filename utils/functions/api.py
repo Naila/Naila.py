@@ -1,11 +1,11 @@
 import os
-
+from io import BytesIO
 from requests.exceptions import HTTPError
 
 
 # https://docs.weeb.sh/
-async def weeb(ctx, endpoint):
-    async with ctx.session.get(
+async def weeb(session, endpoint):
+    async with session.get(
             url=f"https://api.weeb.sh/images/random?nsfw=False&type={endpoint}",
             headers={"Authorization": os.getenv("WEEB")}
     ) as resp:
@@ -14,8 +14,8 @@ async def weeb(ctx, endpoint):
         return raise_for_status(resp)
 
 
-async def boobbot(ctx, endpoint):
-    async with ctx.session.get(
+async def boobbot(session, endpoint):
+    async with session.get(
             url=f"https://boob.bot/api/v2/img/{endpoint}",
             headers={"key": os.getenv("BOOBBOT")}
     ) as resp:
@@ -25,8 +25,8 @@ async def boobbot(ctx, endpoint):
 
 
 # https://sheri.bot/api/
-async def sheri(ctx, endpoint):
-    async with ctx.session.get(
+async def sheri(session, endpoint):
+    async with session.get(
             url=f"https://sheri.bot/api/{endpoint}",
             headers={"Authorization": os.getenv("SHERI")}
     ) as resp:
@@ -36,13 +36,25 @@ async def sheri(ctx, endpoint):
 
 
 # https://nekos.life/api/v2/endpoints
-async def nekos(ctx, endpoint):
-    async with ctx.session.get(
+async def nekos(session, endpoint):
+    async with session.get(
             url=f"https://nekos.life/api/v2/img/{endpoint}",
     ) as resp:
         if resp.status == 200:
             return (await resp.json())["url"]
     return raise_for_status(resp)
+
+
+async def welcomer(session, params: dict = None):
+    if params:
+        params = "?" + "&".join([f"{x}={y}" for x, y in params.items()])
+    async with session.get(
+        url=f"https://ourmainfra.me/api/v2/welcomer/{params}",
+        headers={"Authorization": os.getenv("MAINFRAME_TOKEN")}
+    ) as resp:
+        if resp.status == 200:
+            return BytesIO(await resp.read())
+        return raise_for_status(resp)
 
 
 # Modified from https://3.python-requests.org/_modules/requests/models/#Response.raise_for_status

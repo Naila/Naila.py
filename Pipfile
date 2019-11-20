@@ -18,6 +18,7 @@ rethinkdb = "*"
 pytz = "*"
 sentry-sdk = "*"
 dictor = "*"
+mixpanel-api = "*"
 
 [requires]
 python_version = "3.8"
