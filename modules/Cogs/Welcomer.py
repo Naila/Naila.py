@@ -1,20 +1,17 @@
-import os
-import urllib
+from urllib.parse import quote as parse
 from datetime import datetime
-from io import BytesIO
 
 import discord
-import pytz
 from discord.ext import commands
 from rethinkdb import r
 
 from utils.checks import checks
+from utils.functions.api import welcomer
 
 
 # TODO: CLEAN THIS UP, it is SO BAD and old code, FIX IT PLS KANIN
 
 
-# noinspection PyUnresolvedReferences
 class Welcomer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -67,7 +64,7 @@ class Welcomer(commands.Cog):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         db = await r.table("welcomer").get(str(ctx.guild.id)).run(self.bot.conn)
         if not text:
-            return await ctx.send(f"Current text:\n{db['content']}")
+            return await ctx.send(f"Current text:\n```{db['content']}```")
         if not len(text) <= 1800:
             return await ctx.send("Text must be less than 1800 characters!")
         db["content"] = text
@@ -216,45 +213,38 @@ class Welcomer(commands.Cog):
                                background: str = None, fmt: int = None, channel: discord.TextChannel = None):
 
         guild = member.guild if not guild else guild
-        count = guild.member_count
-        member_created = (pytz.timezone("UTC").localize(datetime.now()) - pytz.timezone("UTC").localize(
-            member.created_at)).days
-        member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         db = await r.table("welcomer").get(str(guild.id)).run(self.bot.conn)
         if not db["channel"] and not db["enabled"] or not db["channel"] or not db["enabled"] or not db:
             return
+        member_created = (datetime.utcnow() - member.created_at).days
+        member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = self.bot.get_channel(int(db["channel"])) if not channel else channel
         color = await self.get_guildcolor(str(guild.id)) if not db["color"] else db["color"]
         background = db["background"] if not background else background
         fmt = db["type"] if not fmt else fmt
         em = discord.Embed(color=color)
         em.set_thumbnail(url=str(guild.icon_url_as(static_format="png", size=1024)))
-        em.description = f"{member_sign} Account created __**{member_created}**__ days ago!"
+        em.description = f"{member_sign} Account created "
+        em.description += f"__**{member_created}**__ days ago!" if member_created else "__**Today!**__"
         em.description += f"\n🤖 __**Bot**__ account!" if member.bot else f"\n✅ __**User**__ account!"
-        avatar = member.avatar_url_as(format="png")
-        color = hex(color).split('x')[-1]
-        member_url = urllib.parse.quote(str(member))
-        guild_url = urllib.parse.quote(str(guild.name))
-        url = f"https://ourmainfra.me/api/v2/welcomer/?avatar={avatar}&user_name={member_url}" \
-              f"&guild_name={guild_url}&member_count={count}&color={color}"
-        if background and background != "Transparent":
-            url += f"&background={background}"
-        if fmt:
-            url += f"&type={fmt}"
-        headers = {"Authorization": os.getenv("MAINFRAME_TOKEN")}
-        async with self.bot.session.get(url, headers=headers) as resp:
-            if resp.status == 200:
-                response = await resp.read()
-                image = BytesIO(response)
-                image.seek(0)
+        params = {
+            "type": fmt,
+            "avatar": member.avatar_url_as(format="png"),
+            "user_name": parse(str(member)),
+            "guild_name": parse(guild.name),
+            "member_count": guild.member_count,
+            "color": hex(color).split('x')[-1]
+        }
+        if background != "Transparent":
+            params["background"] = background
+        image = await welcomer(self.bot.session, params)
         em.set_image(url="attachment://welcome.png")
         try:
             if db["embed"]:
-                await channel.send(file=discord.File(fp=image, filename="welcome.png"), embed=em,
-                                   content=self.build_message(message=db["content"], user=member, guild=guild))
-            else:
-                await channel.send(file=discord.File(fp=image, filename="welcome.png"),
-                                   content=self.build_message(message=db["content"], user=member, guild=guild))
+                return await channel.send(file=discord.File(fp=image, filename="welcome.png"), embed=em,
+                                          content=self.build_message(message=db["content"], user=member, guild=guild))
+            await channel.send(file=discord.File(fp=image, filename="welcome.png"),
+                               content=self.build_message(message=db["content"], user=member, guild=guild))
         except (discord.Forbidden, AttributeError):
             db["channel"] = None
             await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)

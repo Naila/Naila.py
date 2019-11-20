@@ -1,4 +1,4 @@
-def pagify(text, delims=None, shorten_by=8, page_length=1900):
+def pagify(text: str, delims=None, shorten_by=8, page_length=1900):
     if not delims:
         delims = ["\n"]
     in_text = text
@@ -10,3 +10,15 @@ def pagify(text, delims=None, shorten_by=8, page_length=1900):
         yield to_send
         in_text = in_text[closest_delim:]
     yield in_text
+
+
+def single_quote(text: str = None):
+    if text:
+        return f"'{text}'"
+    return None
+
+
+def double_quote(text: str = None):
+    if text:
+        return f"\"{text}\""
+    return None

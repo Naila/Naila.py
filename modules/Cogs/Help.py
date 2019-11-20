@@ -3,6 +3,7 @@ import json
 import discord
 from discord.ext import commands
 from discord.ext.commands import converter as converters
+from utils.functions.text import double_quote, single_quote
 
 
 def command_signature(command: commands.Command):
@@ -108,7 +109,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     def generate_perm_docs(self, docs):
         ctx = self.context
         user, guild, channel = ctx.author, ctx.guild, ctx.channel
-        bot_owner = None
+        bot_owner = False
         user_needs_perms = docs["user"] + ["send_messages"]
         bot_needs_perms = docs["bot"] + ["send_messages"]
         if "bot_owner" in user_needs_perms:
@@ -117,31 +118,22 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         user_perms = [x[0] for x in iter(channel.permissions_for(user)) if x[1]]
         bot_perms = [x[0] for x in iter(channel.permissions_for(guild.me)) if x[1]]
 
-        user_has_perms = [x for x in user_needs_perms if x in user_perms]
-        user_missing_perms = list(set(user_needs_perms) - set(user_has_perms))
+        user_has_perms = [x.replace("_", " ").title() for x in user_needs_perms if x in user_perms]
+        user_missing_perms = [x.replace("_", " ").title() for x in user_needs_perms if x not in user_perms]
+        bot_has_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x in bot_perms]
+        bot_missing_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x not in bot_perms]
 
         if bot_owner:
-            user_has_perms.insert(0, "bot_owner") \
-                if user.id in ctx.bot.config()["owners"] else user_missing_perms.insert(0, "bot_owner")
+            if user.id in ctx.bot.config()["owners"]:
+                user_has_perms.insert(0, "Bot Owner")
+            else:
+                user_missing_perms.insert(0, "Bot Owner")
 
-        user_has = '"' + ", ".join([x.replace("_", " ").title() for x in user_has_perms]) + '"' \
-            if user_has_perms else "User missing all required permissions"
-
-        user_missing = "'" + ", ".join([x.replace("_", " ").title() for x in user_missing_perms]) + "'" \
-            if user_missing_perms else "User has all required permissions"
-
-        bot_perms_list = ", ".join([x.replace("_", " ").title() for x in bot_needs_perms if x in bot_perms])
-        bot_has_perms = "\"" + bot_perms_list + "\"" if bot_perms_list else "Bot missing all required permissions"
-
-        bot_no_perms = ", ".join([x.replace("_", " ").title() for x in bot_needs_perms if x not in bot_perms])
-        bot_no_perms = "'" + bot_no_perms + "'" if bot_no_perms else "Bot has all required permissions"
-        msg = f"Permissions:\n"
-        msg += f"User:\n"
-        msg += f"{user_has}\n"
-        msg += f"{user_missing}\n"
-        msg += f"Bot:\n"
-        msg += f"{bot_has_perms}\n"
-        msg += f"{bot_no_perms}\n\n"
+        user_has = double_quote(", ".join(user_has_perms)) or "User missing all required permissions"
+        user_missing = single_quote(", ".join(user_missing_perms)) or "User has all required permissions"
+        bot_has = double_quote(", ".join(bot_has_perms)) or "Bot missing all required permissions"
+        bot_missing = single_quote(", ".join(bot_missing_perms)) or "Bot has all required permissions"
+        msg = f"Permissions:\nUser:\n{user_has}\n{user_missing}\nBot:\n{bot_has}\n{bot_missing}"
         return msg
 
 
