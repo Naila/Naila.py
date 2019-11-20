@@ -9,7 +9,7 @@ from utils.checks import checks
 from utils.functions.text import pagify
 
 
-class Core(commands.Cog):
+class Dev(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -197,4 +197,4 @@ class Core(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Core(bot))
+    bot.add_cog(Dev(bot))

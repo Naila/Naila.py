@@ -1,9 +1,8 @@
-from datetime import datetime
 from typing import Union
 
 import discord
-from dateutil.relativedelta import relativedelta
 from discord.ext import commands
+from utils.functions.time import get_relative_delta
 
 key_perms = ["kick_members", "ban_members", "administrator", "manage_channels", "manage_server", "manage_messages",
              "mention_everyone", "manage_nicknames", "manage_roles", "manage_webhooks", "manage_emojis"]
@@ -12,30 +11,7 @@ voice_perms = ["connect", "deafen_members", "move_members", "mute_members", "pri
                "use_voice_activation"]
 
 
-def get_relative_delta(time):
-    delta = relativedelta(datetime.now(), time)
-    tme = []
-    msg = time.strftime("%A, %B %d %Y @ %I:%M%p %Z")
-    if delta.years:
-        years = delta.years
-        tme.append(f"{years} years" if years != 1 else "1 year")
-    if delta.months:
-        months = delta.months
-        tme.append(f"{months} months" if months != 1 else "1 month")
-    if delta.days:
-        days = delta.days
-        tme.append(f"{days} days" if days != 1 else "1 day")
-    if len(tme) == 0:
-        return msg + "\nToday!"
-    msg += "\n"
-    msg += ", ".join(tme)
-    msg += " ago"
-    if len(tme) != 1:
-        msg += f" ({(datetime.now() - time).days} days)"
-    return msg
-
-
-class Info(commands.Cog):
+class UserInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -75,55 +51,31 @@ class Info(commands.Cog):
                 name=f"{'BOT: ' if member.bot else ''}"
                      f"{' ~ '.join((str(member), member.nick)) if member.nick else str(member)}"
             )
-
-            em.add_field(
-                name="Status:",
-                value=self.get_member_status(ctx, member),
-                inline=False
-            )
-
+            em.add_field(name="Status:", value=self.get_member_status(ctx, member), inline=False)
             vc = "Not connected"
             if member.voice:
                 other_people = len(member.voice.channel.members) - 1
                 vc = f"In {member.voice.channel.mention}"
                 vc += f" with {other_people} others" if other_people else " alone"
-            em.add_field(
-                name='Voice:',
-                value=vc,
-                inline=False
-            )
-
+            em.add_field(name='Voice:', value=vc, inline=False)
             em.add_field(
                 name=f"Roles [{len(member.roles) - 1}]:",
                 value=" ".join([x.mention for x in member.roles if x is not guild.default_role][::-1]) or "None"
                 if len(member.roles) <= 41 else "Too many to display",
                 inline=False
             )
-
             em.add_field(
                 name="Key Permissions:",
                 value=", ".join(
                     [str(x).replace("_", " ").title()
-                     for x in [x[0] for x in iter(ctx.channel.permissions_for(member))
-                               if x[1]] if x in key_perms]
+                     for x in [x[0] for x in iter(ctx.channel.permissions_for(member)) if x[1]] if x in key_perms]
                 ) or "None",
                 inline=False
             )
-
-            em.add_field(
-                name="Joined Discord on:",
-                value=get_relative_delta(member.created_at),
-                inline=False
-            )
-            em.add_field(
-                name="Joined this server on:",
-                value=get_relative_delta(member.joined_at),
-                inline=False
-            )
-
+            em.add_field(name="Account created:", value=get_relative_delta(member.created_at), inline=False)
+            em.add_field(name="Joined this server on:", value=get_relative_delta(member.joined_at), inline=False)
             em.set_footer(
-                text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1}"
-                     f" • ID: {member.id}"
+                text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1} • ID: {member.id}"
             )
             return await ctx.send(embed=em)
 
@@ -165,4 +117,4 @@ class Info(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Info(bot))
+    bot.add_cog(UserInfo(bot))
