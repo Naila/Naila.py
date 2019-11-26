@@ -4,7 +4,6 @@ from discord.ext import commands
 from dictor import dictor
 
 from modules.Cogs.Help import command_signature
-from utils.database.GuildSettings import Main
 
 
 class CustomContext(commands.Context):
@@ -24,7 +23,7 @@ class CustomContext(commands.Context):
         return self.bot.log
 
     async def guildcolor(self):
-        return await Main(self).color()
+        return await self.pool.fetchval("SELECT color FROM guilds WHERE guild_id=$1", self.guild.id)
 
     def emojis(self, emoji: str):
         with open("config/emojis.yml", "r") as emojis:
