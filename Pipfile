@@ -14,11 +14,11 @@ python-dotenv = "*"
 python-dateutil = "*"
 asyncpg = "*"
 requests = "*"
-rethinkdb = "*"
 pytz = "*"
 sentry-sdk = "*"
 dictor = "*"
 mixpanel-api = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"

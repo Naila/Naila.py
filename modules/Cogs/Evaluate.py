@@ -11,7 +11,6 @@ from io import BytesIO
 import discord
 import psutil
 from discord.ext import commands
-from rethinkdb import r
 
 from utils.checks import checks
 
@@ -21,7 +20,6 @@ ENV = {
     "io": io,
     "os": os,
     "re": re,
-    "r": r,
     "textwrap": textwrap,
     "time": time,
     "traceback": traceback,
@@ -40,7 +38,7 @@ class Evaluate(commands.Cog):
 
     async def _eval(self, ctx, code):
         if code == "exit()":
-            self.env = {}
+            self.env = ENV
             return await ctx.send(f"```Reset history!```")
         if "config/config.yml" in code:
             return await ctx.send_error("You cannot write to the config, please use `bot.config()` to read it.")
@@ -151,6 +149,30 @@ async def func():
             res = (res, None)
 
         return res
+
+    @checks.is_owner()
+    @commands.group(hidden=True)
+    async def sql(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
+    @sql.command(name="execute")
+    async def sql_execute(self, ctx, *, query: str):
+        query = query.strip("`")
+        if query.startswith("sql\n"):
+            query = "\n".join(query.split("\n")[1:])
+
+        command = await self.bot.pool.execute(query)
+        await ctx.send(f"```py\n{command}```")
+
+    @sql.command(name="fetch")
+    async def sql_fetch(self, ctx, *, query: str):
+        query = query.strip("`")
+        if query.startswith("sql\n"):
+            query = "\n".join(query.split("\n")[1:])
+
+        command = await self.bot.pool.fetch(query)
+        await ctx.send(f"```py\n{command}```")
 
 
 def setup(bot):

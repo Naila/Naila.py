@@ -3,52 +3,86 @@ from datetime import datetime
 
 import discord
 from discord.ext import commands
-from rethinkdb import r
 
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
-
-# TODO: Make registration great again
+from utils.database.GuildSettings import Registration as Register
 
 roles = [
     "He/Him", "She/Her", "They/Them", "Mention", "No Mention", "18+", "<18",
     "Registered", "DMs NOT Allowed", "DMs Allowed", "Ask to DM"
 ]
 
-default = {
-    "enabled": False,
-    "role": "Registered",
-    "age": {"enabled": True, "ban_age": 12, "roles": {"over": "18+", "under": "<18"}},
-    "output": 0000000000,
-    "questions": [
-        {
-            "question": "What is your preferred pronoun?",
-            "short": "Pronoun:",
-            "options": {
-                "he/him": {"aliases": ["male", "he", "him"], "role": "He/Him"},
-                "they/them": {"aliases": ["they", "them"], "role": "They/Them"},
-                "she/her": {"aliases": ["female", "she", "her"], "role": "She/Her"}
-            }
-        },
-        {
-            "question": "Are you okay with being Directly Messaged?",
-            "short": "DMs open:",
-            "options": {
-                "yes": {"aliases": [], "role": "DMs Allowed"},
-                "no": {"aliases": [], "role": "DMs NOT Allowed"},
-                "ask": {"aliases": [], "role": "Ask to DM"}
-            }
-        },
-        {
-            "question": "Are you okay with being mentioned?",
-            "short": "Mentions:",
-            "options": {
-                "yes": {"aliases": [], "role": "Mention"},
-                "no": {"aliases": [], "role": "No Mention"}
-            }
+default = [
+    {
+        "question": "What is your preferred pronoun?",
+        "short": "Pronoun:",
+        "options": {
+            "he/him": {"aliases": ["male", "he", "him"], "role": "He/Him"},
+            "they/them": {"aliases": ["they", "them"], "role": "They/Them"},
+            "she/her": {"aliases": ["female", "she", "her"], "role": "She/Her"}
         }
-    ]
-}
+    },
+    {
+        "question": "Are you okay with being Directly Messaged?",
+        "short": "DMs open:",
+        "options": {
+            "yes": {"aliases": [], "role": "DMs Allowed"},
+            "no": {"aliases": [], "role": "DMs NOT Allowed"},
+            "ask": {"aliases": [], "role": "Ask to DM"}
+        }
+    },
+    {
+        "question": "Are you okay with being mentioned?",
+        "short": "Mentions:",
+        "options": {
+            "yes": {"aliases": [], "role": "Mention"},
+            "no": {"aliases": [], "role": "No Mention"}
+        }
+    }
+]
+
+
+def registration_check():
+    async def predicate(ctx):
+        guild, author = ctx.guild, ctx.author
+        data = await Register(ctx).data()
+        if not data["enabled"]:
+            ctx.command.reset_cooldown(ctx)
+            await ctx.send_error("Registration is not enabled here!")
+            return False
+
+        if not data["channel"] or not guild.get_channel(data["channel"]):
+            ctx.command.reset_cooldown(ctx)
+            await ctx.send_error("Either you don't have a channel set up or I could not find it!")
+            return False
+
+        if not can_manage_user(ctx, author):
+            ctx.command.reset_cooldown(ctx)
+            await ctx.send_error("I don't have a role above you which means I can't manage your roles,"
+                                 " please have someone with permissions move my role up!")
+            return False
+        roles_found = 0
+        for role in roles:
+            check = discord.utils.get(guild.roles, name=role)
+            if check in guild.roles:
+                roles_found += 1
+        if roles_found < len(roles):
+            ctx.command.reset_cooldown(ctx)
+            await ctx.send_error(f"It looks like you haven't set up the roles here, you must have all roles in"
+                                 f" the server to use this function:\n"
+                                 f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
+            return False
+
+        registered_role = discord.utils.get(guild.roles, name="Registered")
+        if registered_role in author.roles:
+            ctx.command.reset_cooldown(ctx)
+            await ctx.send_error(f"It looks like you've already registered on this server!\n"
+                                 f"Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
+                                 f" if you wish to re-register.")
+            return False
+        return True
+    return commands.check(predicate)
 
 
 class Registration(commands.Cog):
@@ -61,31 +95,26 @@ class Registration(commands.Cog):
     async def setreg(self, ctx):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help()
+            return await ctx.send_help(ctx.command)
 
-    @setreg.command(description="Set the output channel")
-    async def channel(self, ctx, channel: discord.TextChannel = None):
+    @setreg.command(name="channel", description="Set the output channel")
+    async def setreg_channel(self, ctx, channel: discord.TextChannel):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-        if not channel:
-            channel = ctx.channel
-        db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
-        db["channel"] = str(channel.id)
-        await r.table("Registration").insert(db, conflict="update").run(self.bot.conn)
+        update = await Register(ctx).update_channel(channel)
+        if not update:
+            return await ctx.send_error("That channel is already set!")
         await ctx.send(f"Set the channel {channel.mention} as the output for registration.")
 
-    @setreg.command(description="Toggle registration")
-    async def toggle(self, ctx):
+    @setreg.command(name="toggle", description="Toggle registration")
+    async def setreg_toggle(self, ctx):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-        db = await r.table("Registration").get(str(ctx.guild.id)).run(self.bot.conn)
-        db["enabled"] = not db["enabled"]
-        await r.table("Registration").insert(db, conflict="update").run(self.bot.conn)
-        if db["enabled"]:
-            await ctx.send("Registration enabled.")
-        else:
-            await ctx.send("Registration disabled.")
+        update = await Register(ctx).toggle()
+        if update:
+            return await ctx.send("Registration enabled.")
+        await ctx.send("Registration disabled.")
 
-    @setreg.command(description="Create the roles required for registration")
-    async def roles(self, ctx):
+    @setreg.command(name="roles", description="Create the roles required for registration")
+    async def setreg_roles(self, ctx):
         """{"user": ["manage_guild"], "bot": ["embed_links", "manage_roles"]}"""
         guild = ctx.guild
 
@@ -124,18 +153,15 @@ class Registration(commands.Cog):
             await ctx.send("Creation of roles has failed, The most common problem is that I do not have Manage Roles "
                            "Permissions on the server. Please check this and try again.")
 
-    @setreg.command(name="autoban",
+    @setreg.command(name="banage",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
-    async def setreg_autoban(self, ctx, age: int):
+    async def setreg_banage(self, ctx, age: int):
         """{"user": ["manage_guild"], "bot": ["embed_links", "ban_members"]}"""
-        guild = ctx.guild
-        db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
         if age < 13:
             age = 13
             await ctx.send("You tried to set the age lower than the minimum (13) so I have set it to 13!")
-        db["autoban_age"] = age
-        await r.table("Registration").insert(db, conflict="update").run(self.bot.conn)
-        await ctx.send(f"I will now try to ban users who say they are less than {age}!")
+        await Register(ctx).update_banage(age)
+        await ctx.send(f"I will now ban users who are less than {age}!")
 
     @commands.guild_only()
     @commands.command(description="Unregister, allowing you to register again!")
@@ -154,17 +180,16 @@ class Registration(commands.Cog):
         await ctx.send("Done, you may now register again!")
 
     @commands.guild_only()
+    @registration_check()
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
     async def register(self, ctx):
-        """{"user": [], "bot": ["embed_links", "manage_roles]}"""
+        """{"user": [], "bot": ["embed_links", "manage_roles"]}"""
         guild, author = ctx.guild, ctx.author
-        # TODO: postgres
-        db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
 
-        # Few checks to make sure registration will work properly
-        await self.registration_checks(ctx)
-        ch = guild.get_channel(int(db["channel"]))
+        # Data
+        data = await Register(ctx).data()
+        ch = guild.get_channel(data["channel"])
 
         # Setting default embeds and creating role list
         out = discord.Embed(color=await ctx.guildcolor())
@@ -174,36 +199,38 @@ class Registration(commands.Cog):
         em = discord.Embed(color=await ctx.guildcolor())
         roles_to_add = []
         x = 0
-        questions = len(default["questions"]) + 2 if default["age"]["enabled"] else + 1
+        questions = default if not data["questions"] else data["questions"]
+        total_questions = len(questions) + 1
         try:
             # Should we check the user's age?
-            if default["age"]["enabled"]:
+            if data["age"]["enabled"]:
+                total_questions += 1
                 x += 1
 
                 # Update question embed and send it
-                em.set_author(name=f"Question #{x}/{questions}:")
+                em.set_author(name=f"Question #{x}/{total_questions}:")
                 em.description = "How old are you?"
                 em.add_field(name="Options:", value="Whole number: keep in mind that lying about your age is bannable!")
                 await author.send(embed=em)
 
                 # Manage answer and role parsing/banning for underage users
                 answer = int(await self.ask_question(ctx, "age"))
-                if answer < db["autoban_age"]:
+                if answer < data["age"]["ban_age"]:
                     await author.send("You are under this guilds auto ban age, therefore I have to ban you!")
-                    await guild.ban(author, reason="[ Registration ] Underage")
+                    return await guild.ban(author, reason="[ Registration ] Underage")
                     # return await ctx.send(f"🇫 | {author} was too young to be in the server")
 
-                role = default["age"]["roles"]["over"] if answer >= 18 else default["age"]["roles"]["under"]
+                role = data["age"]["roles"]["over"] if answer >= 18 else data["age"]["roles"]["under"]
                 roles_to_add.append(self.get_role(ctx, role))
                 out.add_field(name="Age:", value=str(answer))
 
             # Loop through questions
-            for question in default["questions"]:
+            for question in questions:
                 x += 1
 
                 # Update question embed and send it
                 em.clear_fields()
-                em.set_author(name=f"Question #{x}/{questions}:")
+                em.set_author(name=f"Question #{x}/{total_questions}:")
                 em.description = question["question"]
                 options = [x for x in question["options"]]
                 em.add_field(
@@ -222,7 +249,7 @@ class Registration(commands.Cog):
             # Allow the user to introduce themselves
             x += 1
             em.clear_fields()
-            em.set_author(name=f"Question #{x}/{questions}:")
+            em.set_author(name=f"Question #{x}/{total_questions}:")
             em.description = "Introduce yourself!"
             em.add_field(name="Options:", value="Long intro or `no` if you would rather not")
             await author.send(embed=em)
@@ -245,42 +272,6 @@ class Registration(commands.Cog):
             return await author.send("Timed out!")
         except discord.NotFound:
             return await ctx.send_error(f"I could not find {author}! Perhaps they left?")
-        except Exception as e:
-            return await ctx.send(e)
-
-    async def registration_checks(self, ctx):
-        guild, author = ctx.guild, ctx.author
-        # TODO: postgres
-        db = await r.table("Registration").get(str(guild.id)).run(self.bot.conn)
-        if not db["enabled"]:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("Registration is not enabled here!")
-
-        if not db["channel"] or not guild.get_channel(int(db["channel"])):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("Either you don't have a channel set up or I could not find it!")
-
-        if not can_manage_user(ctx, author):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error("I don't have a role above you which means I can't manage your roles,"
-                                        " please have someone with permissions move my role up!")
-        roles_found = 0
-        for role in roles:
-            check = discord.utils.get(guild.roles, name=role)
-            if check in guild.roles:
-                roles_found += 1
-        if roles_found < len(roles):
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error(f"It looks like you haven't set up the roles here, you must have all roles in"
-                                        f" the server to use this function:\n"
-                                        f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
-
-        registered_role = discord.utils.get(guild.roles, name="Registered")
-        if registered_role in author.roles:
-            ctx.command.reset_cooldown(ctx)
-            return await ctx.send_error(f"It looks like you've already registered on this server!"
-                                        f"Please run `{await ctx.bot.get_prefix(ctx.message)}unregister`"
-                                        f" if you wish to re-register.")
 
     @staticmethod
     def get_role(ctx, role):

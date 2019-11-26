@@ -1,10 +1,10 @@
 import discord
 import yaml
 from discord.ext import commands
-from rethinkdb import r
 from dictor import dictor
 
 from modules.Cogs.Help import command_signature
+from utils.database.GuildSettings import Guild
 
 
 class CustomContext(commands.Context):
@@ -15,9 +15,16 @@ class CustomContext(commands.Context):
     def session(self):
         return self.bot.session
 
+    @property
+    def pool(self):
+        return self.bot.pool
+
+    @property
+    def log(self):
+        return self.bot.log
+
     async def guildcolor(self):
-        color = await r.table("guilds").get(str(self.guild.id)).get_field("color").run(self.bot.conn)
-        return color
+        return await Guild(self).color()
 
     def emojis(self, emoji: str):
         with open("config/emojis.yml", "r") as emojis:
@@ -28,7 +35,7 @@ class CustomContext(commands.Context):
         channel = self.channel
         prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
         command = self.invoked_subcommand if self.invoked_subcommand else self.command
-        em = discord.Embed(color=discord.Color.red())
+        em = discord.Embed(color=self.bot.error_color)
         em.title = "Missing required argument ❌"
         em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
         await channel.send(embed=em)
@@ -44,9 +51,3 @@ class CustomContext(commands.Context):
         em = discord.Embed(color=self.bot.error_color, title="Invalid argument ❌")
         em.description = str(content)
         await channel.send(embed=em)
-
-    async def group_help(self):
-        message = self.message
-        prefix = await self.bot.get_prefix(message)
-        message.content = f"{prefix}help {self.command.name}"
-        await self.bot.invoke(await self.bot.get_context(message, cls=CustomContext))

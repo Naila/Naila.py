@@ -7,7 +7,7 @@ import discord
 from discord.ext.commands import AutoShardedBot as DiscordBot
 from dotenv import load_dotenv
 
-from utils.Database.Prefix import get_prefixes
+from utils.database.GuildSettings import Prefixes
 from utils.config.setup_bot import setup_bot, setup_logger
 from utils.ctx import CustomContext
 
@@ -18,7 +18,7 @@ class Bot(DiscordBot):
     def __init__(self):
         load_dotenv(join(dirname(__file__), 'env/.env'))
         atexit.register(lambda: asyncio.ensure_future(self.logout()))
-        super().__init__(command_prefix=get_prefixes, description=description, case_insensitive=True)
+        super().__init__(command_prefix=Prefixes.get, description=description, case_insensitive=True)
         setup_bot(self)
         try:
             self.loop.run_until_complete(self.start(os.getenv("TOKEN")))
