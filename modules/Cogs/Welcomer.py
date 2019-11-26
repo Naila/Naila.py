@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from utils.checks import checks
 from utils.ctx import CustomContext
-from utils.database.GuildSettings import Guild, Welcomer as Welcome
+from utils.database.GuildSettings import Main, Welcomer as Welcome
 from utils.functions.api import welcomer
 
 
@@ -194,7 +194,7 @@ class Welcomer(commands.Cog):
         member_created = (datetime.utcnow() - member.created_at).days
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = ctx.channel if ctx else self.bot.get_channel(data["welcomer_channel"])
-        color = await Guild().color(self.bot.pool, guild)
+        color = await Main().color(self.bot.pool, guild)
         background = background or data["welcomer_background"]
         fmt = fmt or data["welcomer_type"]
         content = self.build_message(data["welcomer_content"], member, guild)

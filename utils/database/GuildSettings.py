@@ -17,7 +17,7 @@ __status__ = "Production"
 
 
 @dataclass
-class Guild:
+class Main:
     ctx: CustomContext = None
 
     async def color(self, pool=None, guild: discord.Guild = None):

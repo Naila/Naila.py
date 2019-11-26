@@ -4,7 +4,7 @@ from discord.ext import commands
 from dictor import dictor
 
 from modules.Cogs.Help import command_signature
-from utils.database.GuildSettings import Guild
+from utils.database.GuildSettings import Main
 
 
 class CustomContext(commands.Context):
@@ -24,7 +24,7 @@ class CustomContext(commands.Context):
         return self.bot.log
 
     async def guildcolor(self):
-        return await Guild(self).color()
+        return await Main(self).color()
 
     def emojis(self, emoji: str):
         with open("config/emojis.yml", "r") as emojis:
