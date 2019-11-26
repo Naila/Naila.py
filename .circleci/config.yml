@@ -8,6 +8,9 @@ jobs:
     steps:
       - checkout
 
+      - restore_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
       - run:
           name: Set up pipenv and install requirements
           command: |
