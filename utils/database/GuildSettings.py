@@ -173,7 +173,9 @@ class Prefixes:
         # If we're in a guild, add the guilds custom prefixes
         if isinstance(message.channel, discord.TextChannel):
             guild = message.guild
-            prefixes.extend(await bot.pool.fetchval("SELECT prefixes FROM guilds WHERE guild_id=$1", guild.id))
+            data = await bot.pool.fetchval("SELECT prefixes FROM guilds WHERE guild_id=$1", guild.id)
+            if data:
+                prefixes.extend(data)
 
             # Nicks are different mentions
             if guild.get_member(bot.user.id).nick:
