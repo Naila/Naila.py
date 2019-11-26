@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils.database.add import addtodb
-from utils.database.GuildSettings import Prefixes
+from utils.database.GuildSettings import Prefixes, Check
 
 
 class MessageHandler(commands.Cog):
@@ -19,7 +18,7 @@ class MessageHandler(commands.Cog):
         # Checking if the author of the message is a bot
         if message.author.bot:
             return
-        await addtodb(self.bot, message.guild if message.guild else None, message.author)
+        await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes
         mentions = [self.bot.user.mention]
         if not isinstance(message.channel, discord.DMChannel):
