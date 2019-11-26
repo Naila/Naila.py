@@ -37,7 +37,7 @@ class NSFW(commands.Cog):
     async def boobbot(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
-            await ctx.group_help()
+            await ctx.send_help(ctx.command)
 
     @boobbot.command(name="boobs", description="Boobs")
     async def boobbot_boobs(self, ctx):
@@ -360,7 +360,7 @@ class NSFW(commands.Cog):
     async def sheri(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
-            await ctx.group_help()
+            await ctx.send_help(ctx.command)
 
     @sheri.command(name="yiff", description="Normal yiff")
     async def sheri_yiff(self, ctx):
@@ -385,7 +385,7 @@ class NSFW(commands.Cog):
     async def nneko(self, ctx):
         """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
-            await ctx.group_help()
+            await ctx.send_help(ctx.command)
 
     @nneko.command(name="neko", description="Nekos")
     async def nneko_neko(self, ctx):

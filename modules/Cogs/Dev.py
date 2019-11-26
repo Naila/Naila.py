@@ -64,7 +64,7 @@ class Dev(commands.Cog):
     async def load(self, ctx):
         """{"user": ["bot_owner"], "bot": []}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help()
+            return await ctx.send_help(ctx.command)
 
     @load.command(name="cog", aliases=["c"], description="Load a cog")
     async def load_cog(self, ctx, cog_name: str):
@@ -95,7 +95,7 @@ class Dev(commands.Cog):
     async def unload(self, ctx):
         """{"user": ["bot_owner"], "bot": []}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help()
+            return await ctx.send_help(ctx.command)
 
     @unload.command(name="cog", aliases=["c"], description="Unload a cog")
     async def unload_cog(self, ctx, cog_name: str):
@@ -126,7 +126,7 @@ class Dev(commands.Cog):
     async def reload(self, ctx):
         """{"user": ["bot_owner"], "bot": []}"""
         if not ctx.invoked_subcommand:
-            return await ctx.group_help()
+            return await ctx.send_help(ctx.command)
 
     @reload.command(name="cog", aliases=["c"], description="Reload a cog")
     async def reload_cog(self, ctx, cog_name: str):

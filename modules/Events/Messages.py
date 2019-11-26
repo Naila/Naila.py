@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 
-from utils.Database.Add import addtodb
-from utils.Database.Prefix import list_prefix
+from utils.database.add import addtodb
+from utils.database.GuildSettings import Prefixes
 
 
 class MessageHandler(commands.Cog):
@@ -13,11 +13,11 @@ class MessageHandler(commands.Cog):
     async def on_message(self, message):
         if not self.bot.is_ready():
             return
-        author = message.author
+        ctx = await self.bot.get_context(message)
         # Adding some statistics
         self.bot.counter["messages"] += 1
         # Checking if the author of the message is a bot
-        if author.bot:
+        if message.author.bot:
             return
         await addtodb(self.bot, message.guild if message.guild else None, message.author)
         # Mention the bot to list prefixes
@@ -25,7 +25,7 @@ class MessageHandler(commands.Cog):
         if not isinstance(message.channel, discord.DMChannel):
             mentions.append(message.guild.me.mention)
         if message.content in mentions:
-            await message.channel.send(f"My prefixes here are:\n{await list_prefix(self.bot, message)}")
+            await ctx.send(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
 
     @commands.Cog.listener()
     async def on_command(self, ctx):

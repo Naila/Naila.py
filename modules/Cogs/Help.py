@@ -2,7 +2,7 @@ import json
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import converter as converters
+from discord.ext.commands.converter import Greedy
 from utils.functions.text import double_quote, single_quote
 
 
@@ -16,12 +16,11 @@ def command_signature(command: commands.Command):
 
     result = []
     for name, param in params.items():
-        greedy = isinstance(param.annotation, converters._Greedy)
         if param.kind == param.VAR_POSITIONAL:
             result.append(f"[{clean_param(param)}...]")
-        elif greedy:
+        elif isinstance(param.annotation, type(Greedy)):
             result.append(f"[{clean_param(param)}]...")
-        elif command._is_typing_optional(param.annotation):
+        elif param.default is None:
             result.append(f"[{clean_param(param)}]")
         else:
             result.append(f"<{clean_param(param)}>")
@@ -95,9 +94,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
             try:
                 docs = json.loads(command.help)
                 permissions = self.generate_perm_docs(docs)
-                line = "```ml\n"
-                line += f"{permissions}"
-                line += "\n```"
+                line = f"```ml\n{permissions}\n```"
                 self.paginator.add_line(line, empty=False)
             except RuntimeError:
                 for line in command.help.splitlines():
