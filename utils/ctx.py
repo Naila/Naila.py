@@ -23,6 +23,8 @@ class CustomContext(commands.Context):
         return self.bot.log
 
     async def guildcolor(self):
+        if not self.guild:
+            return self.bot.color
         return await self.pool.fetchval("SELECT color FROM guilds WHERE guild_id=$1", self.guild.id)
 
     def emojis(self, emoji: str):

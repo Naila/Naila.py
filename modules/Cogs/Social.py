@@ -31,10 +31,11 @@ class Social(commands.Cog):
         random_integer = random.randint(0, 100)
         love = Decimal(str(random_integer / 10)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         love_emoji = "❤"
+        empty_bar = "🖤"
         bar = ""
 
         if random_integer == 0:
-            love_emoji = "💔"
+            empty_bar = "💔"
             love_message = "That's not good... maybe delete this and try again before they see?"
         elif random_integer <= 15:
             love_message = "That's a yikes.."
@@ -58,7 +59,7 @@ class Social(commands.Cog):
             love_message = "I ship it!"
 
         for i in range(10):
-            bar += love_emoji if i < love else "🖤"
+            bar += love_emoji if i < love else empty_bar
 
         return f"**Love meter:** {bar} **{random_integer}%**\n**{love_message}**"
 
