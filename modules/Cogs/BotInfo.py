@@ -1,11 +1,12 @@
-import psutil
 import time
-
 from datetime import datetime
+
+import discord
+import psutil
 from discord.ext import commands
 from discord.utils import oauth_url
+
 from utils.functions.time import get_bot_uptime
-import discord
 
 __author__ = "Kanin"
 __date__ = 11 / 19 / 2019
@@ -61,7 +62,7 @@ class BotInfo(commands.Cog):
             name="Serving:",
             value=f"**Guilds:** {len(bot.guilds)} {ctx.emojis('utility.globe')}\n"
                   f"**Users:** {len(set(bot.get_all_members()))} {ctx.emojis('utility.people')}\n"
-                  f"**Channels:** {channels}"
+                  f"**Channels:** {channels} "
                   f"{ctx.emojis('channels.text')}/{ctx.emojis('channels.voice')}/"
                   f"{ctx.emojis('channels.category')}/{ctx.emojis('channels.news')}\n"
                   f"**Text Channels:** {text} {ctx.emojis('channels.text')}\n"
@@ -72,7 +73,7 @@ class BotInfo(commands.Cog):
         ).add_field(
             name="System:",
             value=f"**OS:** Linux {ctx.emojis('system.linux')}\n"
-                  f"**Version:** Ubuntu 16.04 {ctx.emojis('system.ubuntu')}\n"
+                  f"**Version:** Ubuntu 18.04 {ctx.emojis('system.ubuntu')}\n"
                   f"**CPU Usage:** {cpu_usage} {ctx.emojis('system.cpu')}\n"
                   f"**Memory Usage:** {memory_usage} {ctx.emojis('system.ram')}",
             inline=False

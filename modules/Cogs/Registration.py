@@ -46,6 +46,8 @@ default = [
 def registration_check():
     async def predicate(ctx):
         guild, author = ctx.guild, ctx.author
+        if not guild:
+            return False
         data = await Register(ctx).data()
         if not data["enabled"]:
             ctx.command.reset_cooldown(ctx)
@@ -82,6 +84,7 @@ def registration_check():
                                  f" if you wish to re-register.")
             return False
         return True
+
     return commands.check(predicate)
 
 
