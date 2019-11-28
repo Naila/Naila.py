@@ -18,7 +18,8 @@ class MessageHandler(commands.Cog):
         # Checking if the author of the message is a bot
         if message.author.bot:
             return
-        await Check().main(ctx.bot, ctx.guild)
+        if not isinstance(message.channel, discord.DMChannel):
+            await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes
         mentions = [self.bot.user.mention]
         if not isinstance(message.channel, discord.DMChannel):

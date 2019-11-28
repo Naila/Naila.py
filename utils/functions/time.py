@@ -27,10 +27,24 @@ def get_relative_delta(time):
         if delta.seconds:
             seconds = delta.seconds
             tme.append(f"{seconds} seconds" if seconds != 1 else "1 second")
-    msg += "\n"
-    msg += ", ".join(tme)
-    msg += " ago"
+    msg += f"\n{', '.join(tme)} ago"
     if append_days:
         if len(tme) != 1 and "days" not in tme[0]:
             msg += f" ({(datetime.utcnow() - time).days} days)"
     return msg
+
+
+def get_bot_uptime(bot, *, brief=False):
+    # Stolen from owner.py - Courtesy of Danny
+    delta = datetime.utcnow() - bot.uptime
+    hours, remainder = divmod(int(delta.total_seconds()), 3600)
+    days, hours = divmod(hours, 24)
+    minutes, seconds = divmod(remainder, 60)
+
+    if not brief:
+        if days:
+            return f"{days} days, {hours} hours, {minutes} minutes, and {seconds} seconds"
+        return f"{hours} hours, {minutes} minutes, and {seconds} seconds"
+    if days:
+        return f"{days} D - {hours} H - {minutes} M - {seconds} S"
+    return f"{hours} H - {minutes} M - {seconds} S"
