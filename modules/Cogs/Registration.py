@@ -47,7 +47,7 @@ def registration_check():
     async def predicate(ctx):
         guild, author = ctx.guild, ctx.author
         if not guild:
-            return False
+            raise commands.NoPrivateMessage
         data = await Register(ctx).data()
         if not data["enabled"]:
             ctx.command.reset_cooldown(ctx)
@@ -182,7 +182,6 @@ class Registration(commands.Cog):
         await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
         await ctx.send("Done, you may now register again!")
 
-    @commands.guild_only()
     @registration_check()
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
