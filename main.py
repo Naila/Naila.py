@@ -14,7 +14,7 @@ from utils.ctx import CustomContext
 
 load_dotenv(join(dirname(__file__), 'env/.env'))
 
-perms = discord.Permissions(os.getenv("PERMS"))
+perms = discord.Permissions(int(os.getenv("PERMS")))
 description = "**Support server**: https://discord.gg/fox\n" \
               f"Bot invite**:" \
               f" [Recommended perms]({oauth_url(os.getenv('CLIENT_ID'), permissions=perms)}) |" \
