@@ -56,11 +56,11 @@ class BotInfo(commands.Cog):
             color=await ctx.guildcolor()
         ).add_field(
             name="Ping:",
-            value=f"**{round((t2 - t1) * 1000)}ms** <:PingPong:379448723924713482>"
+            value=f"**{round((t2 - t1) * 1000)}ms** {ctx.emojis('utility.ping')}"
         ).add_field(
             name="Serving:",
-            value=f"**Guilds:** {len(bot.guilds)} {ctx.emojis('utils.globe')}\n"
-                  f"**Users:** {len(set(bot.get_all_members()))} {ctx.emojis('utils.people')}\n"
+            value=f"**Guilds:** {len(bot.guilds)} {ctx.emojis('utility.globe')}\n"
+                  f"**Users:** {len(set(bot.get_all_members()))} {ctx.emojis('utility.people')}\n"
                   f"**Channels:** {channels}"
                   f"{ctx.emojis('channels.text')}/{ctx.emojis('channels.voice')}/"
                   f"{ctx.emojis('channels.category')}/{ctx.emojis('channels.news')}\n"
@@ -78,16 +78,16 @@ class BotInfo(commands.Cog):
             inline=False
         ).add_field(
             name="Version:",
-            value=f"**Bot:** {bot.version['bot']}"
-                  f"**Python:** {bot.version['python']} {ctx.emojis('utils.python')}\n"
-                  f"**Discord.py:** {bot.version['discord.py']} {ctx.emojis('utils.discordpy')}",
+            value=f"**Bot:** {bot.version['bot']}\n"
+                  f"**Python:** {bot.version['python']} {ctx.emojis('utility.python')}\n"
+                  f"**Discord.py:** {bot.version['discord.py']} {ctx.emojis('utility.discordpy')}",
             inline=False
         ).add_field(
             name="Counters:",
-            value=f"**Command count:** {len(bot.commands)} {ctx.emojis('utils.abacus')}\n"
-                  f"**Messages read:** {bot.counter['messages']} {ctx.emojis('utils.chat')}\n"
-                  f"**Commands ran:** {bot.counter['commands_ran']} {ctx.emojis('utils.abacus')}\n"
-                  f"**Foxes caught:** {bot.counter['foxes_caught']} {ctx.emojis('utils.fox')}",
+            value=f"**Command count:** {len(bot.commands)} {ctx.emojis('utility.abacus')}\n"
+                  f"**Messages read:** {bot.counter['messages']} {ctx.emojis('utility.chat')}\n"
+                  f"**Commands ran:** {bot.counter['commands_ran']} {ctx.emojis('utility.abacus')}\n"
+                  f"**Foxes caught:** {bot.counter['foxes_caught']} {ctx.emojis('utility.fox')}",
             inline=False
         ).add_field(
             name="Uptime:",
