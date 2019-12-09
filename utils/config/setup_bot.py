@@ -22,7 +22,6 @@ def init_sentry():
     sentry.init(
         os.getenv("SENTRY_URL"),
         attach_stacktrace=True,
-        max_breadcrumbs=50,
         debug=True
     )
 
@@ -61,6 +60,7 @@ def setup_bot(bot):
 
     # Logging
     init_sentry()
+    bot.sentry = sentry
     discord_log = logging.getLogger("discord")
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
     log = logging.getLogger("bot")
