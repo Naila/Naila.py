@@ -9,7 +9,7 @@ from discord.utils import oauth_url
 from utils.functions.time import get_bot_uptime
 
 __author__ = "Kanin"
-__date__ = 11 / 19 / 2019
+__date__ = "11/19/2019"
 __copyright__ = "Copyright 2019, Kanin"
 __credits__ = ["Kanin"]
 __license__ = "GPL v3.0"
@@ -101,6 +101,21 @@ class BotInfo(commands.Cog):
             text=datetime.now().strftime(bot.config()["time_format"]),
             icon_url=bot.user.avatar_url
         )
+        await ctx.send(embed=em)
+
+    @commands.command(description="List of APIs we use")
+    async def apis(self, ctx):
+        em = discord.Embed(color=await ctx.guildcolor())
+        em.set_author(name="APIs we use:")
+        em.description = "https://and-here-is-my-code.glitch.me/\n" \
+                         "https://some-random-api.ml/\n" \
+                         "https://random-d.uk/api/v2/quack\n" \
+                         "https://thecatapi.com/\n" \
+                         "https://thedogapi.com/\n" \
+                         "https://weeb.sh/\n" \
+                         "https://boob.bot/\n" \
+                         "https://sheri.bot/\n" \
+                         "https://nekos.life/"
         await ctx.send(embed=em)
 
 

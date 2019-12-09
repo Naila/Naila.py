@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+
 from requests.exceptions import HTTPError
 
 
@@ -49,8 +50,8 @@ async def welcomer(session, params: dict = None):
     if params:
         params = "?" + "&".join([f"{x}={y}" for x, y in params.items()])
     async with session.get(
-        url=f"https://ourmainfra.me/api/v2/welcomer/{params}",
-        headers={"Authorization": os.getenv("MAINFRAME_TOKEN")}
+            url=f"https://ourmainfra.me/api/v2/welcomer/{params}",
+            headers={"Authorization": os.getenv("MAINFRAME_TOKEN")}
     ) as resp:
         if resp.status == 200:
             return BytesIO(await resp.read())

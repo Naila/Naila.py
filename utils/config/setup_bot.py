@@ -16,7 +16,13 @@ import yaml
 from utils.config.config import get_banner, get_config
 
 logger = logging.getLogger()
-sentry.init(attach_stacktrace=True)
+sentry_url = os.getenv("SENTRY_URL")
+sentry.init(
+    sentry_url,
+    attach_stacktrace=True,
+    max_breadcrumbs=50,
+    debug=True
+)
 
 
 async def init_connection(conn):
@@ -52,7 +58,6 @@ def setup_bot(bot):
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
 
     # Logging
-    bot.sentry = sentry
     discord_log = logging.getLogger("discord")
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
     log = logging.getLogger("bot")
@@ -93,11 +98,17 @@ def setup_bot(bot):
 def starter_modules(bot):
     paths = ["modules/Events", "modules/Cogs"]
     for path in paths:
+        loaded, failed = 0, 0
+        name = path.split('/')[1]
         for file in os.listdir(path):
             try:
                 if file.endswith(".py"):
-                    file_name = file[:-3]
-                    path = path.replace("/", ".")
-                    bot.load_extension(f"{path}.{file_name}")
+                    bot.load_extension(f"{path.replace('/', '.')}.{file[:-3]}")
+                    loaded += 1
             except Exception as e:
-                bot.log.error(f"Failed to load {file}: {e}")
+                failed += 1
+                bot.log.error(f"Failed to load {path}/{file}: {repr(e)}")
+        if failed > 0:
+            bot.log.info(f"Loaded {loaded} {name} | Failed to load {failed} {name}")
+        else:
+            bot.log.info(f"Loaded {loaded} {name}")

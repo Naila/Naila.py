@@ -3,6 +3,7 @@ import traceback
 import discord
 from discord.ext import commands
 import json
+from sentry_sdk import capture_exception
 
 from utils.checks.bot_checks import can_react, can_send
 from utils.functions import errors
@@ -70,7 +71,7 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, errors.TooManyUsers):
             return await ctx.send_error("You provided too many users!")
         print("".join(traceback.format_exception(type(error), error, error.__traceback__)))
-        # self.bot.sentry.capture_exception(error)
+        capture_exception(error)
         return await ctx.send_error(error)
 
 

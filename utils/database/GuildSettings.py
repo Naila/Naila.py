@@ -6,7 +6,7 @@ from utils.ctx import CustomContext
 from ..functions import errors
 
 __author__ = "Kanin"
-__date__ = 11 / 23 / 2019
+__date__ = "11/23/2019"
 __copyright__ = "Copyright 2019, Kanin"
 __credits__ = ["Kanin"]
 __license__ = "GPL v3.0"

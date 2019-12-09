@@ -1,6 +1,5 @@
-def pagify(text: str, delims=None, shorten_by=8, page_length=1900):
-    if not delims:
-        delims = ["\n"]
+def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
+    delims = delims or ["\n"]
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:
