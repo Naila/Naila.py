@@ -109,7 +109,7 @@ class BotInfo(commands.Cog):
         em.set_author(name="APIs we use:")
         em.description = "https://and-here-is-my-code.glitch.me/\n" \
                          "https://some-random-api.ml/\n" \
-                         "https://random-d.uk/api/v2/quack\n" \
+                         "https://random-d.uk/\n" \
                          "https://thecatapi.com/\n" \
                          "https://thedogapi.com/\n" \
                          "https://weeb.sh/\n" \
