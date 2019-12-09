@@ -18,7 +18,7 @@ from utils.config.config import get_banner, get_config
 logger = logging.getLogger()
 
 
-async def init_sentry():
+def init_sentry():
     sentry.init(
         os.getenv("SENTRY_URL"),
         attach_stacktrace=True,
