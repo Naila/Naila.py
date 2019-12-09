@@ -22,7 +22,7 @@ def init_sentry():
     sentry.init(
         os.getenv("SENTRY_URL"),
         attach_stacktrace=True,
-        debug=True
+        max_breadcrumbs=50
     )
 
 
