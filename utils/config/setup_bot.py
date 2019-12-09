@@ -16,13 +16,15 @@ import yaml
 from utils.config.config import get_banner, get_config
 
 logger = logging.getLogger()
-sentry_url = os.getenv("SENTRY_URL")
-sentry.init(
-    sentry_url,
-    attach_stacktrace=True,
-    max_breadcrumbs=50,
-    debug=True
-)
+
+
+async def init_sentry():
+    sentry.init(
+        os.getenv("SENTRY_URL"),
+        attach_stacktrace=True,
+        max_breadcrumbs=50,
+        debug=True
+    )
 
 
 async def init_connection(conn):
@@ -58,6 +60,7 @@ def setup_bot(bot):
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
 
     # Logging
+    init_sentry()
     discord_log = logging.getLogger("discord")
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
     log = logging.getLogger("bot")
