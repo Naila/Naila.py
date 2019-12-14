@@ -18,11 +18,12 @@ from utils.config.config import get_banner, get_config
 logger = logging.getLogger()
 
 
-def init_sentry():
+def init_sentry(bot):
     sentry.init(
         os.getenv("SENTRY_URL"),
         attach_stacktrace=True,
-        max_breadcrumbs=50
+        max_breadcrumbs=50,
+        environment="Development" if bot.debug else "Production"
     )
 
 
@@ -59,7 +60,7 @@ def setup_bot(bot):
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
 
     # Logging
-    init_sentry()
+    init_sentry(bot)
     bot.sentry = sentry
     discord_log = logging.getLogger("discord")
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)

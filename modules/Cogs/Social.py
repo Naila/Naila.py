@@ -27,8 +27,11 @@ class Social(commands.Cog):
         return users, word
 
     @staticmethod
-    def draw_meter():
-        random_integer = random.randint(0, 100)
+    def draw_meter(rigged: bool = False):
+        if rigged:
+            random_integer = 100
+        else:
+            random_integer = random.randint(0, 100)
         love = Decimal(str(random_integer / 10)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         love_emoji = "❤"
         empty_bar = "🖤"
@@ -68,11 +71,16 @@ class Social(commands.Cog):
     async def ship(self, ctx, lover1: discord.Member, lover2: discord.Member = None):
         """{"user": [], "bot": ["embed_links"]}"""
         lover2 = lover2 or ctx.author
+        rigged = False
         name1 = lover1.name[:-round(len(lover1.name) / 2)] + lover2.name[-round(len(lover2.name) / 2):]
         name2 = lover2.name[:-round(len(lover2.name) / 2)] + lover1.name[-round(len(lover1.name) / 2):]
+        if 309799952182280192 and 173237945149423619 in [lover1.id, lover2.id]:
+            name1 = "True Love"
+            name2 = "True Love"
+            rigged = True
         desc = f"**{ctx.author.mention} ships {lover1.mention} and {lover2.mention}!**\n\n " \
                f"Ship names: __**{name1}**__ or __**{name2}**__\n\n " \
-               f"{self.draw_meter()}"
+               f"{self.draw_meter(rigged)}"
         em = discord.Embed(color=await ctx.guildcolor(), description=desc)
         em.set_author(name="Lovely shipping!")
         em.set_image(url='attachment://ship.png')

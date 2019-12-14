@@ -43,7 +43,6 @@ class ErrorHandler(commands.Cog):
         bot_missing_perms = [x.replace("_", " ").title() for x in docs if x not in bot_perms]
         if bot_missing_perms:
             return await ctx.send(f"I am missing permissions to {', '.join(bot_missing_perms)}!")
-        ctx.log.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
         ctx.bot.sentry.capture_exception(error)
         return await ctx.send_error(error)
 
@@ -70,7 +69,6 @@ class ErrorHandler(commands.Cog):
             return
         if isinstance(error, errors.TooManyUsers):
             return await ctx.send_error("You provided too many users!")
-        ctx.log.error("".join(traceback.format_exception(type(error), error, error.__traceback__)))
         ctx.bot.sentry.capture_exception(error)
         return await ctx.send_error(error)
 
