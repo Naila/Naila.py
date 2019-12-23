@@ -16,7 +16,7 @@ class Social(commands.Cog):
     @staticmethod
     def process_users(ctx, users):
         if not users:
-            raise commands.MissingRequiredArgument
+            raise commands.MissingRequiredArgument(users)
         users = [x.mention for x in list(set(users)) if x is not ctx.author]
         if len(users) > 5:
             raise errors.TooManyUsers
@@ -28,10 +28,7 @@ class Social(commands.Cog):
 
     @staticmethod
     def draw_meter(rigged: bool = False):
-        if rigged:
-            random_integer = 100
-        else:
-            random_integer = random.randint(0, 100)
+        random_integer = 100 if rigged else random.randint(0, 100)
         love = Decimal(str(random_integer / 10)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         love_emoji = "❤"
         empty_bar = "🖤"
@@ -55,11 +52,11 @@ class Social(commands.Cog):
             love_message = "Best friends, stay as best friends."
         elif random_integer <= 90:
             love_message = "Give it a go, you're made for each other!"
-        elif random_integer == 100:
+        elif random_integer <= 99:
+            love_message = "I ship it!"
+        else:
             love_emoji = "💛"
             love_message = "Go get married! I hope I'm invited ❤"
-        else:
-            love_message = "I ship it!"
 
         for i in range(10):
             bar += love_emoji if i < love else empty_bar
