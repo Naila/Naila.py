@@ -74,7 +74,7 @@ class Social(commands.Cog):
         rigged = False
         name1 = lover1.name[:-round(len(lover1.name) / 2)] + lover2.name[-round(len(lover2.name) / 2):]
         name2 = lover2.name[:-round(len(lover2.name) / 2)] + lover1.name[-round(len(lover1.name) / 2):]
-        if 309799952182280192 and 173237945149423619 in [lover1.id, lover2.id]:
+        if 309799952182280192 in [lover1.id, lover2.id] and 173237945149423619 in [lover1.id, lover2.id]:
             name1 = "True Love"
             name2 = "True Love"
             rigged = True
