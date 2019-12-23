@@ -16,7 +16,7 @@ class Social(commands.Cog):
     @staticmethod
     def process_users(ctx, users):
         if not users:
-            raise commands.MissingRequiredArgument(users)
+            raise commands.MissingRequiredArgument(ctx.command.params["users"])
         users = [x.mention for x in list(set(users)) if x is not ctx.author]
         if len(users) > 5:
             raise errors.TooManyUsers
