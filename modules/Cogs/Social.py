@@ -1,5 +1,6 @@
 import random
 from decimal import Decimal, ROUND_HALF_UP
+from typing import Union
 
 import discord
 from discord.ext import commands
@@ -15,6 +16,7 @@ class Social(commands.Cog):
 
     @staticmethod
     def process_users(ctx, users):
+        users = [x for x in users if not isinstance(x, str)]
         if not users:
             raise commands.MissingRequiredArgument(ctx.command.params["users"])
         users = [x.mention for x in list(set(users)) if x is not ctx.author]
@@ -86,7 +88,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Bite people!")
-    async def bite(self, ctx, *users: discord.Member):
+    async def bite(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -99,7 +101,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Did someone make you blush?")
-    async def blush(self, ctx, *users: discord.Member):
+    async def blush(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -117,7 +119,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Cry or say someone made you cry")
-    async def cry(self, ctx, *users: discord.Member):
+    async def cry(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -135,7 +137,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Cuddle people!")
-    async def cuddle(self, ctx, *users: discord.Member):
+    async def cuddle(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -148,7 +150,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Dance!")
-    async def dance(self, ctx, *users: discord.Member):
+    async def dance(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -166,7 +168,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Greet people!")
-    async def greet(self, ctx, *users: discord.Member):
+    async def greet(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -179,7 +181,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="High five people!")
-    async def highfive(self, ctx, *users: discord.Member):
+    async def highfive(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -192,7 +194,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Hug people!")
-    async def hug(self, ctx, *users: discord.Member):
+    async def hug(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -205,7 +207,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Insult people!")
-    async def insult(self, ctx, *users: discord.Member):
+    async def insult(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -218,7 +220,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Kiss people!")
-    async def kiss(self, ctx, *users: discord.Member):
+    async def kiss(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -231,7 +233,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Lick people!")
-    async def lick(self, ctx, *users: discord.Member):
+    async def lick(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -244,7 +246,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Pat people!")
-    async def pat(self, ctx, *users: discord.Member):
+    async def pat(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -257,7 +259,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Poke people!")
-    async def poke(self, ctx, *users: discord.Member):
+    async def poke(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -270,7 +272,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Pout or say someone made you pout")
-    async def pout(self, ctx, *users: discord.Member):
+    async def pout(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -288,7 +290,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Punch people!")
-    async def punch(self, ctx, *users: discord.Member):
+    async def punch(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -301,7 +303,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Shoot people!")
-    async def shoot(self, ctx, *users: discord.Member):
+    async def shoot(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -314,7 +316,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Shrug it off ¯\_(ツ)_/¯")
-    async def shrug(self, ctx, *users: discord.Member):
+    async def shrug(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -332,7 +334,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Slap people!")
-    async def slap(self, ctx, *users: discord.Member):
+    async def slap(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -345,7 +347,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Tell people you're sleepy")
-    async def sleepy(self, ctx, *users: discord.Member):
+    async def sleepy(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -363,7 +365,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Did someone make you smile?")
-    async def smile(self, ctx, *users: discord.Member):
+    async def smile(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -381,7 +383,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Stare into space/at someone")
-    async def stare(self, ctx, *users: discord.Member):
+    async def stare(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -399,7 +401,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Give people the thumbs up!")
-    async def thumbsup(self, ctx, *users: discord.Member):
+    async def thumbsup(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
@@ -412,7 +414,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Tickle people!")
-    async def tickle(self, ctx, *users: discord.Member):
+    async def tickle(self, ctx, *users: Union[discord.Member, str]):
         """{"user": [], "bot": ["embed_links"]}"""
         try:
             users, word = self.process_users(ctx, users)
