@@ -40,7 +40,7 @@ class Reminders(commands.Cog):
         """{"user": [], "bot": []}"""
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
-        await Reminder(ctx).add(ctx.channel.id, time, escape(reminder))
+        await Reminder(ctx).add(ctx.channel.id, time, escape(reminder, False, False, False))
         await ctx.send(
             f"{ctx.author.mention}, I will remind you about this"
             f" {get_relative_delta(parse_time(time), append_small=True, bold_string=True)}"
