@@ -23,9 +23,8 @@ class Reminders:
     async def add(self, location: int, expires: str, reminder: str):
         ctx = self.ctx
         await ctx.pool.execute(
-            "INSERT INTO reminders (user_id, guild_id, channel_id, expires, reminder) VALUES ($1, $2, $3, $4, $5)",
+            "INSERT INTO reminders (user_id, channel_id, expires, reminder) VALUES ($1, $2, $3, $4)",
             ctx.author.id,
-            ctx.guild.id or None,
             location,
             parse_time(expires),
             reminder
