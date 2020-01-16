@@ -6,7 +6,7 @@ import requests
 from PIL import Image
 
 __author__ = "Kanin"
-__date__ = 11 / 24 / 2019
+__date__ = "11/24/2019"
 __copyright__ = "Copyright 2019, Kanin"
 __credits__ = ["Kanin"]
 __license__ = "GPL v3.0"

@@ -4,6 +4,17 @@ import discord
 from discord.ext import commands
 from utils.functions.time import get_relative_delta
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
+
 key_perms = ["kick_members", "ban_members", "administrator", "manage_channels", "manage_server", "manage_messages",
              "mention_everyone", "manage_nicknames", "manage_roles", "manage_webhooks", "manage_emojis"]
 
@@ -72,8 +83,12 @@ class UserInfo(commands.Cog):
                 ) or "None",
                 inline=False
             )
-            em.add_field(name="Account created:", value=get_relative_delta(member.created_at), inline=False)
-            em.add_field(name="Joined this server on:", value=get_relative_delta(member.joined_at), inline=False)
+            em.add_field(
+                name="Account created:", value=get_relative_delta(member.created_at, True, True), inline=False
+            )
+            em.add_field(
+                name="Joined this server on:", value=get_relative_delta(member.joined_at, True, True), inline=False
+            )
             em.set_footer(
                 text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1} • ID: {member.id}"
             )

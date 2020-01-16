@@ -3,8 +3,18 @@ from discord.ext import commands
 
 from utils.database.GuildSettings import Prefixes, Check
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
 
-class MessageHandler(commands.Cog):
+
+class Messages(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -42,4 +52,4 @@ class MessageHandler(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(MessageHandler(bot))
+    bot.add_cog(Messages(bot))

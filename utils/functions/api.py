@@ -3,6 +3,16 @@ from io import BytesIO
 
 from requests.exceptions import HTTPError
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
 
 # https://docs.weeb.sh/
 async def weeb(session, endpoint):
@@ -56,6 +66,18 @@ async def welcomer(session, params: dict = None):
         if resp.status == 200:
             return BytesIO(await resp.read())
         return raise_for_status(resp)
+
+
+async def upload_to_cdn(session, files: dict = None):
+    async with session.post(
+        url="https://cdn.naila.bot/upload/archive",
+        headers={"Authorization": os.getenv("NAILA_CDN")},
+        files=files
+    ) as resp:
+        if not resp.status == 200:
+            return raise_for_status(resp)
+        else:
+            return True
 
 
 # Modified from https://3.python-requests.org/_modules/requests/models/#Response.raise_for_status

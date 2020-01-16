@@ -8,6 +8,16 @@ from discord.ext import commands
 from utils.checks import checks
 from utils.functions.text import pagify
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
 
 class Dev(commands.Cog):
     def __init__(self, bot):
@@ -56,7 +66,7 @@ class Dev(commands.Cog):
         cogs_loaded += f"\n-\t{cogs_unloaded}```" if cogs_unloaded else "```"
         events_loaded += f"\n-\t{events_unloaded}```" if events_unloaded else "```"
         em.add_field(name="Cogs:", value=cogs_loaded)
-        em.add_field(name="Events:", value=events_loaded)
+        em.add_field(name="Events:", value=events_loaded, inline=False)
         await ctx.send(embed=em)
 
     @checks.is_owner()

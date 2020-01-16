@@ -1,3 +1,16 @@
+import re
+
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
+
 def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
     delims = delims or ["\n"]
     in_text = text
@@ -12,12 +25,24 @@ def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
 
 
 def single_quote(text: str = None):
-    if text:
-        return f"'{text}'"
-    return None
+    return f"'{text}'" if text else None
 
 
 def double_quote(text: str = None):
-    if text:
-        return f"\"{text}\""
-    return None
+    return f"\"{text}\"" if text else None
+
+
+def bold(text: str):
+    return f"**{text}**"
+
+
+def escape(text: str, user_mentions: bool = True, role_mentions: bool = True, channel_mentions: bool = True):
+    regex = r"@(everyone|here"
+    if user_mentions:
+        regex += r"|[!]?[0-9]{17,21}"
+    if role_mentions:
+        regex += r"|[&]?[0-9]{17,21}"
+    if channel_mentions:
+        regex += r"|[#]?[0-9]{17,21}"
+    regex += r")"
+    return re.sub(regex, "@\u200b\\1", text)

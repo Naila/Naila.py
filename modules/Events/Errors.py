@@ -7,8 +7,18 @@ import json
 from utils.checks.bot_checks import can_react, can_send
 from utils.functions import errors
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
 
-class ErrorHandler(commands.Cog):
+
+class Errors(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -74,4 +84,4 @@ class ErrorHandler(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(ErrorHandler(bot))
+    bot.add_cog(Errors(bot))

@@ -12,6 +12,16 @@ from utils.database.GuildSettings import Prefixes
 from utils.config.setup_bot import setup_bot, setup_logger
 from utils.ctx import CustomContext
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
 load_dotenv(join(dirname(__file__), 'env/.env'))
 
 perms = discord.Permissions(int(os.getenv("PERMS")))

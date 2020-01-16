@@ -9,6 +9,16 @@ from utils.functions import errors
 from utils.functions.api import weeb
 from utils.functions.images import Images
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
 
 class Social(commands.Cog):
     def __init__(self, bot):
@@ -74,8 +84,6 @@ class Social(commands.Cog):
         name1 = lover1.name[:-round(len(lover1.name) / 2)] + lover2.name[-round(len(lover2.name) / 2):]
         name2 = lover2.name[:-round(len(lover2.name) / 2)] + lover1.name[-round(len(lover1.name) / 2):]
         if 309799952182280192 in [lover1.id, lover2.id] and 173237945149423619 in [lover1.id, lover2.id]:
-            name1 = "True Love"
-            name2 = "True Love"
             rigged = True
         desc = f"**{ctx.author.mention} ships {lover1.mention} and {lover2.mention}!**\n\n " \
                f"Ship names: __**{name1}**__ or __**{name2}**__\n\n " \

@@ -8,6 +8,17 @@ from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
 from utils.database.GuildSettings import Registration as Register
 
+__author__ = "Kanin"
+__date__ = "11/19/2019"
+__copyright__ = "Copyright 2019, Kanin"
+__credits__ = ["Kanin"]
+__license__ = "GPL v3.0"
+__version__ = "1.0.0"
+__maintainer__ = "Kanin"
+__email__ = "im@kanin.dev"
+__status__ = "Production"
+
+
 roles = [
     "He/Him", "She/Her", "They/Them", "Mention", "No Mention", "18+", "<18",
     "Registered", "DMs NOT Allowed", "DMs Allowed", "Ask to DM"
