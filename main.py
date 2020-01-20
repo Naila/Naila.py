@@ -34,7 +34,16 @@ description = "**Support server**: https://discord.gg/fox\n" \
 class Bot(DiscordBot):
     def __init__(self):
         atexit.register(lambda: asyncio.ensure_future(self.logout()))
-        super().__init__(command_prefix=Prefixes.get, description=description, case_insensitive=True)
+        super().__init__(
+            command_prefix=Prefixes.get,
+            description=description,
+            case_insensitive=True,
+            activity=discord.Game(
+                name="Booting...",
+                type=discord.ActivityType.playing
+            ),
+            status=discord.Status.dnd
+        )
         setup_bot(self)
         try:
             self.loop.run_until_complete(self.start(os.getenv("TOKEN")))

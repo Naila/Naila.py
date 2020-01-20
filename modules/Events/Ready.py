@@ -44,8 +44,12 @@ class Ready(commands.Cog):
                f"Python version: {self.bot.version['python']}"
         self.bot.log.info(info)
         await self.bot.change_presence(
-            activity=discord.Game(name="n!help | Mid rewrite.. please be patient", type=discord.ActivityType.playing,
-                                  status=discord.Status.dnd))
+            activity=discord.Game(
+                name="n!help | discord.gg/fox | Mid rewrite.. please be patient",
+                type=discord.ActivityType.playing
+            ),
+            status=discord.Status.online
+        )
         self.bot.log.info("Logged in and ready!")
 
 
