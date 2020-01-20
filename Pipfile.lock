@@ -234,11 +234,10 @@
         },
         "python-dotenv": {
             "hashes": [
-                "sha256:007f0bacef4093a7588c1ed0a3d746a59c04f9bac00f68aaa4e9c30c5fe9429b",
-                "sha256:26a252f7931a448a78d3322d69b60e193d847a02fb96260de1d7b37aadcd46b3"
+                "sha256:f254bfd0c970d64ccbb6c9ebef3667ab301a71473569c991253a481f1c98dddc"
             ],
             "index": "pypi",
-            "version": "==0.10.4"
+            "version": "==0.10.5"
         },
         "pytz": {
             "hashes": [
