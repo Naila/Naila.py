@@ -51,13 +51,18 @@ class Reminders(commands.Cog):
         """{"user": [], "bot": []}"""
         reminders = await Reminder(ctx).list()
         to_send = "**Your reminders:**\n"
-        for reminder in reminders:
-            if reminder["channel_id"] == ctx.author.id:
-                location = "Private Messages"
-            else:
-                location = f"<#{reminder['channel_id']}>"
-            to_send += f"\n**{reminder['id']}**: {location}: \"{reminder['reminder']}\" - {get_relative_delta(reminder['expires'], append_small=True, append_seconds=False)}"
-        to_send += f"\n\nRemove a reminder with `{ctx.prefix}delreminder <id>`"
+        if reminders:
+            for reminder in reminders:
+                if reminder["channel_id"] == ctx.author.id:
+                    location = "Private Messages"
+                else:
+                    location = f"<#{reminder['channel_id']}>"
+                to_send += f"\n**{reminder['id']}**: {location}: \"{reminder['reminder']}\" -" \
+                           f" {get_relative_delta(reminder['expires'], append_small=True, append_seconds=False)}"
+        else:
+            to_send += "\n**You don't currently have any reminders set!**"
+        to_send += f"\n\nSet a reminder with `{ctx.prefix}remind <here|me> <time> <reminder>`\n" \
+                   f"Remove a reminder with `{ctx.prefix}delreminder <id>`"
         pages = pagify(to_send)
         for page in pages:
             await ctx.send(page)

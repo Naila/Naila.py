@@ -1,5 +1,5 @@
 from io import BytesIO
-from pprint import pprint
+import json
 
 import discord
 from discord.ext import commands
@@ -23,6 +23,10 @@ class Testing(commands.Cog):
         self.bot = bot
         self.session = bot.session
 
+    @staticmethod
+    def predicate(message):
+        return message.type == discord.MessageType.default
+
     # @commands.command()
     # async def upload(self, ctx):
     #     """{"user": [], "bot": []}"""
@@ -45,20 +49,37 @@ class Testing(commands.Cog):
         if messages > 1000:
             return await ctx.send_error("lol no")
         message_list = []
-        async for message in ctx.channel.history(limit=messages):
+        async for message in ctx.channel.history(limit=messages).filter(self.predicate):
             message_list.append(message)
         message_list = message_list[::-1]
-        data = await format_data(self.bot, message_list)
+        data = await format_data(ctx, message_list)
         data["channel_name"] = ctx.channel.name
-        pprint(data)
-        resp = await self.session.post("https://archive.naila.bot", json=data)
+        # df = BytesIO()
+        # df.write(json.dumps(data, indent=4).encode("utf8"))
+        # df.seek(0)
+        # await ctx.send(file=discord.File(df, filename="data.json"))
+        data = json.loads(json.dumps(data).encode("utf8"))
+        resp = await self.session.post(
+            "https://archive.naila.bot",
+            json=data
+        )
         if resp.status != 200:
             return await ctx.send_error("Something went wrong")
-        resp = await resp.text()
+        resp = await resp.text(encoding="utf8")
         file = BytesIO()
         file.write(resp.encode("utf8"))
         file.seek(0)
         await ctx.send(file=discord.File(file, filename=f"{ctx.channel.name}.html"))
+
+    @checks.is_owner()
+    @commands.command(description="An embed")
+    async def embed(self, ctx):
+        chan = "<#483061332766097419>"
+        em = discord.Embed(description=chan, title=chan)
+        em.set_author(name=chan)
+        em.add_field(name=chan, value=chan)
+        em.set_footer(text=chan)
+        await ctx.send(embed=em)
 
 
 def setup(bot):
