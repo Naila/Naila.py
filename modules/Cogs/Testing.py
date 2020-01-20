@@ -25,7 +25,7 @@ class Testing(commands.Cog):
 
     @staticmethod
     def predicate(message):
-        return message.type == discord.MessageType.default
+        return message.type == discord.MessageType.default and message.author is not None
 
     # @commands.command()
     # async def upload(self, ctx):
