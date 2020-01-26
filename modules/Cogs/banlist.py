@@ -1,9 +1,15 @@
-import asyncio, traceback, discord, urllib.request
-from datetime import timedelta
+import asyncio
+import discord
+import traceback
+import urllib.request
 from datetime import datetime
+from datetime import timedelta
+
 from discord.ext import commands
+
 from utils.checks import checks
 from utils.database.BanSettings import Banlist
+
 
 class Banlists(commands.Cog):
     def __init__(self, bot):
@@ -12,7 +18,7 @@ class Banlists(commands.Cog):
 
     async def banned(self, user):
         lookup = await Banlist.lookup(self, user)
-        if lookup['banned']is True:
+        if lookup['banned'] is True:
             desc = f'**ID:** {user.id}\n**Date:** {lookup["date"]}\n**Reason:** {lookup["reason"]}\n**Proof:** {lookup["proof"]}'
             title = f'{user} was found on Global Banlist!'
             color = discord.Color.red()
@@ -161,6 +167,7 @@ class Banlists(commands.Cog):
         await Banlist.logch.send(f"`{user.id}` | `{user.name}` has been banned by developer **{ctx.author.name}**")
         await ctx.message.delete()
 
+# TODO add appeal command,
     @commands.cooldown(1, 90, type=commands.BucketType.user)
     @commands.command(aliases=["submit"], name="sban", description="Submits report for review by Banlist Admins")
     async def sban(self, ctx):
@@ -257,6 +264,7 @@ class Banlists(commands.Cog):
         em = discord.Embed(color=discord.Color.blue(), description=desc)
         reason2 = reportinfo['reason']
         em.set_author(name='Submit a report')
+        #todo change proof to use direct uploads from discord and not imgur
         await author.send(embed=em)
         while True:
             def pcheck(p):
@@ -283,6 +291,7 @@ class Banlists(commands.Cog):
                 verif = await ctx.bot.wait_for('reaction_add', timeout=60, check=okcheck)
             except asyncio.TimeoutError:
                 return await author.send('Oops, I think I have lost you. The command has timed out, please try again!')
+# todo Change to post to new Temp channel in Reports category for voting/judging. and after judging post to Judgements
             if verif[0].emoji == '✅':
                 channel = self.bot.get_channel(Banlist.reportchan)
                 desc = '🔨 **__Ban Report__** 🔨 \n'
@@ -323,6 +332,7 @@ class Banlists(commands.Cog):
             em.set_author(name='You can report another user in {}'.format(tdelta))
             await ctx.send(embed=em)
 
+# TODO, Change to look for reactions in Reports Category instead of just one channel.
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
         if channel_id == Banlist.reportchan:
             yay = self.bot.get_emoji(308281470659592192)
@@ -422,7 +432,8 @@ class Banlists(commands.Cog):
                                     await Banlist.reject(self, messageid=message_id)
                                     await msg.delete()
                         break
-
+                        
+# TODO, Make sure Check allows only Sapphire and Kanin to run this command
     @checks.is_owner()
     @commands.command()
     async def revoke(self, ctx, id: int, *, reason):

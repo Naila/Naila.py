@@ -19,7 +19,7 @@ __maintainer__ = "Kanin"
 __email__ = "im@kanin.dev"
 __status__ = "Production"
 
-
+# Todo add to embed to show if user is listed on Global Banlist
 class Welcomer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
