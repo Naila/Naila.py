@@ -35,7 +35,7 @@ class Banlist:
 
     async def approve(self, user, reason, proof, reporter):
         ctx = self.ctx
-        date = datetime.now().strftime(self.bot.config()['time_format'])
+        date = datetime.now().strftime(ctx.bot.config()['time_format'])
         await ctx.pool.execute("INSERT INTO bans(id, reason, proof, reporter, date) VALUES($1, $2, $3, $4, $5)", user.id, reason, proof, reporter, date)
 
     async def reject(self, messageid):
@@ -50,3 +50,8 @@ class Banlist:
     async def revoke(self, user):
         ctx = self.ctx
         await ctx.pool.execute("DELETE FROM reports where id=$1", user)
+
+    async def appeal(self, user):
+        ctx = self.ctx
+        date = datetime.now().strftime(ctx.bot.config()['time_format'])
+        await ctx.pool.execute("INSERT INTO appeals(id, reason, proof, date) VALUES($1, $2, $3, $4)", user.id, reason, proof, date)

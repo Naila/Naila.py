@@ -3,7 +3,7 @@ from datetime import timedelta
 from datetime import datetime
 from discord.ext import commands
 from utils.checks import checks
-from utils.database.banlist import Banlist
+from utils.database.BanSettings import Banlist
 
 class Banlists(commands.Cog):
     def __init__(self, bot):
