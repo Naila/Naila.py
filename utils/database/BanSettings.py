@@ -22,8 +22,7 @@ class Banlist:
     judgement = 667894473174286367
     ds_server = 294505571317710849
     banlist_judge = 667897608379039764
-    singleapi = ""
-    listapi = ""
+
 
     async def report(self, messageid, user, reason, proof, reporter):
         ctx = self.ctx
