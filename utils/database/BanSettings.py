@@ -6,22 +6,24 @@ from utils.ctx import CustomContext
 __author__ = "Sapphire"
 __date__ = "01/22/2022"
 __copyright__ = "Copyright 2020, Sapphire"
-__credits__ = ["Sapphire"]
+__credits__ = ["Sapphire", "Kanin"]
 __license__ = "GPL v3.0"
 __version__ = "1.0.1"
 __maintainer__ = "Sapphire"
 __email__ = "Sapphire@hardinserver.com"
 __status__ = "Production"
 
+# TODO: Move to config
+logch = 667894488341020693
+reportchan = 667894451644923906
+judgement = 667894473174286367
+ds_server = 294505571317710849
+banlist_judge = 667897608379039764
+
 
 @dataclass
 class Banlist:
     ctx: CustomContext
-    logch = 667894488341020693
-    reportchan = 667894451644923906
-    judgement = 667894473174286367
-    ds_server = 294505571317710849
-    banlist_judge = 667897608379039764
 
 
     async def report(self, messageid, user, reason, proof, reporter):

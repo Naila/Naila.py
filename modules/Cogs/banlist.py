@@ -1,11 +1,11 @@
 import asyncio
+
 import discord
 import traceback
 import urllib.request
-from datetime import datetime
-from datetime import timedelta
-
+from datetime import datetime, timedelta
 from discord.ext import commands
+from typing import Union
 
 from utils.checks import checks
 from utils.database.BanSettings import Banlist
@@ -16,69 +16,56 @@ class Banlists(commands.Cog):
         self.bot = bot
         self.session = bot.session
 
-    async def banned(self, user):
-        lookup = await Banlist.lookup(self, user)
-        if lookup['banned'] is True:
-            desc = f'**ID:** {user.id}\n**Date:** {lookup["date"]}\n**Reason:** {lookup["reason"]}\n**Proof:** {lookup["proof"]}'
-            title = f'{user} was found on Global Banlist!'
-            color = discord.Color.red()
-        else:
-            title = f'{user} was not found on Global Banlist!'
-            desc = ' '
-            color = discord.Color.green()
-        embed = discord.Embed(title=title, description=desc, color=color)
-        embed.set_thumbnail(url=user.avatar_url)
-        return embed
+    @staticmethod
+    async def banned(ctx, user):
+        lookup = await Banlist(ctx).lookup(user)
+        em = discord.Embed(color=discord.Color.green())
+        em.title = f"{user} was not found on Global Banlist!"
+        em.set_thumbnail(url=user.avatar_url_as(static_format="png"))
+        if lookup["banned"]:
+            # TODO: Add the ability to show multiple ban reports
+            em.colour = discord.Color.red()
+            em.description = f"**ID:** {user.id}\n" \
+                             f"**Date:** {lookup['date']}\n" \
+                             f"**Reason:** {lookup['reason']}\n" \
+                             f"**Proof:** {lookup['proof']}"
+            em.title = f"{user} was found on Global Banlist!"
+        return em
 
-    @commands.command(name= "Bancheck", description="Checks if the user is globally banned. n!bancheck")
-    async def bancheck(self, ctx, member):
-        user = None
-        embed = ""
-        if member is None:
-            user = ctx.author
-        if member is discord.Member:
-            user = member
-        if member is int():
+    @commands.command(name="Bancheck", description="Checks if the user is globally banned.")
+    async def bancheck(self, ctx, member: Union[discord.Member, int] = None):
+        member = ctx.author if not member else member
+        if isinstance(member, int):
             try:
-                user = await self.bot.get_user_info(member)
-            except discord.errors.NotFound:
-                await ctx.send('No user with the id `{}` found.'.format(id))
-        await self.banned(user)
-        embedperm = ctx.guild.me.permissions_in(ctx.channel).embed_links
-        if embedperm:
-            await ctx.send(embed=embed)
-        else:
-            await ctx.send('It seems that I do not have embed permissions in this channel. Please correct and try again!')
+                member = await self.bot.fetch_user(member)
+            except discord.NotFound:
+                return await ctx.send(f"No user with the id `{member}` found.")
+        embed = await self.banned(ctx, member)
+        await ctx.send(embed=embed)
 
     @commands.group(case_insensitive=True, description="Banlist Commands")
     async def banlist(self, ctx):
-        """Checks for global bans on Discord.Services"""
         if not ctx.invoked_subcommand:
-            return await ctx.send_help(ctx.command)
+            await ctx.send_help(ctx.command)
 
-    @banlist.command(name="checkall", description="Checks all members in the server to see if they appear on the ban list! `n!banlist checkall`")
-    async def checkall(self, ctx):
-        guild = ctx.guild
-        ctx.channel.send("This may take a bit depending on the number of users in the server!")
-        list2 = []
+    @banlist.command(name="checkall", description="Checks all members in the server to see if they appear on the ban list!")
+    async def banlist_checkall(self, ctx):
+        await ctx.send("This may take a bit depending on the number of users in the server!")
+        found_bans = []
         em = discord.Embed(title=f'Full Server Bancheck results!')
-        for r in guild.members:
-            data = await Banlist.lookup(self, r)
-            if data['banned']:
-                list2.append(f"``{str(r)}`` -- ``{str(r.id)}`` \n")
-                em.add_field(name=r, value=r.id, inline=False)
-        em.description(f'I have checked all users in the server and there are {len(list2)} users currently listed!')
-        embedperm = ctx.guild.me.permissions_in(ctx.channel).embed_links
-        if embedperm is True:
-            await ctx.send(embed=em)
-        else:
-            await ctx.send(f'I have checked all members in the server and found {len(list2)} members listed. However I cannot '
-                           f'display the results due to not having embed permissions in this channel!')
+        for member in ctx.guild.members:
+            if not member.bot:
+                data = await Banlist.lookup(ctx, member)
+                if data['banned']:
+                    # TODO: Find a good way to list the bans, hastebin?, txt file?
+                    found_bans.append(f"``{str(member)}`` -- ``{str(member.id)}``")
+        em.description(f'I have checked all users in the server and there are {len(found_bans)} users currently listed!')
+        await ctx.send(embed=em)
 
-    @commands.command(name= "mban", description='Bans all users that are listed on the global banlist!')
+    @commands.command(aliases=["mban"], description="Bans all users that are listed on the global banlist!")
     @commands.cooldown(1, 5000, type=commands.BucketType.guild)
     @checks.admin_or_permissions(ban_members=True)
-    async def mban(self, ctx):
+    async def massban(self, ctx):
         guild = ctx.guild
         channel = ctx.channel
         me = guild.me
@@ -92,23 +79,13 @@ class Banlists(commands.Cog):
             if data['banned']:
                 uids = data['id']
                 try:
-                    await self.bot.http.ban(uids, guild, 7, f"MASS BAN, User was listed on Discord.Services global ban list! Command ran by {ctx.author}")
+                    await self.bot.http.ban(uids, guild, 7,
+                                            f"MASS BAN, User was listed on Discord.Services global ban list! Command ran by {ctx.author}")
                     count += 1
                     await asyncio.sleep(2)
                 except:
                     traceback.print_exc()
         await ctx.send(f'You have banned 🔨 {count} bad users👌')
-
-
-    @mban.error
-    async def mban_error(self, error, ctx):
-        if type(error) is commands.CommandOnCooldown:
-            fmt = str(error).split()
-            word = fmt[7].strip('s')
-            time = float(word)
-            timer = round(time, 0)
-            tdelta = str(timedelta(seconds=int(timer))).lstrip('0').lstrip(':')
-            await ctx.send(f'You can ban again in `{tdelta}`')
 
     @commands.command(description='Clears and Resets your Server banlist!')
     @checks.admin_or_permissions(ban_members=True)
@@ -131,7 +108,7 @@ class Banlists(commands.Cog):
                 traceback.print_exc()
         await ctx.send(f'You have unbanned 🔨 {counter} users👌')
 
-#TODO Change to pull image from upload and post to cdn for Naila, allow multiple uploads, 60 secs accept done with finished.
+    # TODO Change to pull image from upload and post to cdn for Naila, allow multiple uploads, 60 secs accept done with finished.
 
     async def post_image(self, image_url):
         if "/a/" in image_url:
@@ -167,7 +144,7 @@ class Banlists(commands.Cog):
         await Banlist.logch.send(f"`{user.id}` | `{user.name}` has been banned by developer **{ctx.author.name}**")
         await ctx.message.delete()
 
-# TODO add appeal command,
+    # TODO add appeal command,
     @commands.cooldown(1, 90, type=commands.BucketType.user)
     @commands.command(aliases=["submit"], name="sban", description="Submits report for review by Banlist Admins")
     async def sban(self, ctx):
@@ -264,11 +241,12 @@ class Banlists(commands.Cog):
         em = discord.Embed(color=discord.Color.blue(), description=desc)
         reason2 = reportinfo['reason']
         em.set_author(name='Submit a report')
-        #todo change proof to use direct uploads from discord and not imgur
+        # todo change proof to use direct uploads from discord and not imgur
         await author.send(embed=em)
         while True:
             def pcheck(p):
                 return p.author == author and p.channel == author.dm_channel
+
             try:
                 proof = await ctx.bot.wait_for('message', timeout=120, check=pcheck)
             except asyncio.TimeoutError:
@@ -287,11 +265,12 @@ class Banlists(commands.Cog):
         while True:
             def okcheck(reaction, user):
                 return user == author and str(reaction.emoji) in ['✅', '❌']
+
             try:
                 verif = await ctx.bot.wait_for('reaction_add', timeout=60, check=okcheck)
             except asyncio.TimeoutError:
                 return await author.send('Oops, I think I have lost you. The command has timed out, please try again!')
-# todo Change to post to new Temp channel in Reports category for voting/judging. and after judging post to Judgements
+            # todo Change to post to new Temp channel in Reports category for voting/judging. and after judging post to Judgements
             if verif[0].emoji == '✅':
                 channel = self.bot.get_channel(Banlist.reportchan)
                 desc = '🔨 **__Ban Report__** 🔨 \n'
@@ -332,7 +311,7 @@ class Banlists(commands.Cog):
             em.set_author(name='You can report another user in {}'.format(tdelta))
             await ctx.send(embed=em)
 
-# TODO, Change to look for reactions in Reports Category instead of just one channel.
+    # TODO, Change to look for reactions in Reports Category instead of just one channel.
     async def on_raw_reaction_add(self, emoji, message_id, channel_id, user_id):
         if channel_id == Banlist.reportchan:
             yay = self.bot.get_emoji(308281470659592192)
@@ -358,7 +337,8 @@ class Banlists(commands.Cog):
                         em.set_author(name='Ban approved', icon_url='http://media2.intoday.in/indiatoday/'
                                                                     'images/stories/thumb-image_031015040724.jpg')
                         user1 = await self.bot.get_user_info(rinfo['id'])
-                        await Banlist.logch.send(f"`{str(user1)}` | {user1.mention}'s report has been APPROVED by **{user}**")
+                        await Banlist.logch.send(
+                            f"`{str(user1)}` | {user1.mention}'s report has been APPROVED by **{user}**")
                         await Banlist.approve(self, user2, reason, proof, reporter)
                         await jch.send(embed=em)
                         await Banlist.reject(self, messageid=message_id)
@@ -373,8 +353,10 @@ class Banlists(commands.Cog):
                     reasonmsg = await c.send('1⃣ Proof is not Sufficient\n2⃣ Reason does not match proof provided.')
                     while True:
                         responses = ['1', '2']
+
                         def ncheck(n):
                             return n.channel == reasonmsg.channel and n.author == user
+
                         try:
                             reason = await self.bot.wait_for('message', timeout=300.0, check=ncheck)
                         except asyncio.TimeoutError:
@@ -405,7 +387,8 @@ class Banlists(commands.Cog):
                                     info = await Banlist.callreport(self, messageid=message_id)
                                     user1 = await self.bot.get_user_info(int(info['id']))
                                     ch = self.bot.get_channel(Banlist.logch)
-                                    await ch.send(f"`{str(user1)}` | {user1.mention}'s report has been DENIED by **{user}**")
+                                    await ch.send(
+                                        f"`{str(user1)}` | {user1.mention}'s report has been DENIED by **{user}**")
                                     await jch.send(embed=em)
                                     await Banlist.reject(self, messageid=message_id)
                                     await msg.delete()
@@ -427,13 +410,14 @@ class Banlists(commands.Cog):
                                     info = await Banlist.callreport(self, messageid=message_id)
                                     user1 = await self.bot.get_user_info(int(info['id']))
                                     ch = self.bot.get_channel(Banlist.logch)
-                                    await ch.send(f"`{str(user1)}` | {user1.mention}'s report has been DENIED by **{user}**")
+                                    await ch.send(
+                                        f"`{str(user1)}` | {user1.mention}'s report has been DENIED by **{user}**")
                                     await jch.send(embed=em)
                                     await Banlist.reject(self, messageid=message_id)
                                     await msg.delete()
                         break
-                        
-# TODO, Make sure Check allows only Sapphire and Kanin to run this command
+
+    # TODO, Make sure Check allows only Sapphire and Kanin to run this command
     @checks.is_owner()
     @commands.command()
     async def revoke(self, ctx, id: int, *, reason):
@@ -446,7 +430,6 @@ class Banlists(commands.Cog):
             await ctx.send("That user has been removed from the banlist!")
         except discord.errors.NotFound:
             ctx.send("Sorry that does not appear to be a valid UserID")
-
 
 
 def setup(bot):
