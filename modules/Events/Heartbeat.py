@@ -1,5 +1,4 @@
-from asyncio import tasks
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 
 __author__ = "Kanin"
