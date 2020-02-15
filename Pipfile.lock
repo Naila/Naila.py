@@ -100,11 +100,11 @@
         },
         "coloredlogs": {
             "hashes": [
-                "sha256:34fad2e342d5a559c31b6c889e8d14f97cb62c47d9a2ae7b5ed14ea10a79eff8",
-                "sha256:b869a2dda3fa88154b9dd850e27828d8755bfab5a838a1c97fbc850c6e377c36"
+                "sha256:6590fea9bc0e47c543508e5bcc7231da8ba0b97a7cef1be5e99d74a4db11c063",
+                "sha256:b82ea0f0d6d9562e2a893af278ed463b0cb77f48c8b2c76734040ef37078bcb2"
             ],
             "index": "pypi",
-            "version": "==10.0"
+            "version": "==11.1"
         },
         "dictor": {
             "hashes": [
@@ -122,10 +122,10 @@
         },
         "humanfriendly": {
             "hashes": [
-                "sha256:23057b10ad6f782e7bc3a20e3cb6768ab919f619bbdc0dd75691121bbde5591d",
-                "sha256:33ee8ceb63f1db61cce8b5c800c531e1a61023ac5488ccde2ba574a85be00a85"
+                "sha256:5a57c973dd28a24f45ab723521c84b111fbe79e9d9fcdca6f9aeb668c18a0f40",
+                "sha256:b77d1aa8d73b6fe7e8860fa516fbc0e2aa85bff159d7525b0213353817cf1cfc"
             ],
-            "version": "==4.18"
+            "version": "==6.1"
         },
         "idna": {
             "hashes": [
@@ -275,10 +275,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:a8a318824cc77d1fd4b2bec2ded92646630d7fe8619497b142c84a9e6f5a7293",
-                "sha256:f3c5fd51747d450d4dcf6f923c81f78f811aab8205fda64b0aba34a4e48b0745"
+                "sha256:2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc",
+                "sha256:87716c2d2a7121198ebcb7ce7cccf6ce5e9ba539041cfbaeecfb641dc0bf6acc"
             ],
-            "version": "==1.25.7"
+            "version": "==1.25.8"
         },
         "websockets": {
             "hashes": [
