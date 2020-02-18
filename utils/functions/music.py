@@ -1,14 +1,15 @@
 import asyncio
 import re
 from decimal import Decimal, ROUND_HALF_UP
+
+import yaml
+from dictor import dictor
 from lavalink import AudioTrack
 
 import discord
 from discord.ext import commands
 from discord.utils import escape_markdown
 from ksoftapi.errors import NoResults
-
-from utils.ctx import CustomContext
 
 __author__ = "Kanin"
 __date__ = "02/09/2020"
@@ -125,7 +126,7 @@ async def enqueue_and_send(bot, ctx, query=None, track=None):
         uri = track["info"]["uri"]
         title = track["info"]["title"]
         album_art = get_thumbnail(uri)
-    emoji = get_emoji(uri)
+    emoji = get_emoji(bot, uri)
     title_fixed = escape_markdown(title)
     em.title = "Track Enqueued:"
     em.description = f"{emoji} [**{title_fixed}**]({uri})"
@@ -148,21 +149,26 @@ def format_time(time):
     return time_formatted
 
 
-def get_emoji(query: str):
-    ctx = CustomContext()
+def emojis(bot, emoji: str):
+    with open("config/emojis.yml", "r") as emjs:
+        emojs = yaml.safe_load(emjs)
+    return bot.get_emoji(dictor(emojs, emoji))
+
+
+def get_emoji(bot, query: str):
     emoji = ""
     if "twitch.tv" in query:
-        emoji = ctx.emojis("music.twitch")
+        emoji = emojis(bot, "music.twitch")
     elif "soundcloud.com" in query:
-        emoji = ctx.emojis("music.soundcloud")
+        emoji = emojis(bot, "music.soundcloud")
     elif "vimeo.com" in query:
-        emoji = ctx.emojis("music.vimeo")
+        emoji = emojis(bot, "music.vimeo")
     elif "mixer.com" in query or "beam.pro" in query:
-        emoji = ctx.emojis("music.mixer")
+        emoji = emojis(bot, "music.mixer")
     elif "youtube.com" in query or "youtu.be" in query or query.startswith("ytsearch:"):
-        emoji = ctx.emojis("music.youtube")
+        emoji = emojis(bot, "music.youtube")
     elif "spotify.com" in query:
-        emoji = ctx.emojis("music.spotify")
+        emoji = emojis(bot, "music.spotify")
     return emoji
 
 
@@ -337,7 +343,7 @@ class Queue:
             title = self.player.current.title
             album_art = get_thumbnail(uri)
         self.embed.set_thumbnail(url=album_art)
-        emoji = get_emoji(uri)
+        emoji = get_emoji(self.bot, uri)
         volume = draw_vol(self.bot, self.ctx)
         now_playing = draw_time(self.bot, self.ctx)
         requester = self.bot.get_user(self.player.current.requester)
@@ -369,7 +375,7 @@ class Queue:
             else:
                 uri = entry.uri
                 title = entry.title
-            emoji = get_emoji(uri)
+            emoji = get_emoji(self.bot, uri)
             title_fixed = escape_markdown(title)
             cut = (title_fixed[:40] + "...") if len(title_fixed) > 27 else title_fixed
             p.append(f"`{index}.` `[{duration}]` {emoji} **[{cut}]({uri})**")

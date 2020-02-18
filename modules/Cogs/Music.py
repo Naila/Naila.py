@@ -91,7 +91,7 @@ class Music(commands.Cog):
                 uri = event.track.uri
                 title = event.track.title
                 album_art = get_thumbnail(uri)
-            emoji = get_emoji(uri)
+            emoji = get_emoji(self.bot, uri)
             requester = self.bot.get_user(event.track.requester)
             em = await embed(self.bot, channel.guild.id)
             em.title = "Now Playing:"
@@ -246,7 +246,7 @@ class Music(commands.Cog):
             em.description = "Not playing!"
         else:
             requester = self.bot.get_user(player.current.requester)
-            emoji = get_emoji(player.current.uri)
+            emoji = get_emoji(self.bot, player.current.uri)
             status = draw_time(self.bot, ctx)
             em.description = f"{emoji} **[{player.current.title}]({player.current.uri})**\n" \
                              f"**Requested by:** {requester.mention}\n" \
@@ -281,7 +281,7 @@ class Music(commands.Cog):
         song = player.queue[index]
         requester = self.bot.get_user(song.requester)
         duration = "🔴 LIVE" if song.stream else format_time(song.duration)
-        emoji = get_emoji(song.uri)
+        emoji = get_emoji(self.bot, song.uri)
         em.title = "Track info:"
         em.description = f"{emoji} [**{escape_markdown(song.title)}**]({song.uri})"
         em.add_field(name="Requester:", value=requester.mention)
