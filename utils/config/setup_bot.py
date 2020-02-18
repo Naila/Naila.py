@@ -12,6 +12,9 @@ import discord
 import psutil
 import sentry_sdk as sentry
 import yaml
+from ksoftapi.client import Client as KClient
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 from utils.config.config import get_banner, get_config
 
@@ -84,10 +87,10 @@ def setup_bot(bot):
 
     # Database
     credentials = {
-        "user": os.environ["POSTGRES_USER"],
-        "password": os.environ["POSTGRES_PASS"],
-        "database": os.environ["POSTGRES_DATABASE"],
-        "host": os.environ["POSTGRES_HOST"],
+        "user": os.getenv("POSTGRES_USER"),
+        "password": os.getenv("POSTGRES_PASS"),
+        "database": os.getenv("POSTGRES_DATABASE"),
+        "host": os.getenv("POSTGRES_HOST"),
         "init": init_connection
     }
     bot.pool = bot.loop.run_until_complete(asyncpg.create_pool(**credentials))
@@ -96,6 +99,13 @@ def setup_bot(bot):
 
     # Config
     bot.config = get_config
+    bot.kclient = KClient(api_key=os.getenv("KSOFT"))
+    bot.spotify = spotipy.Spotify(
+        client_credentials_manager=SpotifyClientCredentials(
+            client_id=os.getenv("SPOTIFY_ID"),
+            client_secret=os.getenv("SPOTIFY_SECRET")
+        )
+    )
     bot.uptime = datetime.datetime.utcnow()
     bot.version = {
         "bot": bot.config()["version"],

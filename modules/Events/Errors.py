@@ -1,10 +1,10 @@
 from datetime import timedelta
-import traceback
-import discord
-from discord.ext import commands
-import json
 
-from utils.checks.bot_checks import can_react, can_send
+import discord
+import json
+from discord.ext import commands
+
+from utils.checks.bot_checks import can_send, can_react
 from utils.functions import errors
 
 __author__ = "Kanin"
@@ -38,24 +38,6 @@ class Errors(commands.Cog):
             fmt = f"{seconds} seconds"
         return f"You can try again in {fmt}"
 
-    @staticmethod
-    async def handle_commandinvokeerror(ctx, error):
-        docs = ["embed_links"] if "help" in ctx.command.name else json.loads(ctx.command.help)["bot"]
-        if not can_send(ctx):
-            if can_react(ctx):
-                return await ctx.message.add_reaction("❌")
-            try:
-                return await ctx.author.send(f"I cannot send messages in {ctx.guild.name}!")
-            except discord.Forbidden:
-                return ctx.log.error(f"Failed to respond to command in {ctx.guild.name}")
-
-        bot_perms = [x[0] for x in iter(ctx.channel.permissions_for(ctx.guild.me)) if x[1]]
-        bot_missing_perms = [x.replace("_", " ").title() for x in docs if x not in bot_perms]
-        if bot_missing_perms:
-            return await ctx.send(f"I am missing permissions to {', '.join(bot_missing_perms)}!")
-        ctx.bot.sentry.capture_exception(error)
-        return await ctx.send_error(error)
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandNotFound):
@@ -68,7 +50,18 @@ class Errors(commands.Cog):
         if isinstance(error, (commands.BadArgument, commands.BadUnionArgument)):
             return await ctx.bad_argument(error)
         if isinstance(error, commands.CommandInvokeError):
-            return await self.handle_commandinvokeerror(ctx, error)
+            docs = ["embed_links"] if "help" in ctx.command.name else json.loads(ctx.command.help)["bot"]
+            if not can_send(ctx):
+                if can_react(ctx):
+                    return await ctx.message.add_reaction("❌")
+                try:
+                    return await ctx.author.send(f"I cannot send messages in {ctx.guild.name}!")
+                except discord.Forbidden:
+                    return ctx.log.error(f"Failed to respond to command in {ctx.guild.name}")
+            bot_perms = [x[0] for x in iter(ctx.channel.permissions_for(ctx.guild.me)) if x[1]]
+            bot_missing_perms = [x.replace("_", " ").title() for x in docs if x not in bot_perms]
+            if bot_missing_perms:
+                return await ctx.send(f"I am missing permissions to {', '.join(bot_missing_perms)}!")
         if isinstance(error, commands.NSFWChannelRequired):
             return await ctx.send_error(f"I can't give you the command {ctx.command} in a sfw environment.")
         if isinstance(error, commands.NoPrivateMessage):
