@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://cdn.discordapp.com/avatars/337481187419226113/d25e291017c57ae198fcd175b2ad552f.png?size=256" height=200></img>
+<img src="https://kanin.cannot.date/2020/04/04/Naila.png" height=600></img>
 <h1>Naila.py</h1>
 
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
