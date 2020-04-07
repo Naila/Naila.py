@@ -391,30 +391,30 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @checks.is_nsfw()
-    @commands.group(case_insensitive=True, description="NSFW images from neko.life")
-    async def nneko(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
-
-    @nneko.command(name="neko", description="Nekos")
-    async def nneko_neko(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
-        url = await nekos(ctx.session, "lewd")
-        em = await self.nekos_embed(ctx)
-        em.set_image(url=url)
-        em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
-
-    @nneko.command(name="ngif", description="Neko gifs")
-    async def nneko_ngif(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
-        url = await nekos(ctx.session, "nsfw_neko_gif")
-        em = await self.nekos_embed(ctx)
-        em.set_image(url=url)
-        em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+    # @checks.is_nsfw()
+    # @commands.group(case_insensitive=True, description="NSFW images from neko.life")
+    # async def nneko(self, ctx):
+    #     """{"user": [], "bot": ["embed_links"]}"""
+    #     if not ctx.invoked_subcommand:
+    #         await ctx.send_help(ctx.command)
+    #
+    # @nneko.command(name="neko", description="Nekos")
+    # async def nneko_neko(self, ctx):
+    #     """{"user": [], "bot": ["embed_links"]}"""
+    #     url = await nekos(ctx.session, "lewd")
+    #     em = await self.nekos_embed(ctx)
+    #     em.set_image(url=url)
+    #     em.description += f"**Image URL:** [Click Here]({url})"
+    #     await ctx.send(embed=em)
+    #
+    # @nneko.command(name="ngif", description="Neko gifs")
+    # async def nneko_ngif(self, ctx):
+    #     """{"user": [], "bot": ["embed_links"]}"""
+    #     url = await nekos(ctx.session, "nsfw_neko_gif")
+    #     em = await self.nekos_embed(ctx)
+    #     em.set_image(url=url)
+    #     em.description += f"**Image URL:** [Click Here]({url})"
+    #     await ctx.send(embed=em)
 
     # TODO: SFW image commands
     # @neko.command(name="")
