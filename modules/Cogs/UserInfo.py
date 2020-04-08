@@ -2,6 +2,8 @@ from typing import Union
 
 import discord
 from discord.ext import commands
+
+from utils.checks import checks
 from utils.functions.time import get_relative_delta
 
 __author__ = "Kanin"
@@ -45,13 +47,16 @@ class UserInfo(commands.Cog):
             status += f"Listening to {member.activity.title}\n" \
                     f"By {', '.join([x for x in member.activity.artists])}\n" \
                     f"On {member.activity.name}"
-        else:
+        elif member.activity.type == discord.ActivityType.streaming:
             status += f"Streaming **[{member.activity.name}]({member.activity.url})**"
+        else:
+            status += str(member.activity)
         return status
 
     @commands.guild_only()
     @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
                     invoke_without_command=True, description="Check a members information!")
+    # @checks.custom_bot_has_permissions(embed_links=True)
     async def user(self, ctx, *, member: discord.Member = None):
         """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
@@ -96,6 +101,7 @@ class UserInfo(commands.Cog):
 
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
+    # @checks.custom_bot_has_permissions(embed_links=True)
     async def user_permissions(self, ctx, user: discord.Member = None, *,
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
         """{"user": [], "bot": ["embed_links"]}"""
@@ -119,6 +125,7 @@ class UserInfo(commands.Cog):
         await ctx.send(embed=em)
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
+    # @checks.custom_bot_has_permissions(embed_links=True)
     async def user_avatar(self, ctx, user: discord.Member = None):
         """{"user": [], "bot": ["embed_links"]}"""
         if not user:
