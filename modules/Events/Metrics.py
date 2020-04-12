@@ -11,6 +11,8 @@ __maintainer__ = "Kanin"
 __email__ = "im@kanin.dev"
 __status__ = "Development"
 
+BLACKLISTED_EVENTS = ["presence_update"]
+
 
 class Metrics(commands.Cog):
     def __init__(self, bot):
@@ -33,7 +35,7 @@ class Metrics(commands.Cog):
             return
 
         event = msg.get("t", "none").lower()
-        if event not in self.events.keys():
+        if event not in self.events.keys() and event not in BLACKLISTED_EVENTS:
             self.events[event] = 1
 
         else:
