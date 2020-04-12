@@ -43,7 +43,9 @@ class Metrics(commands.Cog):
         lines = []
 
         for event, count in self.events.items():
-            lines.append(f"event_counts,type={event} count={count}i")
+            lines.append(f"event_counts,bot=naila,type={event} count={count}i")
+
+        lines.append(f"guild_count,bot=naila count={len(self.bot.guilds)}i")
 
         return web.Response(text="\n".join(lines))
 
