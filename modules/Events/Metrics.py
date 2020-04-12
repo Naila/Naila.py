@@ -35,11 +35,11 @@ class Metrics(commands.Cog):
             return
 
         event = msg.get("t", "none").lower()
-        if event not in self.events.keys() and event not in BLACKLISTED_EVENTS:
-            self.events[event] = 1
-
-        else:
-            self.events[event] += 1
+        if event not in BLACKLISTED_EVENTS:
+            if event not in self.events.keys():
+                self.events[event] = 1
+            else:
+                self.events[event] += 1
 
     async def get_metrics_route(self, request):
         lines = []
