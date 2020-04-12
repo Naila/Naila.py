@@ -24,8 +24,28 @@ class Metrics(commands.Cog):
 
         self.bot.loop.create_task(self.start_app())
 
+        self.events = {}
+
+    @commands.Cog.listener()
+    async def on_socket_response(self, msg):
+        if msg.get("op") != 0:
+            # Not a dispatch (might be useful to track heartbeats, reconnects, invalid sessions etc. tho)
+            return
+
+        event = msg.get("t", "none").lower()
+        if event not in self.events.keys():
+            self.events[event] = 1
+
+        else:
+            self.events[event] += 1
+
     async def get_metrics_route(self, request):
-        return web.Response(text="Metrics Here")
+        lines = []
+
+        for event, count in self.events.items():
+            lines.append(f"event_counts,type={event} count={count}i")
+
+        return web.Response(text="\n".join(lines))
 
     def cog_unload(self):
         self.bot.loop.create_task(self.stop_app())
