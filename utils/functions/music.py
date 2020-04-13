@@ -9,7 +9,7 @@ from lavalink import AudioTrack
 import discord
 from discord.ext import commands
 from discord.utils import escape_markdown
-from ksoftapi.errors import NoResults
+# from ksoftapi.errors import NoResults
 
 __author__ = "Kanin"
 __date__ = "02/09/2020"
@@ -277,7 +277,8 @@ class AutoPlay:
     async def get_recommendation(self, bot):
         try:
             results = await bot.kclient.music.recommendations(tracks=self.history, provider="youtube_ids")
-        except NoResults:
+        # except NoResults:
+        except Exception:
             return False
         return results[0].youtube_link
 
