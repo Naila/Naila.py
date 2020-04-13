@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from utils.functions import errors
 
 __author__ = "Kanin"
 __date__ = "11/19/2019"
@@ -74,10 +75,54 @@ def mod():
     return mod_or_permissions()
 
 
-def permissions(**perms):
+def user_has_permissions(**perms):
     def predicate(ctx):
-        return check_permissions(ctx, **perms)
+        if is_owner():
+            return True
+        permissions = ctx.channel.permissions_for(ctx.author)
+
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise commands.MissingPermissions(missing)
     return commands.check(predicate)
+
+
+def custom_user_has_permissions(**permissions):
+    deco = user_has_permissions(**permissions)
+
+    def inner(func):
+        wrapped = deco(func)
+        setattr(func, "user_perms", permissions)
+        return wrapped
+    return inner
+
+
+def bot_has_permissions(**perms):
+    def predicate(ctx):
+        guild = ctx.guild
+        me = guild.me if guild is not None else ctx.bot.user
+        permissions = ctx.channel.permissions_for(me)
+
+        missing = [perm for perm, value in perms.items() if getattr(permissions, perm) != value]
+
+        if not missing:
+            return True
+
+        raise errors.BotMissingPermissions(missing)
+    return commands.check(predicate)
+
+
+def custom_bot_has_permissions(**permissions):
+    deco = bot_has_permissions(**permissions)
+
+    def inner(func):
+        wrapped = deco(func)
+        setattr(func, "bot_perms", permissions)
+        return wrapped
+    return inner
 
 # Utilities
 

@@ -32,6 +32,7 @@ class Welcomer(commands.Cog):
             return await ctx.send_help(ctx.command)
 
     @welcomer.command(name="toggle", description="Toggle welcomer entirely")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_toggle(self, ctx):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         update = await Welcome(ctx).toggle_welcomer()
@@ -40,6 +41,7 @@ class Welcomer(commands.Cog):
         await ctx.send("I have disabled welcomer!")
 
     @welcomer.command(name="test", description="Test what welcomer will look like")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_test(self, ctx, fmt: int = 2, background: str = None):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if fmt not in [1, 2]:
@@ -50,6 +52,7 @@ class Welcomer(commands.Cog):
         await self.welcomer_handler(member=ctx.author, ctx=ctx, background=background, fmt=fmt)
 
     @welcomer.command(name="embed", description="Toggle the embed")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_embed(self, ctx):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         data = await Welcome(ctx).toggle_welcomer_embed()
@@ -58,6 +61,7 @@ class Welcomer(commands.Cog):
         await ctx.send("Embeds have been disabled for welcomer!")
 
     @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_text(self, ctx, *, text: str):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
@@ -72,6 +76,7 @@ class Welcomer(commands.Cog):
         await ctx.send("Welcomer text has been set!")
 
     @welcomer.command(name="type", description="Change the image type | 1 or 2")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_type(self, ctx, *, image_type: int):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if image_type not in [1, 2]:
@@ -80,6 +85,7 @@ class Welcomer(commands.Cog):
         await ctx.send("Type set!")
 
     @welcomer.command(name="channel", description="Set the output channel")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_channel(self, ctx, channel: discord.TextChannel):
         """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         await Welcome(ctx).set_welcomer_channel(channel)
@@ -210,7 +216,7 @@ class Welcomer(commands.Cog):
         content = self.build_message(data["welcomer_content"], member, guild)
         embed = data["welcomer_embed"]
         desc = [f"{member_sign} Account created __**{member_created}**__ days ago!"
-                if member_created else "__**Today!**__",
+                if member_created else f"{member_sign} Account created __**Today!**__",
                 f"🤖 __**Bot**__ account!" if member.bot else f"✅ __**User**__ account!"]
         desc = '\n'.join(desc)
         em = discord.Embed(color=color, description=desc)

@@ -16,7 +16,6 @@ __status__ = "Development"
 class Heartbeat(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.session = bot.session
         self.heartbeat.start()
 
     def cog_unload(self):
@@ -27,7 +26,7 @@ class Heartbeat(commands.Cog):
         if not self.bot.debug:
             try:
                 self.bot.log.info("[UptimeRobot HeartBeat] - Sending heartbeat Request")
-                req = await self.session.get(os.getenv("UPTIMEROBOT_URL"))
+                req = await self.bot.session.get(os.getenv("UPTIMEROBOT_URL"))
                 response = await req.json()
                 self.bot.log.info(f"[UptimeRobot Heartbeat] - UptimeRobot says: {response['msg']}")
             except Exception as e:

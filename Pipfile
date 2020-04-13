@@ -20,9 +20,9 @@ dictor = "*"
 mixpanel-api = "*"
 pillow = "*"
 lavalink = {editable = true,git = "https://github.com/devoxin/lavalink.py",ref = "dev"}
-ksoftapi = {editable = true,git = "https://github.com/devoxin/ksoftapi.py",ref = "refactor"}
 spotipy = "*"
 webcolors = "*"
+ksoftapi = "*"
 
 [requires]
 python_version = "3.8"

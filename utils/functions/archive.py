@@ -82,13 +82,23 @@ async def get_mentions(ctx, messages, mention_type: str = None):
 async def get_users(ctx, data):
     users = {}
     for message in data:
-        if str(message.author.id) not in users:
+        if message.webhook_id:
+            webhook = await ctx.bot.fetch_webhook(message.webhook_id)
+            if str(message.webhook_id) not in users:
+                badge = "server" if webhook.type is discord.WebhookType.channel_follower else "bot"
+                users[str(message.webhook_id)] = {
+                    "avatar": str(webhook.avatar_url_as(format="png", size=1024)),
+                    "username": str(webhook.name),
+                    "discriminator": "0000",
+                    "badge": badge
+                }
+        elif str(message.author.id) not in users:
             user = await ctx.bot.fetch_user(message.author.id)
             badge = "bot" if user.bot else None
             users[str(message.author.id)] = {
                 "avatar": str(user.avatar_url_as(static_format="png", size=1024)),
-                "username": user.name,
-                "discriminator": user.discriminator,
+                "username": str(user.name),
+                "discriminator": str(user.discriminator),
                 "badge": badge
             }
     return users
@@ -97,20 +107,33 @@ async def get_users(ctx, data):
 def get_messages(data):
     messages = []
     for message in data:
-        if message.type is discord.MessageType.default:
-            message_dict = {
-                "author": str(message.author.id),
-                "time": int(round(message.created_at.timestamp() * 1000)),
-                "content": [{}]
-            }
-            message_dict["content"][0]["msg"] = message.content if message.content else "Temp content, API errors if none atm"
-            if message.attachments:
-                message_dict["content"][0]["attachments"] = [x.url for x in message.attachments]
-            if message.embeds:
-                embed_dict = message.embeds[0].to_dict()
-                if embed_dict["type"] == "rich":
-                    message_dict["content"][0]["embed"] = embed_dict
-            messages.append(message_dict)
+        message_dict = {
+            "author": str(message.author.id),
+            "id": str(message.id),
+            "type": message.type.value,
+            "time": int(message.created_at.timestamp() * 1000)
+        }
+        if message.content:
+            message_dict["content"] = message.content
+        if message.attachments:
+            message_dict["attachments"] = []
+            for attachment in message.attachments:
+                message_dict["attachments"].append({
+                    "id": attachment.id,
+                    "filename": attachment.filename,
+                    "size": attachment.size,
+                    "height": attachment.height,
+                    "width": attachment.width,
+                    "url": attachment.url,
+                    "proxy_url": attachment.proxy_url
+                })
+        if message.embeds:
+            message_dict["embeds"] = []
+            for embed in message.embeds:
+                message_dict["embeds"].append(embed.to_dict())
+        if message.type is discord.MessageType.premium_guild_subscription:
+            message_dict["content"] = f"{message.author.mention} just boosted the server!"
+        messages.append(message_dict)
     return messages
 
 
@@ -118,9 +141,11 @@ async def format_data(ctx, data: list):
     channels, roles, users = await get_mentions(ctx, data)
     users.update(await get_users(ctx, data))
     out = {
-        "users": users,
-        "channels": channels,
-        "roles": roles,
+        "entities": {
+            "users": users,
+            "channels": channels,
+            "roles": roles
+        },
         "messages": get_messages(data)
     }
     return out

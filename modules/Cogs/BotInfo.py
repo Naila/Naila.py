@@ -6,7 +6,9 @@ import psutil
 from discord.ext import commands
 from discord.utils import oauth_url
 
+from utils.checks import checks
 from utils.functions.time import get_bot_uptime
+from utils.functions.text import filesize_fix
 
 __author__ = "Kanin"
 __date__ = "11/19/2019"
@@ -23,9 +25,25 @@ class BotInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command(description="List of APIs we use")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def apis(self, ctx):
+        em = discord.Embed(color=await ctx.guildcolor())
+        em.set_author(name="APIs we use:")
+        em.description = "https://and-here-is-my-code.glitch.me/\n" \
+                         "https://some-random-api.ml/\n" \
+                         "https://random-d.uk/\n" \
+                         "https://thecatapi.com/\n" \
+                         "https://thedogapi.com/\n" \
+                         "https://weeb.sh/\n" \
+                         "https://boob.bot/\n" \
+                         "https://sheri.bot/\n" \
+                         "https://nekos.life/"
+        await ctx.send(embed=em)
+
     @commands.command(description="Invite the bot or join the bots support server!")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def invite(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         perms = discord.Permissions(502656087)
         em = discord.Embed(color=await ctx.guildcolor())
         em.description = "**Support server:** https://discord.gg/fox\n" \
@@ -34,8 +52,8 @@ class BotInfo(commands.Cog):
         await ctx.send(embed=em)
 
     @commands.command(description="Various stats about the bot")
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def stats(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         bot = self.bot
         text, voice, category, news = 0, 0, 0, 0
         for channel in self.bot.get_all_channels():
@@ -48,8 +66,8 @@ class BotInfo(commands.Cog):
             elif isinstance(channel, discord.CategoryChannel):
                 category += 1
         channels = text + voice + category + news
-        cpu_usage = "{0:.1f}%".format(psutil.Process().cpu_percent(interval=None))
-        memory_usage = "{:.2f}Mb".format(psutil.Process().memory_full_info().uss / 1024 ** 2)
+        cpu_usage = f"{psutil.Process().cpu_percent():.1f}"
+        memory_usage = filesize_fix(psutil.Process().memory_full_info().uss)
         t1 = time.perf_counter()
         async with ctx.channel.typing():
             t2 = time.perf_counter()
@@ -64,11 +82,10 @@ class BotInfo(commands.Cog):
                   f"**Users:** {len(set(bot.get_all_members()))} {ctx.emojis('utility.people')}\n"
                   f"**Channels:** {channels} "
                   f"{ctx.emojis('channels.text')}/{ctx.emojis('channels.voice')}/"
-                  f"{ctx.emojis('channels.category')}/{ctx.emojis('channels.news')}\n"
+                  f"{ctx.emojis('channels.category')}\n"
                   f"**Text Channels:** {text} {ctx.emojis('channels.text')}\n"
                   f"**Voice Channels:** {voice} {ctx.emojis('channels.voice')}\n"
-                  f"**Category Channels:** {category} {ctx.emojis('channels.category')}\n"
-                  f"**News Channels:** {news} {ctx.emojis('channels.news')}",
+                  f"**Category Channels:** {category} {ctx.emojis('channels.category')}",
             inline=False
         ).add_field(
             name="System:",
@@ -92,7 +109,7 @@ class BotInfo(commands.Cog):
             inline=False
         ).add_field(
             name="Uptime:",
-            value=f"🆙**{get_bot_uptime(bot, brief=True)}**🆙",
+            value=f"🆙 **{get_bot_uptime(bot, brief=True)}** 🆙",
             inline=False
         ).set_author(
             name="🦊🐾Bot stats🐾🦊",
@@ -101,21 +118,6 @@ class BotInfo(commands.Cog):
             text=datetime.now().strftime(bot.config()["time_format"]),
             icon_url=bot.user.avatar_url
         )
-        await ctx.send(embed=em)
-
-    @commands.command(description="List of APIs we use")
-    async def apis(self, ctx):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_author(name="APIs we use:")
-        em.description = "https://and-here-is-my-code.glitch.me/\n" \
-                         "https://some-random-api.ml/\n" \
-                         "https://random-d.uk/\n" \
-                         "https://thecatapi.com/\n" \
-                         "https://thedogapi.com/\n" \
-                         "https://weeb.sh/\n" \
-                         "https://boob.bot/\n" \
-                         "https://sheri.bot/\n" \
-                         "https://nekos.life/"
         await ctx.send(embed=em)
 
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7fd07b30e81c386253958225b74f21e1e979062259762ef1263735e13e65fcb4"
+            "sha256": "011d9d618a104368a036d524fc33f8cb7f785110f3d37796667314f3b1188197"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -124,15 +124,10 @@
             ],
             "version": "==2.9"
         },
-        "ksoftapi": {
-            "editable": true,
-            "git": "https://github.com/devoxin/ksoftapi.py",
-            "ref": "9fe1d70ae09d6fc2b62832d4bf9d0835d7cea6ac"
-        },
         "lavalink": {
             "editable": true,
             "git": "https://github.com/devoxin/lavalink.py",
-            "ref": "88fba8a8b71aea155c069507c63d29455f0dbe56"
+            "ref": "b78727f48ae5cafbe938551313d87c007bad5998"
         },
         "mixpanel-api": {
             "hashes": [
@@ -282,12 +277,12 @@
         },
         "spotipy": {
             "hashes": [
-                "sha256:4cb4ce6509ea2641b59fd8a3791d145865f7589f2c901ddcf0316cd147724cfc",
-                "sha256:ed95a516d3f3297665db4baf5be363ac9af6b826cb466692defa370ca7597c79",
-                "sha256:f5bd0d04f4fd37d3b38cd3b35d2e9ce05182a57bc52403d6bad14d07bb4f4e68"
+                "sha256:29679098449c15a7a19b892fc95bf791f9b019672b4ce86185ff8b6f62d5fd51",
+                "sha256:77307501a777440f451394cd541734d1744303ceebc1c49ca701cf0e54f1703c",
+                "sha256:861c5762a61f342820eed07d2e4f6268dcd159d712f9f6e2c7c4468ec836430a"
             ],
             "index": "pypi",
-            "version": "==2.10.0"
+            "version": "==2.11.1"
         },
         "urllib3": {
             "hashes": [

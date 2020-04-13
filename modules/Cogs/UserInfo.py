@@ -56,9 +56,8 @@ class UserInfo(commands.Cog):
     @commands.guild_only()
     @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
                     invoke_without_command=True, description="Check a members information!")
-    # @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def user(self, ctx, *, member: discord.Member = None):
-        """{"user": [], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
             guild, message, member = ctx.guild, ctx.message, member or ctx.author
             em = discord.Embed(color=member.color)
@@ -101,10 +100,9 @@ class UserInfo(commands.Cog):
 
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
-    # @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def user_permissions(self, ctx, user: discord.Member = None, *,
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
-        """{"user": [], "bot": ["embed_links"]}"""
         user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
         perms_we_have = ""
@@ -125,9 +123,8 @@ class UserInfo(commands.Cog):
         await ctx.send(embed=em)
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
-    # @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def user_avatar(self, ctx, user: discord.Member = None):
-        """{"user": [], "bot": ["embed_links"]}"""
         if not user:
             user = ctx.author
         url = user.avatar_url_as(static_format="png", size=1024)

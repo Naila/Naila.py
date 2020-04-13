@@ -107,29 +107,31 @@ class Registration(commands.Cog):
     @checks.admin_or_permissions()
     @commands.group(case_insensitive=True, description="Registration management")
     async def setreg(self, ctx):
-        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
     @setreg.command(name="channel", description="Set the output channel")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_channel(self, ctx, channel: discord.TextChannel):
-        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         update = await Register(ctx).update_channel(channel)
         if not update:
             return await ctx.send_error("That channel is already set!")
         await ctx.send(f"Set the channel {channel.mention} as the output for registration.")
 
     @setreg.command(name="toggle", description="Toggle registration")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_toggle(self, ctx):
-        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
         update = await Register(ctx).toggle()
         if update:
             return await ctx.send("Registration enabled.")
         await ctx.send("Registration disabled.")
 
     @setreg.command(name="roles", description="Create the roles required for registration")
+    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_roles(self, ctx):
-        """{"user": ["manage_guild"], "bot": ["embed_links", "manage_roles"]}"""
         guild = ctx.guild
 
         def check(m):
@@ -169,8 +171,9 @@ class Registration(commands.Cog):
 
     @setreg.command(name="banage",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
+    @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
+    @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_banage(self, ctx, age: int):
-        """{"user": ["manage_guild"], "bot": ["embed_links", "ban_members"]}"""
         if age < 13:
             age = 13
             await ctx.send("You tried to set the age lower than the minimum (13) so I have set it to 13!")
@@ -179,8 +182,8 @@ class Registration(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Unregister, allowing you to register again!")
+    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
     async def unregister(self, ctx):
-        """{"user": [], "bot": ["embed_links", "manage_roles]}"""
         guild, author = ctx.guild, ctx.author
         if not can_manage_user(ctx, author):
             return await ctx.send("I don't have a role above you which means I can't manage your roles,"
@@ -196,8 +199,8 @@ class Registration(commands.Cog):
     @registration_check()
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
+    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
     async def register(self, ctx):
-        """{"user": [], "bot": ["embed_links", "manage_roles"]}"""
         guild, author = ctx.guild, ctx.author
 
         # Data

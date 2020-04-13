@@ -31,7 +31,7 @@ class Music(commands.Cog):
 
         if not hasattr(bot, 'lavalink'):
             # TODO: Load modules after bot is ready
-            bot.lavalink = lavalink.Client(337481187419226113)
+            bot.lavalink = lavalink.Client(610443119225471007)
             host = os.getenv("LAVALINK_HOST")
             port = int(os.getenv("LAVALINK_PORT"))
             password = os.getenv("LAVALINK_PASS")
@@ -117,7 +117,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Play some music! Or resumes the queue")
     async def play(self, ctx, *, query: str = None):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
         if query is None:
@@ -131,7 +130,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Search for a track on YouTube")
     async def search(self, ctx, *, query):
-        """{"user": [], "bot": ["embed_links"]}"""
         query = query.strip("<>")
         if url_rx.match(query):
             return await ctx.send_error("Search must be a string! Not a url!")
@@ -171,7 +169,6 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["resume"], description="Pauses or resumes the queue")
     async def pause(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
         if not player.is_playing:
@@ -186,7 +183,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Seek through a track in seconds or by time string")
     async def seek(self, ctx, time):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -210,7 +206,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Skip the currently playing song")
     async def skip(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -224,7 +219,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Stop the queue")
     async def stop(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -239,7 +233,6 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['np', 'song'], description="Check what's playing right now!")
     async def now(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
         if not player.current:
@@ -256,7 +249,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Get information on a song in the queue")
     async def songinfo(self, ctx, index: int):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
         if not player.queue:
@@ -292,7 +284,6 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["vol"], description="View or set the volume")
     async def volume(self, ctx, volume: int = None):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
         if not volume and volume != 0:
@@ -309,7 +300,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Toggle the queues shuffle status")
     async def shuffle(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -323,7 +313,6 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["loop"], description="Toggle the queues repeat status")
     async def repeat(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -337,7 +326,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Toggle the queues autoplay status | ONLY WORKS WITH YOUTUBE TRACKS")
     async def autoplay(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -352,7 +340,6 @@ class Music(commands.Cog):
 
     @commands.command(description="Remove a track from the queue")
     async def remove(self, ctx, index: int):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 
@@ -383,7 +370,6 @@ class Music(commands.Cog):
 
     @commands.command(name="disconnect", aliases=["dc"], description="Disconnect the bot from the voice channel")
     async def music_disconnect(self, ctx):
-        """{"user": [], "bot": ["embed_links"]}"""
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = await embed(self.bot, ctx.guild.id)
 

@@ -46,3 +46,11 @@ def escape(text: str, user_mentions: bool = True, role_mentions: bool = True, ch
         regex += r"|[#]?[0-9]{17,21}"
     regex += r")"
     return re.sub(regex, "@\u200b\\1", text)
+
+
+def filesize_fix(num):
+    for unit in ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}"
+        num /= 1024.0
+    return f"{num:.1f}YiB"

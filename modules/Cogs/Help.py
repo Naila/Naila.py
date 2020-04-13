@@ -1,9 +1,6 @@
-import json
-
 import discord
 from discord.ext import commands
 from discord.ext.commands.converter import Greedy
-from utils.functions.text import double_quote, single_quote
 
 __author__ = "Kanin"
 __date__ = "11/19/2019"
@@ -42,9 +39,9 @@ def clean_param(param):
     if not param.annotation:
         return param.name
 
-    clean = str(param).replace(" ", "").replace("=None", "").replace("*", "")
+    clean = str(param).replace(" ", "").strip("*=None")
     if "Union" in clean:
-        args = clean.split(":")[1].replace("Union[", "").replace("]", "")
+        args = clean.split(":")[1].strip("Union[]")
         arg_names = [item.split(".")[-1] for item in args.split(",")]
         union = f"{', '.join(arg_names[:-1])}, or {arg_names[-1]}" if len(arg_names) > 2 else " or ".join(arg_names)
         clean = f"{clean.split(':')[0]}:{union}"
@@ -100,48 +97,48 @@ class MyHelpCommand(commands.MinimalHelpCommand):
         else:
             self.paginator.add_line(signature, empty=True)
 
-        if command.help:
-            try:
-                docs = json.loads(command.help)
-                permissions = self.generate_perm_docs(docs)
-                line = f"```ml\n{permissions}\n```"
-                self.paginator.add_line(line, empty=False)
-            except RuntimeError:
-                for line in command.help.splitlines():
-                    self.paginator.add_line(line)
-                self.paginator.add_line()
-            except Exception as e:
-                print(e)
+        # if command.help:
+        # try:
+        # docs = json.loads(command.help)
+        # permissions = self.generate_perm_docs(docs)
+        # line = f"```ml\n{permissions}\n```"
+        # self.paginator.add_line(line, empty=False)
+        # except RuntimeError:
+        #     for line in command.help.splitlines():
+        #         self.paginator.add_line(line)
+        #     self.paginator.add_line()
+        # except Exception as e:
+        #     print(e)
 
-    def generate_perm_docs(self, docs):
-        ctx = self.context
-        user, guild, channel = ctx.author, ctx.guild, ctx.channel
-        bot_owner = False
-        user_needs_perms = docs["user"] + ["send_messages"]
-        bot_needs_perms = docs["bot"] + ["send_messages"]
-        if "bot_owner" in user_needs_perms:
-            bot_owner = True
-            user_needs_perms.pop(user_needs_perms.index("bot_owner"))
-        user_perms = [x[0] for x in iter(channel.permissions_for(user)) if x[1]]
-        bot_perms = [x[0] for x in iter(channel.permissions_for(guild.me)) if x[1]]
-
-        user_has_perms = [x.replace("_", " ").title() for x in user_needs_perms if x in user_perms]
-        user_missing_perms = [x.replace("_", " ").title() for x in user_needs_perms if x not in user_perms]
-        bot_has_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x in bot_perms]
-        bot_missing_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x not in bot_perms]
-
-        if bot_owner:
-            if user.id in ctx.bot.config()["owners"]:
-                user_has_perms.insert(0, "Bot Owner")
-            else:
-                user_missing_perms.insert(0, "Bot Owner")
-
-        user_has = double_quote(", ".join(user_has_perms)) or "User missing all required permissions"
-        user_missing = single_quote(", ".join(user_missing_perms)) or "User has all required permissions"
-        bot_has = double_quote(", ".join(bot_has_perms)) or "Bot missing all required permissions"
-        bot_missing = single_quote(", ".join(bot_missing_perms)) or "Bot has all required permissions"
-        msg = f"Permissions:\nUser:\n{user_has}\n{user_missing}\nBot:\n{bot_has}\n{bot_missing}"
-        return msg
+    # def generate_perm_docs(self, docs):
+    #     ctx = self.context
+    #     user, guild, channel = ctx.author, ctx.guild, ctx.channel
+    #     bot_owner = False
+    #     user_needs_perms = docs["user"] + ["send_messages"]
+    #     bot_needs_perms = docs["bot"] + ["send_messages"]
+    #     if "bot_owner" in user_needs_perms:
+    #         bot_owner = True
+    #         user_needs_perms.pop(user_needs_perms.index("bot_owner"))
+    #     user_perms = [x[0] for x in iter(channel.permissions_for(user)) if x[1]]
+    #     bot_perms = [x[0] for x in iter(channel.permissions_for(guild.me)) if x[1]]
+    #
+    #     user_has_perms = [x.replace("_", " ").title() for x in user_needs_perms if x in user_perms]
+    #     user_missing_perms = [x.replace("_", " ").title() for x in user_needs_perms if x not in user_perms]
+    #     bot_has_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x in bot_perms]
+    #     bot_missing_perms = [x.replace("_", " ").title() for x in bot_needs_perms if x not in bot_perms]
+    #
+    #     if bot_owner:
+    #         if user.id in ctx.bot.config()["owners"]:
+    #             user_has_perms.insert(0, "Bot Owner")
+    #         else:
+    #             user_missing_perms.insert(0, "Bot Owner")
+    #
+    #     user_has = double_quote(", ".join(user_has_perms)) or "User missing all required permissions"
+    #     user_missing = single_quote(", ".join(user_missing_perms)) or "User has all required permissions"
+    #     bot_has = double_quote(", ".join(bot_has_perms)) or "Bot missing all required permissions"
+    #     bot_missing = single_quote(", ".join(bot_missing_perms)) or "Bot has all required permissions"
+    #     msg = f"Permissions:\nUser:\n{user_has}\n{user_missing}\nBot:\n{bot_has}\n{bot_missing}"
+    #     return msg
 
 
 class Help(commands.Cog):

@@ -26,7 +26,6 @@ class Reminders(commands.Cog):
 
     @remind.command(name="me")
     async def remind_me(self, ctx, time: str, *, reminder: str):
-        """{"user": [], "bot": []}"""
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.author.id, time, reminder)
@@ -37,7 +36,6 @@ class Reminders(commands.Cog):
 
     @remind.command(name="here")
     async def remind_here(self, ctx, time: str, *, reminder: str):
-        """{"user": [], "bot": []}"""
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.channel.id, time, escape(reminder, False, False, False))
@@ -48,7 +46,6 @@ class Reminders(commands.Cog):
 
     @commands.command()
     async def reminders(self, ctx):
-        """{"user": [], "bot": []}"""
         reminders = await Reminder(ctx).list()
         to_send = "**Your reminders:**\n"
         if reminders:
@@ -69,7 +66,6 @@ class Reminders(commands.Cog):
 
     @commands.command(aliases=["delreminder"])
     async def deletereminder(self, ctx, reminder_id: int):
-        """{"user": [], "bot": []}"""
         deleted = await Reminder(ctx).delete(reminder_id)
         if deleted == "UPDATE 1":
             return await ctx.send("I have deleted that reminder!")
