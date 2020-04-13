@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "011d9d618a104368a036d524fc33f8cb7f785110f3d37796667314f3b1188197"
+            "sha256": "177c148bfd9d8ce1eb11f0055594f97893c6981d481fa1f621b2edab1f2db9c7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -123,6 +123,11 @@
                 "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"
             ],
             "version": "==2.9"
+        },
+        "ksoftapi": {
+            "editable": true,
+            "git": "https://github.com/KSoft-Si/ksoftapi.py",
+            "ref": "0916c7b633b02644680a77c3873bd13902ecca21"
         },
         "lavalink": {
             "editable": true,
