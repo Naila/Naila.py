@@ -8,8 +8,8 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+#      - restore_cache:
+#          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 
       - run:
           name: Set up pipenv and install requirements
@@ -17,10 +17,10 @@ jobs:
             sudo pip install pipenv
             pipenv install
 
-      - save_cache:
-          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-          paths:
-            - ./venv
+#      - save_cache:
+#          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+#          paths:
+#            - ./venv
 
       - run:
           name: Compile files
