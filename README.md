@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://cdn.naila.bot/naila/fullbody/Naila.png" height=600></img>
+<img src="https://cdn.naila.bot/naila/headshots/NailaCrop.png" height=250></img>
 <h1>Naila.py</h1>
 
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
