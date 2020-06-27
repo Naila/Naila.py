@@ -146,3 +146,4 @@ def role_or_permissions(ctx, **perms):
     # DMs don't have roles or permissions so
     if isinstance(ctx.channel, discord.DMChannel):
         return False
+    return False
