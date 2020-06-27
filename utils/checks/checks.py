@@ -51,8 +51,7 @@ def admin_or_permissions(**perms):
     def predicate(ctx):
         if ctx.author.permissions_in(ctx.channel).manage_guild:
             return True
-        return False
-        # return role_or_permissions(ctx, **perms)
+        return role_or_permissions(ctx, **perms)
     return commands.check(predicate)
 
 
@@ -131,11 +130,14 @@ def custom_bot_has_permissions(**permissions):
 def check_permissions(ctx, perms):
     # Bot owner override
     if is_owner():
+        print(3)
         return True
     # If no perms are provided there is nothing more to check
     if not perms:
+        print(4)
         return False
     # Perms checks the dict passed {"permission": bool}
+    print(5)
     resolved = ctx.channel.permissions_for(ctx.author)
     return all(getattr(resolved, name, None) == value for name, value in perms.items())
 
@@ -143,7 +145,9 @@ def check_permissions(ctx, perms):
 # TODO: Allow server owners to set mod/admin roles
 def role_or_permissions(ctx, **perms):
     if check_permissions(ctx, perms):
+        print(1)
         return True
     # DMs don't have roles or permissions so
     if isinstance(ctx.channel, discord.DMChannel):
+        print(2)
         return False
