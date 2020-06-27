@@ -51,7 +51,8 @@ def admin_or_permissions(**perms):
     def predicate(ctx):
         if ctx.author.permissions_in(ctx.channel).manage_guild:
             return True
-        return role_or_permissions(ctx, **perms)
+        return False
+        # return role_or_permissions(ctx, **perms)
     return commands.check(predicate)
 
 
@@ -146,4 +147,3 @@ def role_or_permissions(ctx, **perms):
     # DMs don't have roles or permissions so
     if isinstance(ctx.channel, discord.DMChannel):
         return False
-    return False
