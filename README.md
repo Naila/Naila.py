@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://kanin.cannot.date/2020/04/04/Naila.png" height=600></img>
+<img src="https://cdn.naila.bot/naila/headshots/NailaCrop.png" height=250></img>
 <h1>Naila.py</h1>
 
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
@@ -9,7 +9,11 @@
 
 [![Support-Server](https://discordapp.com/api/guilds/365260338851086346/widget.png?style=banner2)](https://discord.gg/fox)
 
-</div>
-
 Naila Bot written in discord.py\
 None of this is meant to be used by anyone but me, it's a mess atm and I don't expect anyone to understand it. :)
+
+<h2>Powered By</h2>
+
+[![JetBrains](http://cdn.naila.bot/jetbrains.svg)](https://www.jetbrains.com/?from=NailaBot)
+
+</div>
