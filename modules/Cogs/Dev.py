@@ -76,6 +76,7 @@ class Dev(commands.Cog):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
+    @checks.is_owner()
     @load.command(name="cog", aliases=["c"], description="Load a cog")
     async def load_cog(self, ctx, cog_name: str):
         cog_name = cog_name.replace(".py", "")
@@ -87,6 +88,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} has now been loaded!")
 
+    @checks.is_owner()
     @load.command(name="event", aliases=["e"], description="Load an event")
     async def load_event(self, ctx, event_name: str):
         event_name = event_name.replace(".py", "")
@@ -104,6 +106,7 @@ class Dev(commands.Cog):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
+    @checks.is_owner()
     @unload.command(name="cog", aliases=["c"], description="Unload a cog")
     async def unload_cog(self, ctx, cog_name: str):
         cog_name = cog_name.replace(".py", "")
@@ -115,6 +118,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} is now unloaded!")
 
+    @checks.is_owner()
     @unload.command(name="event", aliases=["e"], description="Unload an event")
     async def unload_event(self, ctx, event_name: str):
         event_name = event_name.replace(".py", "")
@@ -132,6 +136,7 @@ class Dev(commands.Cog):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
+    @checks.is_owner()
     @reload.command(name="cog", aliases=["c"], description="Reload a cog")
     async def reload_cog(self, ctx, cog_name: str):
         cog_name = cog_name.replace(".py", "")
@@ -143,6 +148,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
         await ctx.send(f"Cog {cog_name} has been reloaded!")
 
+    @checks.is_owner()
     @reload.command(name="event", aliases=["e"], description="Reload an event")
     async def reload_event(self, ctx, event_name: str):
         event_name = event_name.replace(".py", "")

@@ -111,6 +111,7 @@ class Registration(commands.Cog):
             return await ctx.send_help(ctx.command)
 
     @setreg.command(name="channel", description="Set the output channel")
+    @checks.admin_or_permissions()
     @checks.custom_bot_has_permissions(embed_links=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_channel(self, ctx, channel: discord.TextChannel):
@@ -120,6 +121,7 @@ class Registration(commands.Cog):
         await ctx.send(f"Set the channel {channel.mention} as the output for registration.")
 
     @setreg.command(name="toggle", description="Toggle registration")
+    @checks.admin_or_permissions()
     @checks.custom_bot_has_permissions(embed_links=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_toggle(self, ctx):
@@ -129,6 +131,7 @@ class Registration(commands.Cog):
         await ctx.send("Registration disabled.")
 
     @setreg.command(name="roles", description="Create the roles required for registration")
+    @checks.admin_or_permissions()
     @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_roles(self, ctx):
@@ -171,6 +174,7 @@ class Registration(commands.Cog):
 
     @setreg.command(name="banage",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
+    @checks.admin_or_permissions()
     @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def setreg_banage(self, ctx, age: int):
@@ -211,7 +215,7 @@ class Registration(commands.Cog):
         out = discord.Embed(color=await ctx.guildcolor())
         out.set_author(name=f"Introduction for {author}:",
                        icon_url=author.avatar_url if author.avatar else author.default_avatar_url)
-        out.set_footer(text=f"ID: {author.id} | {datetime.now().strftime(self.bot.config()['time_format'])}")
+        out.set_footer(text=f"ID: {author.id} | {datetime.utcnow().strftime(self.bot.config()['time_format'])}")
         em = discord.Embed(color=await ctx.guildcolor())
         roles_to_add = []
         x = 0

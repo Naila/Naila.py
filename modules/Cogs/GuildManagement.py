@@ -32,6 +32,7 @@ class GuildManagement(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @prefix.command(name="add", description="Add a prefix")
+    @checks.admin()
     @checks.custom_bot_has_permissions(embed_links=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def prefix_add(self, ctx, prefix: str):
@@ -51,6 +52,7 @@ class GuildManagement(commands.Cog):
         )
 
     @prefix.command(name="remove", description="Remove a prefix")
+    @checks.admin()
     @checks.custom_bot_has_permissions(embed_links=True)
     @checks.custom_user_has_permissions(manage_guild=True)
     async def prefix_remove(self, ctx, prefix):

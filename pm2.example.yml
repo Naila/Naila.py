@@ -1,0 +1,3 @@
+apps:
+  name: "Naila"
+  script: "main.py"

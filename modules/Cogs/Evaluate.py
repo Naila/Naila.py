@@ -43,7 +43,7 @@ ENV = {
 class Evaluate(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.process = psutil.Process(os.getpid())
+        self.process = psutil.Process()
         self.env = ENV
         self.stdout = io.StringIO()
 
@@ -166,6 +166,7 @@ async def func():
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
+    @checks.is_owner()
     @sql.command(name="execute")
     async def sql_execute(self, ctx, *, query: str):
         query = query.strip("`")
@@ -175,6 +176,7 @@ async def func():
         command = await self.bot.pool.execute(query)
         await ctx.send(f"```py\n{command}```")
 
+    @checks.is_owner()
     @sql.command(name="fetch")
     async def sql_fetch(self, ctx, *, query: str):
         query = query.strip("`")
