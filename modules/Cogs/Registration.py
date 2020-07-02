@@ -103,102 +103,94 @@ class Registration(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @commands.guild_only()
-    # @checks.admin_or_permissions()
-    # @commands.group(case_insensitive=True, description="Registration management")
-    # async def setreg(self, ctx):
-    #     if not ctx.invoked_subcommand:
-    #         return await ctx.send_help(ctx.command)
-    #
-    # @setreg.command(name="channel", description="Set the output channel")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # @checks.custom_user_has_permissions(manage_guild=True)
-    # async def setreg_channel(self, ctx, channel: discord.TextChannel):
-    #     update = await Register(ctx).update_channel(channel)
-    #     if not update:
-    #         return await ctx.send_error("That channel is already set!")
-    #     await ctx.send(f"Set the channel {channel.mention} as the output for registration.")
-    #
-    # @setreg.command(name="toggle", description="Toggle registration")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # @checks.custom_user_has_permissions(manage_guild=True)
-    # async def setreg_toggle(self, ctx):
-    #     update = await Register(ctx).toggle()
-    #     if update:
-    #         return await ctx.send("Registration enabled.")
-    #     await ctx.send("Registration disabled.")
-    #
-    # @setreg.command(name="roles", description="Create the roles required for registration")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
-    # @checks.custom_user_has_permissions(manage_guild=True)
-    # async def setreg_roles(self, ctx):
-    #     guild = ctx.guild
-    #
-    #     def check(m):
-    #         return m.channel == ctx.channel and m.author == ctx.author
-    #
-    #     try:
-    #         await ctx.send("This will create the roles needed for this cog to function.\n```md\n"
-    #                        "[Pronoun Roles](He/Him, She/Her, They/Them)\n"
-    #                        "[DM Roles](DMs Allowed, DMs NOT Allowed, Ask to DM)\n"
-    #                        "[Mention](Mention, No Mention)\n"
-    #                        "[Misc Roles](18+, Registered, <18)\n"
-    #                        "These roles are required for the cog to function correctly.\n"
-    #                        "DO NOT CHANGE THE NAME OF THESE ROLES\n"
-    #                        "They will be made with no permissions. You can modify this later through Role"
-    #                        " Management if you "
-    #                        "Need/Want to.\nDo you wish to continue? [This command will time out in 60s]```")
-    #         try:
-    #             setrole = await ctx.bot.wait_for("message", timeout=60.0, check=check)
-    #         except asyncio.TimeoutError:
-    #             return await ctx.send("Timed out")
-    #         if setrole.content.lower() == "no":
-    #             await ctx.send("Okay, this must be done before the command will work correctly!")
-    #         elif setrole.content.lower() == "yes":
-    #             created = 0
-    #             await ctx.send("Okay, this will just take a moment")
-    #             for role in roles:
-    #                 check = discord.utils.get(guild.roles, name=role)
-    #                 if check not in guild.roles:
-    #                     await guild.create_role(name=role)
-    #                     created += 1
-    #             await ctx.send(f"All done! Created {created} roles.")
-    #         else:
-    #             await ctx.send("You have entered an invalid response. Valid responses include `yes` and `no`.")
-    #     except (discord.HTTPException, discord.Forbidden):
-    #         await ctx.send("Creation of roles has failed, The most common problem is that I do not have Manage Roles "
-    #                        "Permissions on the server. Please check this and try again.")
-    #
-    # @setreg.command(name="banage",
-    #                 description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
-    # @checks.custom_user_has_permissions(manage_guild=True)
-    # async def setreg_banage(self, ctx, age: int):
-    #     if age < 13:
-    #         age = 13
-    #         await ctx.send("You tried to set the age lower than the minimum (13) so I have set it to 13!")
-    #     await Register(ctx).update_banage(age)
-    #     await ctx.send(f"I will now ban users who are less than {age}!")
-    #
-    # @commands.guild_only()
-    # @commands.command(description="Unregister, allowing you to register again!")
-    # @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
-    # async def unregister(self, ctx):
-    #     guild, author = ctx.guild, ctx.author
-    #     if not can_manage_user(ctx, author):
-    #         return await ctx.send("I don't have a role above you which means I can't manage your roles,"
-    #                               " please have someone with permissions move my role up!")
-    #     remove = []
-    #     for role in roles:
-    #         check = discord.utils.get(guild.roles, name=role)
-    #         if check in author.roles:
-    #             remove.append(check)
-    #     await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
-    #     await ctx.send("Done, you may now register again!")
+    @commands.group(case_insensitive=True, description="Registration management")
+    @commands.guild_only()
+    @checks.admin()
+    async def setreg(self, ctx):
+        if not ctx.invoked_subcommand:
+            return await ctx.send_help(ctx.command)
+
+    @setreg.command(name="channel", description="Set the output channel")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def setreg_channel(self, ctx, channel: discord.TextChannel):
+        update = await Register(ctx).update_channel(channel)
+        if not update:
+            return await ctx.send_error("That channel is already set!")
+        await ctx.send(f"Set the channel {channel.mention} as the output for registration.")
+
+    @setreg.command(name="toggle", description="Toggle registration")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def setreg_toggle(self, ctx):
+        update = await Register(ctx).toggle()
+        if update:
+            return await ctx.send("Registration enabled.")
+        await ctx.send("Registration disabled.")
+
+    @setreg.command(name="roles", description="Create the roles required for registration")
+    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    async def setreg_roles(self, ctx):
+        guild = ctx.guild
+
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.author
+
+        try:
+            await ctx.send("This will create the roles needed for this cog to function.\n```md\n"
+                           "[Pronoun Roles](He/Him, She/Her, They/Them)\n"
+                           "[DM Roles](DMs Allowed, DMs NOT Allowed, Ask to DM)\n"
+                           "[Mention](Mention, No Mention)\n"
+                           "[Misc Roles](18+, Registered, <18)\n"
+                           "These roles are required for the cog to function correctly.\n"
+                           "DO NOT CHANGE THE NAME OF THESE ROLES\n"
+                           "They will be made with no permissions. You can modify this later through Role"
+                           " Management if you "
+                           "Need/Want to.\nDo you wish to continue? [This command will time out in 60s]```")
+            try:
+                setrole = await ctx.bot.wait_for("message", timeout=60.0, check=check)
+            except asyncio.TimeoutError:
+                return await ctx.send("Timed out")
+            if setrole.content.lower() == "no":
+                await ctx.send("Okay, this must be done before the command will work correctly!")
+            elif setrole.content.lower() == "yes":
+                created = 0
+                await ctx.send("Okay, this will just take a moment")
+                for role in roles:
+                    check = discord.utils.get(guild.roles, name=role)
+                    if check not in guild.roles:
+                        await guild.create_role(name=role)
+                        created += 1
+                await ctx.send(f"All done! Created {created} roles.")
+            else:
+                await ctx.send("You have entered an invalid response. Valid responses include `yes` and `no`.")
+        except (discord.HTTPException, discord.Forbidden):
+            await ctx.send("Creation of roles has failed, The most common problem is that I do not have Manage Roles "
+                           "Permissions on the server. Please check this and try again.")
+
+    @setreg.command(name="banage",
+                    description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
+    @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
+    async def setreg_banage(self, ctx, age: int):
+        if age < 13:
+            age = 13
+            await ctx.send("You tried to set the age lower than the minimum (13) so I have set it to 13!")
+        await Register(ctx).update_banage(age)
+        await ctx.send(f"I will now ban users who are less than {age}!")
+
+    @commands.guild_only()
+    @commands.command(description="Unregister, allowing you to register again!")
+    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    async def unregister(self, ctx):
+        guild, author = ctx.guild, ctx.author
+        if not can_manage_user(ctx, author):
+            return await ctx.send("I don't have a role above you which means I can't manage your roles,"
+                                  " please have someone with permissions move my role up!")
+        remove = []
+        for role in roles:
+            check = discord.utils.get(guild.roles, name=role)
+            if check in author.roles:
+                remove.append(check)
+        await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
+        await ctx.send("Done, you may now register again!")
 
     @registration_check()
     @commands.cooldown(1, 300, commands.BucketType.user)

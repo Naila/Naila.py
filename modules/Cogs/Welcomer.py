@@ -24,78 +24,72 @@ class Welcomer(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @commands.guild_only()
-    # @commands.group(case_insensitive=True, description="Welcomer management")
-    # @checks.admin_or_permissions()
-    # async def welcomer(self, ctx):
-    #     if not ctx.invoked_subcommand:
-    #         return await ctx.send_help(ctx.command)
-    #
-    # @welcomer.command(name="toggle", description="Toggle welcomer entirely")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_toggle(self, ctx):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     update = await Welcome(ctx).toggle_welcomer()
-    #     if update:
-    #         return await ctx.send("I have enabled welcomer!")
-    #     await ctx.send("I have disabled welcomer!")
-    #
-    # @welcomer.command(name="test", description="Test what welcomer will look like")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_test(self, ctx, fmt: int = 2, background: str = None):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     if fmt not in [1, 2]:
-    #         return await ctx.send_error("fmt must either be 1 or 2!")
-    #     data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
-    #     background = background if background else data["welcomer_background"]
-    #     fmt = fmt if fmt else data["welcomer_type"]
-    #     await self.welcomer_handler(member=ctx.author, ctx=ctx, background=background, fmt=fmt)
-    #
-    # @welcomer.command(name="embed", description="Toggle the embed")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_embed(self, ctx):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     data = await Welcome(ctx).toggle_welcomer_embed()
-    #     if data:
-    #         return await ctx.send("Embeds have been enabled for welcomer!")
-    #     await ctx.send("Embeds have been disabled for welcomer!")
-    #
-    # @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_text(self, ctx, *, text: str):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
-    #     if text == "--current":
-    #         return await ctx.send(f"Current text:\n```{data['welcomer_content']}```")
-    #     if text == "--clear":
-    #         await Welcome(ctx).set_welcomer_text()
-    #         return await ctx.send("Welcomer text has been cleared!")
-    #     if len(text) >= 1800:
-    #         return await ctx.send_error("Text must be less than 1800 characters!")
-    #     await Welcome(ctx).set_welcomer_text(text)
-    #     await ctx.send("Welcomer text has been set!")
-    #
-    # @welcomer.command(name="type", description="Change the image type | 1 or 2")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_type(self, ctx, *, image_type: int):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     if image_type not in [1, 2]:
-    #         return await ctx.send_error("Type must be 1 or 2!")
-    #     await Welcome(ctx).set_welcomer_type(image_type)
-    #     await ctx.send("Type set!")
-    #
-    # @welcomer.command(name="channel", description="Set the output channel")
-    # @checks.admin_or_permissions()
-    # @checks.custom_bot_has_permissions(embed_links=True)
-    # async def welcomer_channel(self, ctx, channel: discord.TextChannel):
-    #     """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
-    #     await Welcome(ctx).set_welcomer_channel(channel)
-    #     await ctx.send(f"Channel set to {channel.mention}!")
+    @commands.group(case_insensitive=True, description="Welcomer management")
+    @commands.guild_only()
+    @checks.admin()
+    async def welcomer(self, ctx):
+        if not ctx.invoked_subcommand:
+            return await ctx.send_help(ctx.command)
+
+    @welcomer.command(name="toggle", description="Toggle welcomer entirely")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_toggle(self, ctx):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        update = await Welcome(ctx).toggle_welcomer()
+        if update:
+            return await ctx.send("I have enabled welcomer!")
+        await ctx.send("I have disabled welcomer!")
+
+    @welcomer.command(name="test", description="Test what welcomer will look like")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_test(self, ctx, fmt: int = 2, background: str = None):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        if fmt not in [1, 2]:
+            return await ctx.send_error("fmt must either be 1 or 2!")
+        data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
+        background = background if background else data["welcomer_background"]
+        fmt = fmt if fmt else data["welcomer_type"]
+        await self.welcomer_handler(member=ctx.author, ctx=ctx, background=background, fmt=fmt)
+
+    @welcomer.command(name="embed", description="Toggle the embed")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_embed(self, ctx):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        data = await Welcome(ctx).toggle_welcomer_embed()
+        if data:
+            return await ctx.send("Embeds have been enabled for welcomer!")
+        await ctx.send("Embeds have been disabled for welcomer!")
+
+    @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_text(self, ctx, *, text: str):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
+        if text == "--current":
+            return await ctx.send(f"Current text:\n```{data['welcomer_content']}```")
+        if text == "--clear":
+            await Welcome(ctx).set_welcomer_text()
+            return await ctx.send("Welcomer text has been cleared!")
+        if len(text) >= 1800:
+            return await ctx.send_error("Text must be less than 1800 characters!")
+        await Welcome(ctx).set_welcomer_text(text)
+        await ctx.send("Welcomer text has been set!")
+
+    @welcomer.command(name="type", description="Change the image type | 1 or 2")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_type(self, ctx, *, image_type: int):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        if image_type not in [1, 2]:
+            return await ctx.send_error("Type must be 1 or 2!")
+        await Welcome(ctx).set_welcomer_type(image_type)
+        await ctx.send("Type set!")
+
+    @welcomer.command(name="channel", description="Set the output channel")
+    @checks.custom_bot_has_permissions(embed_links=True)
+    async def welcomer_channel(self, ctx, channel: discord.TextChannel):
+        """{"user": ["manage_guild"], "bot": ["embed_links"]}"""
+        await Welcome(ctx).set_welcomer_channel(channel)
+        await ctx.send(f"Channel set to {channel.mention}!")
 
     # TODO: Fix auto roles and extend on welcomers functionality
     # @welcomer.group(name="userroles")

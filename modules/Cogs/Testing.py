@@ -183,7 +183,7 @@ class Testing(commands.Cog):
     #     data.add_field("file", open("utils/assets/ship/heart1.png", "rb"), filename="test/testing.png")
     #     async with ctx.session.post(
     #         url="https://cdn.naila.bot/upload/archive",
-    #         headers={"Authorization": "6c878e5f-6f10-4502-abff-be50cdf6e6f4"},
+    #         headers={"Authorization": ""},
     #         data=data
     #     ) as resp:
     #         if resp.status != 204:
