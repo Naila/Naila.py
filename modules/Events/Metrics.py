@@ -50,7 +50,7 @@ class Metrics(commands.Cog):
         async with self.bot.session.get("https://stats.boob.bot/pings") as pings_resp:
             pings_json = await pings_resp.json()
 
-        lines.append(f"guild_count,bot=bb count={int(stats_json['stats']['bb']['Guilds'])}")
+        lines.append(f"guild_count,bot=bb count={int(stats_json['stats']['bb']['Guilds'])}i")
 
         return web.Response(text="\n".join(lines))
 
