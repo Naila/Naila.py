@@ -44,13 +44,19 @@ class Metrics(commands.Cog):
 
         # BoobBot: TODO: Make this a micro service
         async with self.bot.session.get("https://stats.boob.bot/stats") as stats_resp:
-            stats_json = await stats_resp.json()
-        async with self.bot.session.get("https://stats.boob.bot/metrics") as metrics_resp:
-            metrics_json = await metrics_resp.json()
-        async with self.bot.session.get("https://stats.boob.bot/pings") as pings_resp:
-            pings_json = await pings_resp.json()
+            if stats_resp.status == 200:
+                stats_json = await stats_resp.json()
 
-        lines.append(f"guild_count,bot=bb count={int(stats_json['stats']['bb']['Guilds'])}i")
+                lines.append(f"audio_players,bot=bb count={int(stats_json['stats']['bb']['Audio_Players'])}i")
+                lines.append(f"guild_count,bot=bb count={int(stats_json['stats']['bb']['Guilds'])}i")
+                lines.append(f"user_count,bot=bb count={int(stats_json['stats']['bb']['Users'])}i")
+                lines.append(f"average_latency,bot=bb latency={stats_json['stats']['bb']['Average_Latency']}")
+        # async with self.bot.session.get("https://stats.boob.bot/metrics") as metrics_resp:
+        #     if metrics_resp.status == 200:
+        #         metrics_json = await metrics_resp.json()
+        # async with self.bot.session.get("https://stats.boob.bot/pings") as pings_resp:
+        #     if pings_resp.status == 200:
+        #         pings_json = await pings_resp.json()
 
         return web.Response(text="\n".join(lines))
 
