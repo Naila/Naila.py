@@ -30,8 +30,7 @@ class Music(commands.Cog):
         self.bot = bot
 
         if not hasattr(bot, 'lavalink'):
-            # TODO: Load modules after bot is ready
-            bot.lavalink = lavalink.Client(610443119225471007)
+            bot.lavalink = lavalink.Client(bot.user.id)
             host = os.getenv("LAVALINK_HOST")
             port = int(os.getenv("LAVALINK_PORT"))
             password = os.getenv("LAVALINK_PASS")

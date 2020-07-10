@@ -9,7 +9,7 @@ from discord.ext.commands import AutoShardedBot as DiscordBot
 from dotenv import load_dotenv
 
 from utils.database.GuildSettings import Prefixes
-from utils.config.setup_bot import setup_bot, setup_logger
+from utils import setup
 from utils.ctx import CustomContext
 
 __author__ = "Kanin"
@@ -44,7 +44,7 @@ class Bot(DiscordBot):
             ),
             status=discord.Status.dnd
         )
-        setup_bot(self)
+        setup.bot(self)
         try:
             self.loop.run_until_complete(self.start(os.getenv("TOKEN")))
         except (discord.errors.LoginFailure, discord.errors.HTTPException) as e:
@@ -57,9 +57,9 @@ class Bot(DiscordBot):
         return await super().get_context(message, cls=cls or CustomContext)
 
     if __name__ != "__main__":
-        setup_logger()
+        setup.logger()
 
 
 if __name__ == "__main__":
-    setup_logger()
+    setup.logger()
     Bot()

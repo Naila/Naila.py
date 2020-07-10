@@ -1,34 +1,30 @@
 import datetime
+import json
 import logging
 import os
 import sys
-import json
 from collections.__init__ import Counter
 
 import aiohttp
 import asyncpg
-import coloredlogs
 import discord
 import psutil
 import sentry_sdk as sentry
-import yaml
-from ksoftapi.client import Client as KClient
 import spotipy
+from ksoftapi.client import Client as KClient
 from spotipy.oauth2 import SpotifyClientCredentials
 
 from utils.config.config import get_banner, get_config
 
 __author__ = "Kanin"
-__date__ = "11/19/2019"
+__date__ = "07/10/2020"
 __copyright__ = "Copyright 2019, Kanin"
 __credits__ = ["Kanin"]
 __license__ = "GPL v3.0"
-__version__ = "1.0.0"
+__version__ = "0.0.1"
 __maintainer__ = "Kanin"
 __email__ = "im@kanin.dev"
-__status__ = "Production"
-
-logger = logging.getLogger()
+__status__ = "Development"
 
 
 def init_sentry(bot):
@@ -49,25 +45,6 @@ async def init_connection(conn):
     )
 
 
-def setup_logger():
-    with open("config/logging.yml", "r") as log_config:
-        config = yaml.safe_load(log_config)
-
-    coloredlogs.install(
-        level="INFO",
-        logger=logger,
-        fmt=config["formats"]["console"],
-        datefmt=config["formats"]["datetime"],
-        level_styles=config["levels"],
-        field_styles=config["fields"]
-    )
-
-    file = logging.FileHandler(filename=f"logs/bot.log", encoding="utf-8", mode="w")
-    file.setFormatter(logging.Formatter(config["formats"]["file"]))
-    logger.addHandler(file)
-    return logger
-
-
 def setup_bot(bot):
     # Argument Handling
     bot.debug = any("debug" in arg.lower() for arg in sys.argv)
@@ -83,7 +60,7 @@ def setup_bot(bot):
 
     # Load modules
     bot.session = aiohttp.ClientSession(loop=bot.loop)
-    starter_modules(bot)
+    bot.load_extension("modules.Events.Ready")
 
     # Database
     credentials = {
@@ -117,22 +94,3 @@ def setup_bot(bot):
     bot.process = psutil.Process()
     bot.color = bot.config()["colors"]["main"]
     bot.error_color = bot.config()["colors"]["error"]
-
-
-def starter_modules(bot):
-    paths = ["modules/Events", "modules/Cogs"]
-    for path in paths:
-        loaded, failed = 0, 0
-        name = path.split('/')[1]
-        for file in os.listdir(path):
-            try:
-                if file.endswith(".py"):
-                    bot.load_extension(f"{path.replace('/', '.')}.{file[:-3]}")
-                    loaded += 1
-            except Exception as e:
-                failed += 1
-                bot.log.error(f"Failed to load {path}/{file}: {repr(e)}")
-        if failed > 0:
-            bot.log.info(f"Loaded {loaded} {name} | Failed to load {failed} {name}")
-        else:
-            bot.log.info(f"Loaded {loaded} {name}")
