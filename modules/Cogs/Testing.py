@@ -1,13 +1,15 @@
-from io import BytesIO
 import json
+import random
+import re
+from io import BytesIO
+from typing import Union
 
 import discord
-import re
+from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
-import random
+
 from utils.checks import checks
 from utils.functions.archive import format_data
-from PIL import Image, ImageDraw, ImageFont
 
 __author__ = "Kanin"
 __date__ = "12/19/2019"
@@ -20,6 +22,11 @@ __email__ = "im@kanin.dev"
 __status__ = "Development"
 
 HEX_COLOR_RE = re.compile(r"^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$")
+RGB_COLOR_RE = re.compile(
+    r"([0-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]) *, *"
+    r"([0-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]) *, *"
+    r"([0-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(?!\d)"
+)
 COLOR_NAMES_TO_HEX = {
     "alice_blue": "#f0f8ff",
     "antique_white": "#faebd7",
@@ -229,65 +236,80 @@ class Testing(commands.Cog):
         em.set_footer(text=chan)
         await ctx.send(embed=em)
 
-    @staticmethod
-    def interpolate(color_a: tuple, color_b: tuple, t):
-        return tuple(int(a + (b - a) * t) for a, b in zip(color_a, color_b))
-
-    @staticmethod
-    def closest_colour(requested_colour):
-        min_colours = {}
-        for name, hexa in COLOR_NAMES_TO_HEX.items():
-            hexa = hexa.strip("#")
-            r_c, g_c, b_c = tuple(int(hexa[i:i+2], 16) for i in (0, 2, 4))
-            rd = (r_c - requested_colour[0]) ** 2
-            gd = (g_c - requested_colour[1]) ** 2
-            bd = (b_c - requested_colour[2]) ** 2
-            min_colours[(rd + gd + bd)] = name
-        return min_colours[min(min_colours.keys())]
-
-    def get_colour_name(self, requested_colour):
-        try:
-            hexa = "#{:02x}{:02x}{:02x}".format(*requested_colour)
-            color_keys = list(COLOR_NAMES_TO_HEX.keys())
-            color_values = list(COLOR_NAMES_TO_HEX.values())
-            closest_name = actual_name = color_keys[color_values.index(hexa)].capitalize().replace("_", " ")
-        except ValueError:
-            closest_name = self.closest_colour(requested_colour).capitalize().replace("_", " ")
-            actual_name = None
-        return actual_name, closest_name
-
-    @checks.is_owner()
     @commands.command()
-    @checks.custom_user_has_permissions(bot_owner=True)
+    @checks.is_owner()
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def color(self, ctx, *, color: str = None):
-        color = color.strip("#") if color else f"{random.randint(0, 0xFFFFFF):06x}"
-        match = HEX_COLOR_RE.match(color)
-        if not match:
-            if color.lower().replace(" ", "_") not in COLOR_NAMES_TO_HEX:
-                return await ctx.send_error("Color must be a valid hex code!")
-            color = COLOR_NAMES_TO_HEX[color.lower().replace(" ", "_")]
-        hex_digits = match.group(1) if match else color.strip("#")
-        if len(hex_digits) == 3:
-            hex_digits = "".join(2 * d for d in hex_digits)
-        integer = int(hex_digits, 16)
-        rgb = tuple(int(hex_digits[i:i+2], 16) for i in (0, 2, 4))
-        color_name, closest_name = self.get_colour_name(rgb)
+    async def color(self, ctx, *, color: Union[discord.Member, str] = None):
+        valid = self.validate_color(color)
+        if not valid:
+            return await ctx.send_error("Invalid color!")
+
+        color = valid
+        color_image = self.generate_color_image(color["rgb"])
+        gradient_image = self.generate_gradient_image(color["rgb"])
+        em = discord.Embed(color=color["decimal"])
+
+        color_name, closest_name = self.get_color_name(color["rgb"])
         author_name = color_name if color_name else f"Closest named color: {closest_name}"
-        em = discord.Embed(color=integer)
         em.set_author(name=author_name)
-        em.add_field(name="HEX:", value=f"#{hex_digits}")
-        em.add_field(name="RGB:", value=str(rgb))
-        em.add_field(name="Integer:", value=str(integer))
-        em.set_thumbnail(url="attachment://color.png")
-        em.set_image(url="attachment://gradient.png")
-        color_image_create = Image.new("RGB",  (200, 200), rgb)
+
+        em.add_field(name="HEX:", value=f"#{color['hex']}")
+        em.add_field(name="RGB:", value=str(color["rgb"]))
+        em.add_field(name="Integer:", value=str(color["decimal"]))
+
+        em.set_thumbnail(url=f"attachment://{color['hex']}.png")
+        em.set_image(url=f"attachment://{color['hex']}-gradient.png")
+        await ctx.send(
+            embed=em,
+            files=[
+                discord.File(fp=color_image, filename=f"{color['hex']}.png"),
+                discord.File(fp=gradient_image, filename=f"{color['hex']}-gradient.png")
+            ]
+        )
+
+    @staticmethod
+    def validate_color(color):
+        # TODO: HSL, HSV, CMYK, XYZ
+        if color is None:
+            hexa = f"{random.randint(0, 0xFFFFFF):06x}"
+            rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
+            decimal = int(hexa, 16)
+        elif isinstance(color, discord.Member):
+            hexa = str(color.color).strip("#")
+            rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
+            decimal = int(hexa, 16)
+        elif RGB_COLOR_RE.match(color.strip("()")):
+            rgb = tuple(int(x) for x in color.strip("()").split(","))
+            hexa = "{:02x}{:02x}{:02x}".format(*rgb)
+            decimal = int(hexa, 16)
+        elif HEX_COLOR_RE.match(color):
+            hexa = color.strip("#")
+            rgb = tuple(int(hexa[i:i+2], 16) for i in (0, 2, 4))
+            decimal = int(hexa, 16)
+        elif color.lower().replace(" ", "_") in COLOR_NAMES_TO_HEX:
+            hexa = COLOR_NAMES_TO_HEX[color.lower().replace(" ", "_")].strip("#")
+            rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
+            decimal = int(hexa, 16)
+        else:
+            return None
+        return {
+            "rgb": rgb,
+            "hex": hexa,
+            "decimal": decimal
+        }
+
+    @staticmethod
+    def generate_color_image(color: tuple) -> Image:
+        color_image_create = Image.new("RGB", (512, 512), color)
         color_image = BytesIO()
         color_image_create.save(color_image, "PNG")
         color_image.seek(0)
+        return color_image
+
+    def generate_gradient_image(self, color: tuple) -> Image:
         blank = Image.new("RGB", (2200, 400), (0, 0, 0))
-        dark_gradient = [self.interpolate(rgb, (0, 0, 0), t/10) for t in range(11)]
-        light_gradient = [self.interpolate(rgb, (255, 255, 255), t/10) for t in range(11)]
+        dark_gradient = [self.interpolate(color, (0, 0, 0), t / 10) for t in range(11)]
+        light_gradient = [self.interpolate(color, (255, 255, 255), t / 10) for t in range(11)]
         for i in range(11):
             coord = i * 200
             font = ImageFont.truetype("utils/assets/fonts/Smithsonian.ttf", size=32)
@@ -312,13 +334,34 @@ class Testing(commands.Cog):
         gradient_image = BytesIO()
         blank.save(gradient_image, "PNG")
         gradient_image.seek(0)
-        await ctx.send(
-            embed=em,
-            files=[
-                discord.File(fp=color_image, filename="color.png"),
-                discord.File(fp=gradient_image, filename="gradient.png")
-            ]
-        )
+        return gradient_image
+
+    @staticmethod
+    def interpolate(color_a: tuple, color_b: tuple, t) -> tuple:
+        return tuple(int(a + (b - a) * t) for a, b in zip(color_a, color_b))
+
+    @staticmethod
+    def closest_color(requested_colour):
+        min_colours = {}
+        for name, hexa in COLOR_NAMES_TO_HEX.items():
+            hexa = hexa.strip("#")
+            r_c, g_c, b_c = tuple(int(hexa[i:i+2], 16) for i in (0, 2, 4))
+            rd = (r_c - requested_colour[0]) ** 2
+            gd = (g_c - requested_colour[1]) ** 2
+            bd = (b_c - requested_colour[2]) ** 2
+            min_colours[(rd + gd + bd)] = name
+        return min_colours[min(min_colours.keys())]
+
+    def get_color_name(self, requested_colour):
+        try:
+            hexa = "#{:02x}{:02x}{:02x}".format(*requested_colour)
+            color_keys = list(COLOR_NAMES_TO_HEX.keys())
+            color_values = list(COLOR_NAMES_TO_HEX.values())
+            closest_name = actual_name = color_keys[color_values.index(hexa)].replace("_", " ").title()
+        except ValueError:
+            closest_name = self.closest_color(requested_colour).replace("_", " ").title()
+            actual_name = None
+        return actual_name, closest_name
 
 
 def setup(bot):
