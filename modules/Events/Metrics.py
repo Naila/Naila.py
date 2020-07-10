@@ -42,6 +42,16 @@ class Metrics(commands.Cog):
 
         lines.append(f"guild_count,bot=naila count={len(self.bot.guilds)}i")
 
+        # BoobBot: TODO: Make this a micro service
+        async with self.bot.session.get("https://stats.boob.bot/stats") as stats_resp:
+            stats_json = await stats_resp.json()
+        async with self.bot.session.get("https://stats.boob.bot/metrics") as metrics_resp:
+            metrics_json = await metrics_resp.json()
+        async with self.bot.session.get("https://stats.boob.bot/pings") as pings_resp:
+            pings_json = await pings_resp.json()
+
+        lines.append(f"guild_count,bot=bb count={int(stats_json['stats']['bb']['Guilds'])}")
+
         return web.Response(text="\n".join(lines))
 
     async def start_app(self):
