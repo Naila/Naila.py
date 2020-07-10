@@ -170,20 +170,22 @@ async def func():
     @sql.command(name="execute")
     async def sql_execute(self, ctx, *, query: str):
         query = query.strip("`")
+        con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):
             query = "\n".join(query.split("\n")[1:])
 
-        command = await self.bot.pool.execute(query)
+        command = await con.execute(query)
         await ctx.send(f"```py\n{command}```")
 
     @checks.is_owner()
     @sql.command(name="fetch")
     async def sql_fetch(self, ctx, *, query: str):
         query = query.strip("`")
+        con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):
             query = "\n".join(query.split("\n")[1:])
 
-        command = await self.bot.pool.fetch(query)
+        command = await con.fetch(query)
         await ctx.send(f"```py\n{command}```")
 
 

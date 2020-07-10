@@ -22,7 +22,8 @@ class Reminders:
 
     async def add(self, location: int, expires: str, reminder: str):
         ctx = self.ctx
-        await ctx.pool.execute(
+        con = await ctx.pool.acquire()
+        await con.execute(
             "INSERT INTO reminders (user_id, channel_id, expires, reminder) VALUES ($1, $2, $3, $4)",
             ctx.author.id,
             location,
@@ -32,12 +33,13 @@ class Reminders:
 
     @staticmethod
     async def check(bot):
-        reminders = await bot.pool.fetch(
+        con = await bot.pool.acquire()
+        reminders = await con.fetch(
             "SELECT * FROM reminders WHERE NOT expired AND expires <= now() AT TIME ZONE 'utc'"
         )
         for reminder in reminders:
             bot.log.info(f"Reminder #{reminder['id']} expired")
-            await bot.pool.execute("UPDATE reminders SET expired=True WHERE id=$1", reminder["id"])
+            await con.execute("UPDATE reminders SET expired=True WHERE id=$1", reminder["id"])
             author = bot.get_user(reminder["user_id"])
             channel = bot.get_channel(reminder["channel_id"])
             to_send = f"**Reminder** {author.mention}: {reminder['reminder']}"
@@ -53,7 +55,8 @@ class Reminders:
 
     async def list(self):
         ctx = self.ctx
-        reminders = await ctx.pool.fetch(
+        con = await ctx.pool.acquire()
+        reminders = await con.fetch(
             "SELECT * FROM reminders WHERE NOT expired AND user_id=$1",
             ctx.author.id
         )
@@ -61,7 +64,8 @@ class Reminders:
 
     async def delete(self, reminder_id: int):
         ctx = self.ctx
-        deleted = await ctx.pool.execute(
+        con = await ctx.pool.acquire()
+        deleted = await con.execute(
             "UPDATE reminders SET expired=null WHERE id=$1 AND user_id=$2",
             reminder_id,
             ctx.author.id
