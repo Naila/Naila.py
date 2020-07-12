@@ -1,9 +1,9 @@
-name: Style Checker
-on: [push]
-
-jobs:
-  wemake-stylechecker:
-    name: We Make Services Style Checker
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wemake-services/wemake-python-styleguide@0.14.0
+#name: Style Checker
+#on: [push]
+#
+#jobs:
+#  wemake-stylechecker:
+#    name: We Make Services Style Checker
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: wemake-services/wemake-python-styleguide@0.14.0
