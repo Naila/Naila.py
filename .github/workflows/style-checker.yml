@@ -1,8 +1,11 @@
-name: Style_Checker
-on: [push]
+#name: Style_Checker
+#on: [push]
+#
+#jobs:
+#  Style_Checker:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: wemake-services/wemake-python-styleguide@0.14.0
 
-jobs:
-  Style_Checker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: wemake-services/wemake-python-styleguide@0.14.0
+- name: wemake-python-styleguide
+  uses: wemake-services/wemake-python-styleguide@0.14.0
