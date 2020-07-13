@@ -46,7 +46,7 @@ class PrivateVC(commands.Cog):
         }
         await tc.edit(overwrites=overwrites)
         await vc.edit(overwrites=overwrites)
-        await ctx.send("Added them!")
+        await ctx.send(f"{member.mention} now has access to your channels!")
 
     @privatevc.command(name="remove")
     async def privatevc_remove(self, ctx: CustomContext, *, member: discord.Member):
@@ -67,7 +67,7 @@ class PrivateVC(commands.Cog):
         }
         await tc.edit(overwrites=overwrites)
         await vc.edit(overwrites=overwrites)
-        await ctx.send("Removed them!")
+        await ctx.send(f"{member.mention} no longer has access to your channels!")
 
     async def clear_data(self, member: discord.Member, guild: discord.Guild):
         if member.id in self.queued:
