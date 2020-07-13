@@ -23,7 +23,7 @@ class PrivateVC(commands.Cog):
     ):
         guild: discord.Guild = member.guild
         if after.channel is not None:
-            settings = await PrivateVCs.settings(self.bot, guild)
+            settings = await PrivateVCs.fetch_settings(self.bot, guild)
             data = await PrivateVCs.fetch_data(self.bot, member)
             if data:
                 return
