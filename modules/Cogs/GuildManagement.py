@@ -1,5 +1,8 @@
 from discord.ext import commands
+
+from utils.ctx import CustomContext
 from utils.database.GuildSettings import Prefixes
+from utils.database import PrivateVCs
 from utils.functions import errors
 import discord
 from utils.checks import checks
@@ -25,6 +28,30 @@ class GuildManagement(commands.Cog):
     async def guildset(self, ctx):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
+
+    @guildset.group(description="Private VC management", aliases=["pvc"])
+    @checks.admin()
+    async def privatevc(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
+    @privatevc.command(name="category", aliases=["cat"])
+    async def privatevc_category(self, ctx: CustomContext, *, category: discord.CategoryChannel):
+        if not category.guild == ctx.guild:
+            return await ctx.send_error("Category must be in this guild!")
+        vc = await category.create_voice_channel("Join for a private VC")
+        await PrivateVCs.set_settings(self.bot, ctx.guild, category, vc)
+        await ctx.send("Done!")
+
+    @privatevc.command(name="toggle")
+    async def privatevc_toggle(self, ctx: CustomContext):
+        settings = await PrivateVCs.fetch_settings(self.bot, ctx.guild)
+        if not settings["category_id"]:
+            return await ctx.send_error("You must set a category before you toggle Private VCs!")
+        status = await PrivateVCs.toggle(self.bot, ctx.guild)
+        if status:
+            return await ctx.send("I have enabled Private VCs!")
+        await ctx.send("I have disabled Private VCs!")
 
     @guildset.group(description="Prefix management")
     @checks.admin()

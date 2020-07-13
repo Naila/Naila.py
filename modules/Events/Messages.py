@@ -20,8 +20,6 @@ class Messages(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if not self.bot.is_ready():
-            return
         ctx = await self.bot.get_context(message)
         # Adding some statistics
         self.bot.counter["messages"] += 1

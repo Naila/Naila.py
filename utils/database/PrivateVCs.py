@@ -21,14 +21,13 @@ async def fetch_settings(bot: DiscordBot, guild: discord.Guild):
 
 
 async def set_settings(bot: DiscordBot, guild: discord.Guild,
-                       category: discord.CategoryChannel, voice: discord.VoiceChannel, text: discord.TextChannel):
+                       category: discord.CategoryChannel, voice: discord.VoiceChannel):
     con = await bot.pool.acquire()
     await check(bot, guild)
     await con.execute(
-        "UPDATE guildsettings_privatevc SET category_id=$1, default_vc_id=$2, default_tc_id=$3 WHERE guild_id=$4",
+        "UPDATE guildsettings_privatevc SET category_id=$1, default_vc_id=$2 WHERE guild_id=$3",
         category.id,
         voice.id,
-        text.id,
         guild.id
     )
     await bot.pool.release(con)
@@ -37,10 +36,21 @@ async def set_settings(bot: DiscordBot, guild: discord.Guild,
 async def reset_settings(bot: DiscordBot, guild: discord.Guild):
     con = await bot.pool.acquire()
     await con.execute(
-        "UPDATE guildsettings_privatevc SET category_id=null, default_vc_id=null, default_tc_id=null WHERE guild_id=$1",
+        "UPDATE guildsettings_privatevc SET category_id=null, default_vc_id=null, vc_enabled=false WHERE guild_id=$1",
         guild.id
     )
     await bot.pool.release(con)
+
+
+async def toggle(bot: DiscordBot, guild: discord.Guild):
+    con = await bot.pool.acquire()
+    settings = await fetch_settings(bot, guild)
+    await con.execute(
+        "UPDATE guildsettings_privatevc SET vc_enabled = NOT vc_enabled WHERE guild_id=$1",
+        guild.id
+    )
+    await bot.pool.release(con)
+    return not settings["vc_enabled"]
 
 
 async def add_data(bot: DiscordBot,
