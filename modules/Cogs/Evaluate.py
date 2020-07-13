@@ -176,6 +176,7 @@ async def func():
 
         command = await con.execute(query)
         await ctx.send(f"```py\n{command}```")
+        await self.bot.pool.release(con)
 
     @checks.is_owner()
     @sql.command(name="fetch")
@@ -187,6 +188,7 @@ async def func():
 
         command = await con.fetch(query)
         await ctx.send(f"```py\n{command}```")
+        await self.bot.pool.release(con)
 
 
 def setup(bot):

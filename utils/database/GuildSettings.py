@@ -95,6 +95,7 @@ class Registration:
         con = await ctx.pool.acquire()
         data = await self.data()
         if data["channel"] and data["channel"] == channel.id:
+            await ctx.pool.release(con)
             return False
         await con.execute("UPDATE registration SET channel=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
         await ctx.pool.release(con)
@@ -217,6 +218,7 @@ class Prefixes:
         # Now that we have the list, let's try to see if it's in the message, if not we just return the entire list
         for prefix in prefixes:
             if message.content.lower().startswith(prefix):
+                await bot.pool.release(con)
                 return message.content[:len(prefix)]
         await bot.pool.release(con)
         return prefixes
@@ -242,6 +244,7 @@ class Prefixes:
         con = await ctx.pool.acquire()
         # If the prefix is more than 10 characters we don't want it
         if len(prefix) > 10:
+            await ctx.pool.release(con)
             raise errors.PrefixTooLong
 
         # Get the current prefixes and make sure it's not 10 in length
