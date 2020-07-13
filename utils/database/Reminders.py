@@ -30,6 +30,7 @@ class Reminders:
             parse_time(expires),
             reminder
         )
+        await ctx.pool.release(con)
 
     @staticmethod
     async def check(bot):
@@ -45,13 +46,16 @@ class Reminders:
             to_send = f"**Reminder** {author.mention}: {reminder['reminder']}"
             if channel:
                 try:
+                    await bot.pool.release(con)
                     return await channel.send(to_send)
                 except (discord.Forbidden, discord.HTTPException):
                     to_send += "\n*Failed to send to channel*"
             try:
                 await author.send(to_send)
             except (discord.Forbidden, discord.HTTPException):
+                await bot.pool.release(con)
                 return
+        await bot.pool.release(con)
 
     async def list(self):
         ctx = self.ctx
@@ -60,6 +64,7 @@ class Reminders:
             "SELECT * FROM reminders WHERE NOT expired AND user_id=$1",
             ctx.author.id
         )
+        await ctx.pool.release(con)
         return reminders
 
     async def delete(self, reminder_id: int):
@@ -70,4 +75,5 @@ class Reminders:
             reminder_id,
             ctx.author.id
         )
+        await ctx.pool.release(con)
         return deleted

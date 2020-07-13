@@ -150,9 +150,9 @@ def format_time(time):
 
 
 def emojis(bot, emoji: str):
-    with open("config/emojis.yml", "r") as emjs:
-        emojs = yaml.safe_load(emjs)
-    return bot.get_emoji(dictor(emojs, emoji))
+    with open("config/emojis.yml", "r") as x:
+        y = yaml.safe_load(x)
+    return bot.get_emoji(dictor(y, emoji))
 
 
 def get_emoji(bot, query: str):
@@ -179,7 +179,10 @@ def get_thumbnail(url):
 
 
 async def guildcolor(bot, guild_id: int):
-    return await bot.pool.fetchval("SELECT color FROM guilds WHERE guild_id=$1", guild_id)
+    con = await bot.pool.acquire()
+    color = await con.fetchval("SELECT color FROM guilds WHERE guild_id=$1", guild_id)
+    await bot.pool.release(con)
+    return color
 
 
 async def embed(bot, guild_id: int):

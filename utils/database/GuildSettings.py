@@ -15,6 +15,8 @@ __maintainer__ = "Kanin"
 __email__ = "im@kanin.dev"
 __status__ = "Production"
 
+# TODO: Rewrite all of this shitty code, literally all of the database code is poopoo
+
 
 @dataclass
 class Guild:
@@ -22,8 +24,11 @@ class Guild:
 
     async def color(self, pool=None, guild: discord.Guild = None):
         guild = self.ctx.guild if self.ctx else guild
-        con = await self.ctx.pool.acquire() if self.ctx else await pool.acquire()
-        return await con.fetchval("SELECT color FROM guilds WHERE guild_id=$1", guild.id)
+        pool = self.ctx.pool if self.ctx else pool
+        con = await pool.acquire()
+        color = await con.fetchval("SELECT color FROM guilds WHERE guild_id=$1", guild.id)
+        await pool.release(con)
+        return color
 
 
 @dataclass
@@ -41,6 +46,7 @@ class Check:
         if not data:
             await con.execute("INSERT INTO guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
             bot.log.info(f"Added {guild.name} to the (guilds) database")
+        await bot.pool.release(con)
 
     @staticmethod
     async def welcomer(bot, guild: discord.Guild):
@@ -49,6 +55,7 @@ class Check:
         if not data:
             await con.execute("INSERT INTO welcomer (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
             bot.log.info(f"Added {guild.name} to the (welcomer) database")
+        await bot.pool.release(con)
 
     @staticmethod
     async def registration(bot, guild: discord.Guild):
@@ -57,6 +64,7 @@ class Check:
         if not data:
             await con.execute("INSERT INTO registration (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
             bot.log.info(f"Added {guild.name} to the (registration) database")
+        await bot.pool.release(con)
 
 
 @dataclass
@@ -65,11 +73,13 @@ class Registration:
 
     async def data(self):
         ctx = self.ctx
+        con = await ctx.pool.acquire()
         await Check().registration(ctx.bot, ctx.guild)
-        data = await ctx.pool.fetchrow(
+        data = await con.fetchrow(
             "SELECT enabled, channel, age::json, questions::json, role FROM registration WHERE guild_id=$1",
             ctx.guild.id
         )
+        await ctx.pool.release(con)
         return data
 
     async def toggle(self):
@@ -77,6 +87,7 @@ class Registration:
         con = await ctx.pool.acquire()
         data = await self.data()
         await con.execute("UPDATE registration SET enabled = NOT enabled WHERE guild_id=$1", ctx.guild.id)
+        await ctx.pool.release(con)
         return not data["enabled"]
 
     async def update_channel(self, channel: discord.TextChannel):
@@ -86,6 +97,7 @@ class Registration:
         if data["channel"] and data["channel"] == channel.id:
             return False
         await con.execute("UPDATE registration SET channel=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
+        await ctx.pool.release(con)
         return True
 
     async def update_banage(self, age: int):
@@ -96,6 +108,7 @@ class Registration:
             str(age),
             ctx.guild.id
         )
+        await ctx.pool.release(con)
 
 
 @dataclass
@@ -111,6 +124,7 @@ class Welcomer:
             " welcomer_embed, welcomer_content, welcomer_type FROM welcomer WHERE guild_id=$1",
             guild.id
         )
+        await bot.pool.release(con)
         return data
 
     async def toggle_welcomer(self):
@@ -121,6 +135,7 @@ class Welcomer:
             "UPDATE welcomer SET welcomer_enabled = NOT welcomer_enabled WHERE guild_id=$1",
             ctx.guild.id
         )
+        await ctx.pool.release(con)
         return not data["welcomer_enabled"]
 
     async def toggle_welcomer_embed(self):
@@ -131,6 +146,7 @@ class Welcomer:
             "UPDATE welcomer SET welcomer_embed = NOT welcomer_embed WHERE guild_id=$1",
             ctx.guild.id
         )
+        await ctx.pool.release(con)
         return not data["welcomer_embed"]
 
     async def set_welcomer_text(self, text: str = None):
@@ -142,6 +158,7 @@ class Welcomer:
             text,
             ctx.guild.id
         )
+        await ctx.pool.release(con)
 
     async def set_welcomer_type(self, image_type: int):
         ctx = self.ctx
@@ -152,6 +169,7 @@ class Welcomer:
             image_type,
             ctx.guild.id
         )
+        await ctx.pool.release(con)
 
     async def set_welcomer_channel(self, channel: discord.TextChannel):
         ctx = self.ctx
@@ -162,6 +180,7 @@ class Welcomer:
             channel.id,
             ctx.guild.id
         )
+        await ctx.pool.release(con)
 
     @staticmethod
     async def disable(bot, guild: discord.Guild):
@@ -170,6 +189,7 @@ class Welcomer:
             "UPDATE welcomer SET welcomer_channel=null, welcomer_enabled=false WHERE guild_id=$1",
             guild.id
         )
+        await bot.pool.release(con)
 
 
 @dataclass
@@ -198,6 +218,7 @@ class Prefixes:
         for prefix in prefixes:
             if message.content.lower().startswith(prefix):
                 return message.content[:len(prefix)]
+        await bot.pool.release(con)
         return prefixes
 
     async def list(self):
@@ -213,6 +234,7 @@ class Prefixes:
             prefixes.extend(await con.fetchval("SELECT prefixes FROM guilds WHERE guild_id=$1", ctx.guild.id))
 
         # Make a string out of the list and return it
+        await bot.pool.release(con)
         return ", ".join(prefixes)
 
     async def add(self, prefix: str):
@@ -225,11 +247,13 @@ class Prefixes:
         # Get the current prefixes and make sure it's not 10 in length
         current_prefixes = await con.fetchval("SELECT prefixes FROM guilds WHERE guild_id=$1", ctx.guild.id)
         if len(current_prefixes) == 10:
+            await ctx.pool.release(con)
             raise errors.TooManyPrefixes
 
         # Get the default prefixes and make sure the prefix isn't in those
         default_prefixes = ctx.bot.config()["prefixes"]["main"] + ctx.bot.config()["prefixes"]["debug"]
         if prefix.lower() in current_prefixes or prefix in default_prefixes:
+            await ctx.pool.release(con)
             raise errors.DuplicatePrefix
 
         # Add the prefix
@@ -238,6 +262,7 @@ class Prefixes:
             prefix.lower(),
             ctx.guild.id
         )
+        await ctx.pool.release(con)
 
     async def remove(self, prefix: str):
         ctx = self.ctx
@@ -245,6 +270,7 @@ class Prefixes:
         # Get the current prefixes and make sure it's in them
         prefixes = await con.fetchval("SELECT prefixes FROM guilds WHERE guild_id=$1", ctx.guild.id)
         if prefix.lower() not in prefixes:
+            await ctx.pool.release(con)
             raise errors.PrefixNotFound
 
         # Remove the prefix
@@ -253,3 +279,4 @@ class Prefixes:
             prefix.lower(),
             ctx.guild.id
         )
+        await ctx.pool.release(con)

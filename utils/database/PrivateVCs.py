@@ -9,12 +9,15 @@ async def check(bot: DiscordBot, guild: discord.Guild):
     if not _data:
         await con.execute("INSERT INTO guildsettings_privatevc (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
         bot.log.info(f"Added {guild.name} to the (guildsettings_privatevc) database")
+    await bot.pool.release(con)
 
 
-async def settings(bot: DiscordBot, guild: discord.Guild):
+async def fetch_settings(bot: DiscordBot, guild: discord.Guild):
     con = await bot.pool.acquire()
     await check(bot, guild)
-    return await con.fetchrow("SELECT * FROM guildsettings_privatevc WHERE guild_id=$1", guild.id)
+    settings = await con.fetchrow("SELECT * FROM guildsettings_privatevc WHERE guild_id=$1", guild.id)
+    await bot.pool.release(con)
+    return settings
 
 
 async def set_settings(bot: DiscordBot, guild: discord.Guild,
@@ -28,6 +31,7 @@ async def set_settings(bot: DiscordBot, guild: discord.Guild,
         text.id,
         guild.id
     )
+    await bot.pool.release(con)
 
 
 async def reset_settings(bot: DiscordBot, guild: discord.Guild):
@@ -36,6 +40,7 @@ async def reset_settings(bot: DiscordBot, guild: discord.Guild):
         "UPDATE guildsettings_privatevc SET category_id=null, default_vc_id=null, default_tc_id=null WHERE guild_id=$1",
         guild.id
     )
+    await bot.pool.release(con)
 
 
 async def add_data(bot: DiscordBot,
@@ -51,14 +56,17 @@ async def add_data(bot: DiscordBot,
         vc.id,
         datetime.utcnow()
     )
+    await bot.pool.release(con)
 
 
 async def fetch_data(bot: DiscordBot, user: discord.Member):
     con = await bot.pool.acquire()
-    return await con.fetchrow(
+    data = await con.fetchrow(
         "SELECT * FROM data_privatevc WHERE user_id=$1 AND time_removed IS NULL",
         user.id
     )
+    await bot.pool.release(con)
+    return data
 
 
 async def update_data(bot: DiscordBot, user: discord.Member):
@@ -68,3 +76,4 @@ async def update_data(bot: DiscordBot, user: discord.Member):
         datetime.utcnow(),
         user.id,
     )
+    await bot.pool.release(con)
