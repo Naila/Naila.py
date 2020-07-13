@@ -1,3 +1,5 @@
+import re
+
 import discord
 from discord.ext import commands
 from discord.ext.commands.converter import Greedy
@@ -48,7 +50,10 @@ def clean_param(param):
     if ":" in clean:
         args = clean.split(":")[1].split(".")[-1]
         clean = f"{clean.split(':')[0]}:{args}" if args else clean
-    clean = clean.replace("str", "Text").replace("int", "Number")
+    clean = re.sub(r"\bstr\b|\bActionReason\b", "Text", clean)
+    clean = re.sub(r"\bint\b", "Number", clean)
+    clean = re.sub(r"\bActionReason\b", "Text", clean)
+    clean = re.sub(r"\bMemberID\b", "Member or ID", clean)
     return clean
 
 
