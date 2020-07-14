@@ -376,11 +376,10 @@ class Music(commands.Cog):
             em.description = "Not connected."
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
             return await ctx.send("You're not in my voice channel!")
-        else:
-            player.queue.clear()
-            await player.stop()
-            await disconnect(self.bot, ctx.guild.id)
-            em.description = "Disconnected."
+        player.queue.clear()
+        await player.stop()
+        await disconnect(self.bot, ctx.guild.id)
+        em.description = "Disconnected."
         await ctx.send(embed=em)
 
 
