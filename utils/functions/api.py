@@ -76,8 +76,7 @@ async def upload_to_cdn(session, files: dict = None):
     ) as resp:
         if not resp.status == 200:
             return raise_for_status(resp)
-        else:
-            return True
+        return True
 
 
 # Modified from https://3.python-requests.org/_modules/requests/models/#Response.raise_for_status
