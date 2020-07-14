@@ -446,10 +446,7 @@ class Queue:
                 to_delete.append(await self.ctx.channel.send(f"Invalid page given. ({page}/{self.maximum_pages})"))
                 await asyncio.sleep(5)
 
-        try:
-            await self.ctx.channel.delete_messages(to_delete)
-        except:
-            pass
+        await self.ctx.channel.delete_messages(to_delete)
 
     async def stop_pages(self):
         """stops the interactive pagination session"""
