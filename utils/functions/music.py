@@ -487,7 +487,6 @@ class Queue:
                     await self.message.clear_reactions()
                     break
                 except (discord.HTTPException, discord.Forbidden):
-                    pass
                     break
 
             try:
