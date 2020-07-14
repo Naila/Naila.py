@@ -82,8 +82,8 @@ async def enqueue_and_send(bot, ctx, query=None, track=None):
             return await ctx.send(embed=em)
         if results["loadType"] == "PLAYLIST_LOADED":
             tracks = results["tracks"]
-            for track in tracks:
-                player.add(requester=ctx.author.id, track=track)
+            for track1 in tracks:
+                player.add(requester=ctx.author.id, track=track1)
 
             em.title = "Playlist Enqueued:"
             em.description = f"{ctx.emojis('music.youtube')}" \
@@ -485,9 +485,9 @@ class Queue:
                 self.paginating = False
                 try:
                     await self.message.clear_reactions()
+                    break
                 except (discord.HTTPException, discord.Forbidden):
                     pass
-                finally:
                     break
 
             try:
