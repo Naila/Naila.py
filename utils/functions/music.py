@@ -448,7 +448,7 @@ class Queue:
 
         try:
             await self.ctx.channel.delete_messages(to_delete)
-        except Exception:
+        except:
             pass
 
     async def stop_pages(self):
