@@ -25,7 +25,7 @@ __status__ = "Production"
 load_dotenv(join(dirname(__file__), 'env/.env'))
 
 perms = discord.Permissions(int(os.getenv("PERMS")))
-description = "**Support server**: https://discord.gg/fox\n" \
+description = "**Support server**: https://discord.gg/WXGHfHH\n" \
               f"**Bot invite**:" \
               f" [Recommended perms]({oauth_url(os.getenv('CLIENT_ID'), permissions=perms)}) |" \
               f" [No perms]({oauth_url(os.getenv('CLIENT_ID'))})"

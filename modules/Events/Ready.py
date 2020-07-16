@@ -46,7 +46,7 @@ class Ready(commands.Cog):
         self.bot.log.info(info)
         await self.bot.change_presence(
             activity=discord.Game(
-                name="n!help | discord.gg/fox | Mid rewrite.. please be patient",
+                name="n!help | discord.gg/WXGHfHH | Mid rewrite.. please be patient",
                 type=discord.ActivityType.playing
             ),
             status=discord.Status.online
