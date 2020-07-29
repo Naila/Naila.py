@@ -6,4 +6,4 @@ jobs:
     name: We Make Services Style Checker
     runs-on: ubuntu-latest
     steps:
-      - uses: wemake-services/wemake-python-styleguide@0.15.1
+      - uses: wemake-services/wemake-python-styleguide@0.14.1
