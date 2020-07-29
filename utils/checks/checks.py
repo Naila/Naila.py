@@ -35,7 +35,7 @@ def is_nsfw():
             return True
         if ctx.channel.is_nsfw():
             return True
-        raise commands.NSFWChannelRequired
+        raise commands.NSFWChannelRequired(ctx.channel)
     return commands.check(predicate)
 
 
