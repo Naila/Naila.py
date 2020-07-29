@@ -6,6 +6,7 @@
 [![CircleCI](https://circleci.com/gh/NailaBot/Naila.py.svg?style=svg)](https://circleci.com/gh/NailaBot/Naila.py)
 [![CodeFactor](https://www.codefactor.io/repository/github/nailabot/naila.py/badge)](https://www.codefactor.io/repository/github/nailabot/naila.py)
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=NailaBot/Naila.py)](https://dependabot.com)
+[![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 
 [![Support-Server](https://discordapp.com/api/guilds/294505571317710849/widget.png?style=banner2)](https://discord.gg/WXGHfHH)
 
