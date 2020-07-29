@@ -12,7 +12,7 @@ __status__ = "Production"
 
 
 def get_banner():
-    banner = open("res/banner.txt")
+    banner = open("utils/assets/banner.txt")
     return banner.read()
 
 
