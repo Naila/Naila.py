@@ -11,7 +11,7 @@ import discord
 import psutil
 import sentry_sdk as sentry
 import spotipy
-from ksoftapi.client import Client as KClient
+# from ksoftapi.client import Client as KClient
 from spotipy.oauth2 import SpotifyClientCredentials
 
 from utils.config.config import get_banner, get_config
@@ -76,7 +76,7 @@ def setup_bot(bot):
 
     # Config
     bot.config = get_config
-    bot.kclient = KClient(api_key=os.getenv("KSOFT"))
+    # bot.kclient = KClient(api_key=os.getenv("KSOFT"))
     bot.spotify = spotipy.Spotify(
         client_credentials_manager=SpotifyClientCredentials(
             client_id=os.getenv("SPOTIFY_ID"),

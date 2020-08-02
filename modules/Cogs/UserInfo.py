@@ -82,8 +82,9 @@ class UserInfo(commands.Cog):
             em.add_field(
                 name="Key Permissions:",
                 value=", ".join(
-                    [str(x).replace("_", " ").title()
-                     for x in [x[0] for x in iter(ctx.channel.permissions_for(member)) if x[1]] if x in key_perms]
+                    sorted([str(x).replace("_", " ").title()
+                            for x in
+                            [x[0] for x in iter(ctx.channel.permissions_for(member)) if x[1]] if x in key_perms])
                 ) or "None",
                 inline=False
             )
@@ -105,19 +106,19 @@ class UserInfo(commands.Cog):
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
         user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
-        perms_we_have = ""
-        perms_we_dont = ""
+        perms_list = []
         if isinstance(channel, discord.TextChannel):
             for perm in perms:
                 if perm[0] not in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
-                    perms_we_have += f"+\t{perm_name}\n" if perm[1] else f"-\t{perm_name}\n"
+                    perms_list.append(f"+\t{perm_name}" if perm[1] else f"-\t{perm_name}")
         elif isinstance(channel, discord.VoiceChannel):
             for perm in perms:
                 if perm[0] in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
-                    perms_we_have += f"+\t{perm_name}\n" if perm[1] else f"-\t{perm_name}\n"
-        desc = f"```diff\n{perms_we_have}{perms_we_dont}\n```"
+                    perms_list.append(f"+\t{perm_name}" if perm[1] else f"-\t{perm_name}")
+        end = "\n".join(sorted(perms_list))
+        desc = f"```diff\n{end}\n```"
         em = discord.Embed(color=user.color, description=desc)
         em.set_author(name=f"{user.name}'s permissions in {channel}:")
         await ctx.send(embed=em)
