@@ -23,6 +23,7 @@ lavalink = {editable = true,git = "https://github.com/devoxin/lavalink.py",ref =
 spotipy = "*"
 webcolors = "*"
 aiohttp-jinja2 = "*"
+lru-dict = "*"
 
 [requires]
 python_version = "3.8"
