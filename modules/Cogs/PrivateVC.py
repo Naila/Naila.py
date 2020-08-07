@@ -22,6 +22,7 @@ class PrivateVC(commands.Cog):
         self.bot = bot
         self.queued = []
 
+    @commands.cooldown(5, 30, commands.BucketType.user)
     @commands.group(aliases=["pvc"])
     async def privatevc(self, ctx: CustomContext):
         if not ctx.invoked_subcommand:
@@ -59,6 +60,10 @@ class PrivateVC(commands.Cog):
             return await ctx.send_error("You must run this in the guild your channel is in!")
         if ctx.channel.id != data["textchannel_id"]:
             return await ctx.send_error("You must use this command in your private channel!")
+        if member.permissions_in(tc).administrator:
+            return await ctx.send_error("That user is an Administrator... we can't remove them!")
+        if member == ctx.guild.me:
+            return await ctx.send_error("You can't remove me...")
         if not member.permissions_in(tc).read_messages:
             return await ctx.send_error("That member doesn't have access!")
         overwrites = {
@@ -106,12 +111,15 @@ class PrivateVC(commands.Cog):
                     return
                 overwrites = {
                     guild.default_role: discord.PermissionOverwrite(read_messages=False),
-                    member: discord.PermissionOverwrite(read_messages=True, send_messages=True, connect=True)
+                    member: discord.PermissionOverwrite(read_messages=True, send_messages=True, connect=True),
+                    guild.me: discord.PermissionOverwrite(
+                        read_messages=True, send_messages=True, embed_links=True, manage_permissions=True
+                    )
                 }
                 vc: discord.VoiceChannel = \
                     await category.create_voice_channel(f"{member.name}'s channel", overwrites=overwrites)
                 tc: discord.TextChannel = \
-                    await category.create_text_channel(f"{member.name}s-channel", overwrites=overwrites)
+                    await category.create_text_channel(f"{member.name}s-channel", overwrites=overwrites, nsfw=True)
                 await PrivateVCs.add_data(self.bot, member, guild, tc, vc)
                 await member.move_to(vc, reason="User created private channel")
                 info = f"To add someone to your channel use: `n!pvc add <Member>`\n\n" \
