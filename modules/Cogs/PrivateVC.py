@@ -109,6 +109,8 @@ class PrivateVC(commands.Cog):
                 if not category:
                     await PrivateVCs.reset_settings(self.bot, guild)
                     return
+                if member.bot:
+                    return await member.move_to(None, reason="Bot joined Private VC")
                 overwrites = {
                     guild.default_role: discord.PermissionOverwrite(read_messages=False),
                     member: discord.PermissionOverwrite(read_messages=True, send_messages=True, connect=True),
