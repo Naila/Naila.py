@@ -226,7 +226,7 @@ class CustomContext(commands.Context):
             if codepoint == "✅":
                 confirm = True
                 return True
-            elif codepoint == "❌":
+            if codepoint == "❌":
                 confirm = False
                 return True
 
