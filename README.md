@@ -1,4 +1,4 @@
-<div style="align-content: center">
+<div align="center">
 
 <img src="https://cdn.naila.bot/naila/headshots/NailaCrop.png" width=65%></img>
 <h1>Naila.py</h1>
