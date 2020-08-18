@@ -8,6 +8,13 @@
   <a href="https://github.com/wemake-services/wemake-python-styleguide"><img alt="Style: wemake" src="https://img.shields.io/badge/style-wemake-000000.svg"></a>
   <a href="https://github.com/NailaBot/Naila.py/blob/master/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/NailaBot/Naila.py"></a>
   <br>
+  <a href="https://naila.bot"><img alt="Website" src="https://img.shields.io/website?down_color=red&down_message=down&up_color=009696&up_message=naila.bot&url=https%3A%2F%2Fnaila.bot"></a>
+  <a href="https://twitter.com/NailaBot"><img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/NailaBot?label=Follow&style=social"></a>
+  <br>
+  <a href="https://github.com/Rapptz/discord.py"><img alt="Library" src="https://botlist.space/bot/337481187419226113/badge?property=library&style=flat&color=blue"></a>
+  <img alt="Servers" src="https://botlist.space/bot/337481187419226113/badge?property=servers&style=flat&color=009696">
+  <img alt="Uptime" src="https://botlist.space/bot/337481187419226113/badge?property=uptime&style=flat&color=green">
+  <br>
   <a href="https://discord.gg/WXGHfHH"><img alt="Support Server" src="https://discordapp.com/api/guilds/294505571317710849/widget.png?style=banner2"></a>
   <br>
   <p>TODO</p>
