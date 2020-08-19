@@ -19,10 +19,10 @@ class Ready(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_connect(self):
-        self.bot.gateway_server_name = json.loads(self.bot.ws._trace[0])[0]
-        self.bot.session_server_name = json.loads(self.bot.ws._trace[0])[1]["calls"][0]
+    # @commands.Cog.listener()
+    # async def on_connect(self):
+    #     self.bot.gateway_server_name = json.loads(self.bot.ws._trace[0])[0]
+    #     self.bot.session_server_name = json.loads(self.bot.ws._trace[0])[1]["calls"][0]
 
     @commands.Cog.listener()
     async def on_resumed(self):
