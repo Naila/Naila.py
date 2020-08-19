@@ -21,18 +21,18 @@ class Ready(commands.Cog):
 
     @commands.Cog.listener()
     async def on_connect(self):
-        self.bot.gateway_server_name = json.loads(self.bot.shards[0].ws._trace[0])[0]
-        self.bot.session_server_name = json.loads(self.bot.shards[0].ws._trace[0])[1]["calls"][0]
+        self.bot.gateway_server_name = json.loads(self.bot.ws._trace[0])[0]
+        self.bot.session_server_name = json.loads(self.bot.ws._trace[0])[1]["calls"][0]
 
     @commands.Cog.listener()
     async def on_resumed(self):
-        self.bot.gateway_server_name = json.loads(self.bot.shards[0].ws._trace[0])[0]
-        self.bot.session_server_name = json.loads(self.bot.shards[0].ws._trace[0])[1]["calls"][0]
+        self.bot.gateway_server_name = json.loads(self.bot.ws._trace[0])[0]
+        self.bot.session_server_name = json.loads(self.bot.ws._trace[0])[1]["calls"][0]
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.gateway_server_name = json.loads(self.bot.shards[0].ws._trace[0])[0]
-        self.bot.session_server_name = json.loads(self.bot.shards[0].ws._trace[0])[1]["calls"][0]
+        self.bot.gateway_server_name = json.loads(self.bot.ws._trace[0])[0]
+        self.bot.session_server_name = json.loads(self.bot.ws._trace[0])[1]["calls"][0]
         info = f"\nConnected ⚡\n" \
                f"Gateway server: {self.bot.gateway_server_name}\n" \
                f"Session server: {self.bot.session_server_name}\n" \
