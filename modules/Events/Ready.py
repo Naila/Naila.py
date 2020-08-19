@@ -1,4 +1,3 @@
-import json
 import os
 
 import discord
@@ -56,6 +55,8 @@ class Ready(commands.Cog):
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
         blacklist = ["modules/Events/Ready", "modules/Cogs/Music"]
+        if self.bot.debug:
+            blacklist.append("modules/Events/Loops")
         for path in paths:
             loaded, failed = 0, 0
             name = path.split("/")[-1]
