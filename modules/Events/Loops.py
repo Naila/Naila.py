@@ -1,6 +1,6 @@
 from discord.ext import commands, tasks
 
-from utils.APIs.BotLists import BotListSpace
+from utils.APIs.BotLists import BotListSpace, DiscordBots
 from utils.database.Reminders import Reminders
 
 __author__ = "Kanin"
@@ -33,7 +33,8 @@ class Loops(commands.Cog):
         self.bot.log.info(
             f"Posting to all bot lists... | Shards: {self.bot.shard_count} | Guilds: {len(self.bot.guilds)}"
         )
-        await BotListSpace().post(self.bot)
+        await BotListSpace().post_bot_stats(self.bot)
+        await DiscordBots().post_bot_stats(self.bot)
         self.bot.log.info("Done posting")
 
 
