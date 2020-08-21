@@ -18,7 +18,7 @@ class Loops(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.ten_second_loop.start()
-        self.botlists.start()
+        # self.botlists.start()
 
     def cog_unload(self):
         self.ten_second_loop.stop()
