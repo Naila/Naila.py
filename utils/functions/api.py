@@ -91,11 +91,10 @@ async def session_get(session, url, allowed_statuses: list = None, headers: dict
         return None
 
 
-async def session_post(session, url, allowed_statuses: list = None,
-                       headers: dict = None, json: dict = None, files: dict = None):
+async def session_post(session, url, allowed_statuses: list = None, headers: dict = None, json: dict = None):
     allowed_statuses = allowed_statuses or [200]
     try:
-        async with session.post(url, headers=headers, json=json, files=files) as resp:
+        async with session.post(url, headers=headers, json=json) as resp:
             if resp.status not in allowed_statuses:
                 return raise_for_status(resp)
             return resp
