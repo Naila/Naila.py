@@ -1,9 +1,0 @@
-{
-  "apps": [{
-    "name": "Naila",
-    "script": "/path/to/main.py",
-    "args": [""],
-    "interpreter" : "pipenv",
-    "interpreter_args": "run python"
-  }]
-}

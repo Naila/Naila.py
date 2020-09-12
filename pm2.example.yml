@@ -1,3 +1,5 @@
 apps:
-  name: "Naila"
-  script: "main.py"
+  - name: "Naila"
+    script: "/path/to/main.py"
+    interpreter: "pipenv"
+    interpreter_args: "run python"
