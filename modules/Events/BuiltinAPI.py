@@ -5,16 +5,6 @@ import jinja2
 from aiohttp import web
 from discord.ext import commands
 
-__author__ = "Kanin"
-__date__ = "04/12/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 BLACKLISTED_EVENTS = ["presence_update"]
 
 

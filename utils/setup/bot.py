@@ -14,18 +14,8 @@ import spotipy
 # from ksoftapi.client import Client as KClient
 from spotipy.oauth2 import SpotifyClientCredentials
 
-from utils.config.config import get_banner, get_config
+from utils.config.config import get_banner
 from config import config
-
-__author__ = "Kanin"
-__date__ = "07/10/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
 
 
 def init_sentry(bot):

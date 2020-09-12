@@ -4,16 +4,6 @@ from utils.database.Reminders import Reminders as Reminder
 from utils.functions.text import escape, pagify
 from utils.functions.time import get_relative_delta, parse_time
 
-__author__ = "Kanin"
-__date__ = "01/13/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 
 class Reminders(commands.Cog):
     def __init__(self, bot):

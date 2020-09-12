@@ -3,16 +3,6 @@ import os
 import discord
 from discord.ext import commands
 
-__author__ = "Kanin"
-__date__ = "11/19/2019"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "1.0.0"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Production"
-
 
 class Ready(commands.Cog):
     def __init__(self, bot):

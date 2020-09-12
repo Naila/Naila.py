@@ -11,16 +11,6 @@ from discord.ext import commands
 from utils.checks import checks
 from utils.functions.archive import format_data
 
-__author__ = "Kanin"
-__date__ = "12/19/2019"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 HEX_COLOR_RE = re.compile(r"^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$")
 RGB_COLOR_RE = re.compile(
     r"([0-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]) *, *"

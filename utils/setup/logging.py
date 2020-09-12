@@ -3,16 +3,6 @@ import logging
 import coloredlogs
 import yaml
 
-__author__ = "Kanin"
-__date__ = "07/10/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 
 def setup_logger():
     logger = logging.getLogger()

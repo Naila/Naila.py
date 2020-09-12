@@ -3,16 +3,6 @@ from discord.ext import commands, tasks
 from utils.APIs.BotLists import BotListSpace, DiscordBots
 from utils.database.Reminders import Reminders
 
-__author__ = "Kanin"
-__date__ = "01/13/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 
 class Loops(commands.Cog):
     def __init__(self, bot):

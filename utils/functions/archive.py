@@ -2,16 +2,6 @@ import discord
 import re
 import random
 
-__author__ = "Kanin"
-__date__ = "12/23/2019"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 
 def find_mentions(messages, mention):
     mentions = []

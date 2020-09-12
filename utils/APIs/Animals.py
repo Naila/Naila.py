@@ -4,16 +4,6 @@ from random import choice
 from utils.functions.api import raise_for_status
 from utils.functions.text import pagify
 
-__author__ = "Kanin"
-__date__ = "12/04/2019"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "1.0.0"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 
 class Animal:
     def __init__(self, ctx):

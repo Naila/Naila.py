@@ -11,16 +11,6 @@ from discord.ext import commands
 from discord.utils import escape_markdown
 # from ksoftapi.errors import NoResults
 
-__author__ = "Kanin"
-__date__ = "02/09/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 url_rx = re.compile("https?://(?:www\\.)?.+")
 
 

@@ -8,16 +8,6 @@ import asyncio
 from utils.functions.music import Queue, draw_time, draw_vol, ensure_voice, enqueue_and_send, disconnect,\
     format_time, get_emoji, embed, get_thumbnail
 
-__author__ = "Kanin"
-__date__ = "02/06/2020"
-__copyright__ = "Copyright 2019, Kanin"
-__credits__ = ["Kanin"]
-__license__ = "GPL v3.0"
-__version__ = "0.0.1"
-__maintainer__ = "Kanin"
-__email__ = "im@kanin.dev"
-__status__ = "Development"
-
 url_rx = re.compile("https?://(?:www\\.)?.+")
 emojis = {
     "numbers": ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"],
