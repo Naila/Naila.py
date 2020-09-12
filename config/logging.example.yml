@@ -1,4 +1,3 @@
----
 # Formatting various elements of the output https://humanfriendly.readthedocs.io/en/latest/_images/ansi-demo.png
 formats:
   file: "[%(asctime)-3s][%(name)-2s][%(levelname)-1s][%(message)s][%(filename)s:%(lineno)d]"

@@ -207,7 +207,7 @@ class Registration(commands.Cog):
         out = discord.Embed(color=await ctx.guildcolor())
         out.set_author(name=f"Introduction for {author}:",
                        icon_url=author.avatar_url if author.avatar else author.default_avatar_url)
-        out.set_footer(text=f"ID: {author.id} | {datetime.utcnow().strftime(self.bot.config()['time_format'])}")
+        out.set_footer(text=f"ID: {author.id} | {datetime.utcnow().strftime(self.bot.config.time_format)}")
         em = discord.Embed(color=await ctx.guildcolor())
         roles_to_add = []
         x = 0

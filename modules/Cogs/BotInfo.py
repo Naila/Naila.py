@@ -115,7 +115,7 @@ class BotInfo(commands.Cog):
             name="🦊🐾Bot stats🐾🦊",
             icon_url=bot.user.avatar_url
         ).set_footer(
-            text=datetime.utcnow().strftime(bot.config()["time_format"]),
+            text=datetime.utcnow().strftime(bot.config.time_format),
             icon_url=bot.user.avatar_url
         )
         await ctx.send(embed=em)

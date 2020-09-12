@@ -20,7 +20,7 @@ def is_owner():
 
 
 def owner_check(ctx):
-    return ctx.author.id in ctx.bot.config()["owners"]
+    return ctx.author.id in ctx.bot.config.owners
 
 
 # def is_staff():

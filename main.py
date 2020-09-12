@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from utils.database.GuildSettings import Prefixes
 from utils import setup
 from utils.ctx import CustomContext
+from config import config
 
 __author__ = "Kanin"
 __date__ = "11/19/2019"
@@ -22,13 +23,12 @@ __maintainer__ = "Kanin"
 __email__ = "im@kanin.dev"
 __status__ = "Production"
 
-load_dotenv(join(dirname(__file__), 'env/.env'))
+load_dotenv(join(dirname(__file__), "config/.env"))
 
-perms = discord.Permissions(int(os.getenv("PERMS")))
-description = "**Support server**: https://discord.gg/WXGHfHH\n" \
+description = f"**Support server**: {config.support_invite}\n" \
               f"**Bot invite**:" \
-              f" [Recommended perms]({oauth_url(os.getenv('CLIENT_ID'), permissions=perms)}) |" \
-              f" [No perms]({oauth_url(os.getenv('CLIENT_ID'))})"
+              f" [Recommended perms]({oauth_url(config.client_id, permissions=config.permissions)}) |" \
+              f" [No perms]({oauth_url(config.client_id)})"
 
 
 class Bot(DiscordBot):

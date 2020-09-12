@@ -202,7 +202,7 @@ class Prefixes:
         con = await bot.pool.acquire()
         # Get default prefixes
         prefixes = [bot.user.mention + " "]
-        prefixes.extend(bot.config()["prefixes"]["debug"] if bot.debug else bot.config()["prefixes"]["main"])
+        prefixes.extend(bot.config.prefixes["debug"] if bot.debug else bot.config.prefix["main"])
 
         # If we're in a guild, add the guilds custom prefixes
         if isinstance(message.channel, discord.TextChannel):
@@ -229,7 +229,7 @@ class Prefixes:
         con = await bot.pool.acquire()
         # Get default prefixes
         prefixes = [bot.user.mention + " "]
-        prefixes.extend(bot.config()["prefixes"]["debug"] if bot.debug else bot.config()["prefixes"]["main"])
+        prefixes.extend(bot.config.prefixes["debug"] if bot.debug else bot.config.prefixes["main"])
 
         # If we're in a guild, add the guilds custom prefixes
         if isinstance(ctx.channel, discord.TextChannel):
@@ -254,7 +254,7 @@ class Prefixes:
             raise errors.TooManyPrefixes
 
         # Get the default prefixes and make sure the prefix isn't in those
-        default_prefixes = ctx.bot.config()["prefixes"]["main"] + ctx.bot.config()["prefixes"]["debug"]
+        default_prefixes = ctx.bot.config.prefixes["main"] + ctx.bot.config.prefixes["debug"]
         if prefix.lower() in current_prefixes or prefix in default_prefixes:
             await ctx.pool.release(con)
             raise errors.DuplicatePrefix
