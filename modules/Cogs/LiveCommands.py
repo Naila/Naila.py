@@ -103,7 +103,7 @@ class Live_Commands(commands.Cog):
                 break
 
         post = discord.Embed()
-        post.title = f"Sheri Live {z} Commands:"
+        post.title = f"Nalia Live {z} Commands:"
         post.description = f"Most Used: {most_used_cmds}({uses:,})\nLast Cmd Ran: {core.last}"
         post.description += f"```ml\n{str(p)}```"
 
