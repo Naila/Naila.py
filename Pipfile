@@ -19,7 +19,8 @@ sentry-sdk = "*"
 dictor = "*"
 mixpanel-api = "*"
 pillow = "*"
-lavalink = {editable = true,git = "https://github.com/devoxin/lavalink.py",ref = "dev"}
+#lavalink = {editable = true,git = "https://github.com/devoxin/lavalink.py",ref = "dev"}
+lavalink = "*"
 spotipy = "*"
 webcolors = "*"
 aiohttp-jinja2 = "*"
