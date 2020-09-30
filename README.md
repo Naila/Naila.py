@@ -19,5 +19,5 @@
   <br>
   <p>TODO</p>
   <h2>Powered By</h2>
-  <a href="https://www.jetbrains.com/?from=NailaBot"><img alt="JetBrains" src="http://cdn.naila.bot/jetbrains.svg"></a>
+  <a href="https://www.jetbrains.com/?from=Naila"><img alt="JetBrains" src="http://cdn.naila.bot/jetbrains.svg"></a>
 </div>

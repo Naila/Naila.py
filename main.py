@@ -25,6 +25,7 @@ class Bot(DiscordBot):
     def __init__(self):
         atexit.register(lambda: asyncio.ensure_future(self.logout()))
         super().__init__(
+            intents=config.intents,
             command_prefix=Prefixes.get,
             description=description,
             case_insensitive=True,

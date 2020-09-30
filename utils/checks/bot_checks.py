@@ -12,6 +12,8 @@ def can_manage_user(ctx: commands.Context, user: discord.Member):
 
 def can_send(ctx: commands.Context, channel: discord.TextChannel = None):
     channel = ctx.channel if not channel else channel
+    if isinstance(channel, discord.DMChannel):
+        return True
     return ctx.guild.me.permissions_in(channel).send_messages
 
 

@@ -52,9 +52,11 @@ class BotListSpace:
     async def post_bot_stats(self, bot):
         # headers = self.headers
         # headers["Content-Type"] = "application/json"
+        bot.log.info("Posting to BotList.space")
         resp = await session_post(
             session=bot.session,
-            url=self.base_url + f"bots/{bot.user.id}",
+            # url=self.base_url + f"bots/{bot.user.id}",
+            url=self.base_url + f"bots/337481187419226113",
             allowed_statuses=[200, 400, 401, 403, 404],
             headers=self.headers,
             json={"server_count": len(bot.guilds)}
@@ -62,11 +64,7 @@ class BotListSpace:
         if not resp:
             bot.log.error("BotList.space didn't respond.. maybe it's down?")
         else:
-            data = await resp.json()
-            if resp.status == 200:
-                bot.log.info("Posted to BotList.space")
-            else:
-                bot.log.error(f"BotList.space returned {data['code']}: {data['message']}")
+            bot.log.info("Posted to BotList.space")
 
     async def get_bot_upvotes(self, bot):
         resp = await session_get(
@@ -131,16 +129,18 @@ class BotListSpace:
 
 
 class DiscordBots:
-    base_url = "https://discord.bots.gg/api/v1"
+    base_url = "https://discord.bots.gg/api/v1/"
     headers = {
         "Authorization": os.getenv("DISCORD_BOTS"),
         "Content-Type": "application/json"
     }
 
     async def post_bot_stats(self, bot):
+        bot.log.info("Posting to DiscordBots")
         resp = await session_post(
             session=bot.session,
-            url=self.base_url + f"bots/{bot.user.id}/stats",
+            # url=self.base_url + f"bots/{bot.user.id}/stats",
+            url=self.base_url + "bots/337481187419226113/stats",
             headers=self.headers,
             json={"guildCount": len(bot.guilds), "shardCount": bot.shard_count}
         )

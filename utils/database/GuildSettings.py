@@ -192,7 +192,7 @@ class Prefixes:
         con = await bot.pool.acquire()
         # Get default prefixes
         prefixes = [bot.user.mention + " "]
-        prefixes.extend(bot.config.prefixes["debug"] if bot.debug else bot.config.prefix["main"])
+        prefixes.extend(bot.config.prefixes["debug"] if bot.debug else bot.config.prefixes["main"])
 
         # If we're in a guild, add the guilds custom prefixes
         if isinstance(message.channel, discord.TextChannel):

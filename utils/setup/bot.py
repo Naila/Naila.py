@@ -10,9 +10,10 @@ import asyncpg
 import discord
 import psutil
 import sentry_sdk as sentry
-import spotipy
+from sentry_sdk.integrations.aiohttp import AioHttpIntegration
+# import spotipy
 # from ksoftapi.client import Client as KClient
-from spotipy.oauth2 import SpotifyClientCredentials
+# from spotipy.oauth2 import SpotifyClientCredentials
 
 from utils.config.config import get_banner
 from config import config
@@ -21,6 +22,7 @@ from config import config
 def init_sentry(bot):
     sentry.init(
         os.getenv("SENTRY_URL"),
+        integrations=[AioHttpIntegration()],
         attach_stacktrace=True,
         max_breadcrumbs=50,
         environment="Development" if bot.debug else "Production"
@@ -42,7 +44,6 @@ def setup_bot(bot):
 
     # Logging
     init_sentry(bot)
-    bot.sentry = sentry
     discord_log = logging.getLogger("discord")
     discord_log.setLevel(logging.CRITICAL if not bot.debug else logging.INFO)
     log = logging.getLogger("bot")
@@ -62,8 +63,10 @@ def setup_bot(bot):
         "init": init_connection
     }
     bot.pool = bot.loop.run_until_complete(asyncpg.create_pool(**credentials))
-    bot.log.info(f"Postgres connected to database ({bot.pool._working_params.database})"
-                 f" under the ({bot.pool._working_params.user}) user")
+    bot.log.info(
+        f"Postgres connected to database ({bot.pool._working_params.database})"
+        f" under the ({bot.pool._working_params.user}) user"
+    )
 
     # Config
     bot.config = config

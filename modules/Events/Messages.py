@@ -1,3 +1,5 @@
+import re
+
 import discord
 from discord.ext import commands
 
@@ -19,10 +21,7 @@ class Messages(commands.Cog):
         if not isinstance(message.channel, discord.DMChannel):
             await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes
-        mentions = [self.bot.user.mention]
-        if not isinstance(message.channel, discord.DMChannel):
-            mentions.append(message.guild.me.mention)
-        if message.content in mentions:
+        if re.match(f"<@!?{self.bot.user.id}>", message.content):
             await ctx.send(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
 
     @commands.Cog.listener()

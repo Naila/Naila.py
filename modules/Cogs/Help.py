@@ -31,9 +31,10 @@ def clean_param(param):
     if not param.annotation:
         return param.name
 
-    clean = str(param).replace(" ", "").strip("*=None")
+    clean = str(param).replace(" ", "")
+    clean = re.sub("Union\[|]|=None", "", clean)
     if "Union" in clean:
-        args = clean.split(":")[1].strip("Union[]")
+        args = clean.split(":")[1]
         arg_names = [item.split(".")[-1] for item in args.split(",")]
         union = f"{', '.join(arg_names[:-1])}, or {arg_names[-1]}" if len(arg_names) > 2 else " or ".join(arg_names)
         clean = f"{clean.split(':')[0]}:{union}"
