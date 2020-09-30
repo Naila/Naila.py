@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "36ec18c93d538ee76baa550414ac0a108bec0b4050cdc547139dc26f15b245e6"
+            "sha256": "66f550c4ab9fc3af11f95bd073ceffa64ed6bef87784ee69864758abb9f0e00f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -151,11 +151,12 @@
             "version": "==2.11.2"
         },
         "lavalink": {
+            "editable": true,
+            "git": "https://github.com/devoxin/lavalink.py",
             "hashes": [
                 "sha256:d676312a7a7dd3c105097c8bd84e380d117126cff297144b43fa61683b4bc595"
             ],
-            "index": "pypi",
-            "version": "==3.1.2"
+            "ref": "ed4a7214ca164cdf7c00bddca64dc482868ffe61"
         },
         "lru-dict": {
             "hashes": [

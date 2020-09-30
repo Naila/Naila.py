@@ -3,7 +3,7 @@ from urllib.parse import quote as parse
 
 import discord
 from discord.ext import commands
-
+from utils.functions.images import createWelcomeImage
 from utils.checks import checks
 from utils.ctx import CustomContext
 from utils.database.GuildSettings import Guild, Welcomer as Welcome
@@ -189,7 +189,7 @@ class Welcomer(commands.Cog):
             if not ctx:
                 return
             warning += "You either don't have welcomer enabled or don't have a channel set so this will not work!"
-            await ctx.send_error(warning)
+            return await ctx.send_error(warning)
         member_created = (datetime.utcnow() - member.created_at).days
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = ctx.channel if ctx else self.bot.get_channel(data["welcomer_channel"])
@@ -211,17 +211,25 @@ class Welcomer(commands.Cog):
                 content += f"\n\n{desc}"
             else:
                 content = desc
-        params = {
-            "type": fmt,
-            "avatar": member.avatar_url_as(format="png"),
-            "user_name": parse(str(member)),
-            "guild_name": parse(guild.name),
-            "member_count": guild.member_count,
-            "color": hex(color).split('x')[-1]
-        }
-        if background:
-            params["background"] = background
-        image = await welcomer(self.bot.session, params)
+        # params = {
+        #     "type": fmt,
+        #     "avatar": member.avatar_url_as(format="png"),
+        #     "user_name": parse(str(member)),
+        #     "guild_name": parse(guild.name),
+        #     "member_count": guild.member_count,
+        #     "color": hex(color).split('x')[-1]
+        # }
+        # if background:
+        #     params["background"] = background
+        # image = await welcomer(self.bot.session, params)
+        image = createWelcomeImage(
+            fmt=str(fmt),
+            url=member.avatar_url_as(format="png"),
+            user_name=str(member),
+            guild_name=guild.name,
+            member_count=guild.member_count,
+            color=hex(color).split("x")[-1]
+        )
         try:
             return await channel.send(
                 file=discord.File(fp=image, filename="welcome.png"),

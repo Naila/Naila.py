@@ -8,7 +8,7 @@ from discord.ext import commands
 from utils.checks import checks
 from utils.functions import errors
 from utils.functions.api import weeb
-from utils.functions.images import Images
+from utils.functions.images import ship
 
 
 class Social(commands.Cog):
@@ -82,7 +82,7 @@ class Social(commands.Cog):
         em = discord.Embed(color=await ctx.guildcolor(), description=desc)
         em.set_author(name="Lovely shipping!")
         em.set_image(url='attachment://ship.png')
-        file = Images.ship(lover1.avatar_url_as(format="png"), lover2.avatar_url_as(format="png"))
+        file = ship(lover1.avatar_url_as(format="png"), lover2.avatar_url_as(format="png"))
         await ctx.send(file=discord.File(fp=file, filename="ship.png"), embed=em)
 
     @commands.guild_only()

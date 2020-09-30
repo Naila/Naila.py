@@ -21,7 +21,7 @@ class Loops(commands.Cog):
     @tasks.loop(minutes=30)
     async def botlists(self):
         self.bot.log.info(
-            f"Posting to all bot lists... | Shards: 2 | Guilds: 2000"
+            f"Posting to all bot lists... | Shards: {self.bot.shard_count} | Guilds: {len(self.bot.guilds)}"
         )
         await BotListSpace().post_bot_stats(self.bot)
         await DiscordBots().post_bot_stats(self.bot)
