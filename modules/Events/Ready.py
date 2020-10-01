@@ -47,7 +47,8 @@ class Ready(commands.Cog):
             ),
             status=discord.Status.online
         )
-        self.starter_modules()
+        if len(self.bot.cogs) == 1:
+            self.starter_modules()
         webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
         em = discord.Embed(description=info, color=self.bot.color)
         em.set_author(name=f'{self.bot.user.name} Ready')
