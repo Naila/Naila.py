@@ -58,8 +58,6 @@ class Ready(commands.Cog):
 
     async def on_shard_ready(self, shard_id: int):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=shard_id)._trace[0])
-        self.bot.gateway_server_name = ws[0]
-        self.bot.session_server_name = ws[1]["calls"][0]
 
         em = discord.Embed(color=self.bot.color)
         em.description = f"**Gateway server:** {ws[0]}\n**Session server:** {ws[1]['calls'][0]}"
