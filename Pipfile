@@ -25,6 +25,7 @@ spotipy = "*"
 webcolors = "*"
 aiohttp-jinja2 = "*"
 lru-dict = "*"
+beautifultable = "*"
 
 [requires]
 python_version = "3.8"
