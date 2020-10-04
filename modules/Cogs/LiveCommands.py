@@ -25,9 +25,8 @@ class Live_Commands(commands.Cog):
     def get_cmdlist(self):
         if 1 in self.cmd:
             return self.cmd[1]
-        else:
-            self.cmd[1] = The_Core()
-            return self.cmd[1]
+        self.cmd[1] = The_Core()
+        return self.cmd[1]
 
     @commands.Cog.listener()
     async def on_message(self, message):
