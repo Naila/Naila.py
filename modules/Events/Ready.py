@@ -56,12 +56,13 @@ class Ready(commands.Cog):
         await webhook.send(embed=em, username="Ready", avatar_url=self.bot.user.avatar_url)
         self.bot.log.info("Logged in and ready!")
 
+    @commands.Cog.listener()
     async def on_shard_ready(self, shard_id: int):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=shard_id)._trace[0])
 
         em = discord.Embed(color=self.bot.color)
         em.description = f"**Gateway server:** {ws[0]}\n**Session server:** {ws[1]['calls'][0]}"
-        em.set_author(name=f"Shard {shard_id}/{self.bot.shard_count - 1} ready")
+        em.set_author(name=f"Shard {shard_id} ready")
         webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
         await webhook.send(embed=em, username="Shard ready/restarted", avatar_url=self.bot.user.avatar_url)
 

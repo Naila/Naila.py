@@ -41,4 +41,4 @@ prefixes = {
 }
 
 # https://strftime.org/
-time_format = "%A, %B %d %Y @ %I:%M%p %Z"
+time_format = "%A, %B %d %Y @ %I:%M%p"
