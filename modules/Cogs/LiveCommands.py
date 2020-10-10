@@ -83,7 +83,7 @@ class LiveCommands(commands.Cog):
                 z -= 1
                 break
 
-        post = discord.Embed()
+        post = discord.Embed(color=await ctx.guildcolor())
         post.title = f"Naila's top {z} commands:"
         post.description = f"**Most used:** {most_used_commands} `[{uses:,}]`\n**Last command ran:** {core.last}"
         post.description += f"```ml\n{p}```"
