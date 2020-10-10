@@ -354,29 +354,6 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @checks.is_nsfw()
-    @commands.group(case_insensitive=True, description="NSFW Furry images from sheri.bot")
-    async def sheri(self, ctx):
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
-
-    @sheri.command(name="yiff", description="Normal yiff")
-    @checks.custom_bot_has_permissions(embed_links=True)
-    async def sheri_yiff(self, ctx):
-        url = await sheri(ctx.session, "yiff")
-        em = await self.sheri_embed(ctx)
-        em.set_image(url=url)
-        em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
-
-    @sheri.command(name="gif", description="Yiff gifs")
-    @checks.custom_bot_has_permissions(embed_links=True)
-    async def sheri_gif(self, ctx):
-        url = await sheri(ctx.session, "gif")
-        em = await self.sheri_embed(ctx)
-        em.set_image(url=url)
-        em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
 
     # @checks.is_nsfw()
     # @commands.group(case_insensitive=True, description="NSFW images from neko.life")
