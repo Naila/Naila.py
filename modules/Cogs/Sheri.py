@@ -2,6 +2,9 @@ import os
 
 import discord
 import httpx
+from discord.ext import commands
+
+from utils.checks import checks
 
 base_url = "https://sheri.bot/api/"
 
@@ -28,3 +31,27 @@ async def image_send(ctx, endpoint: str):
         else:
             return await ctx.send("Either the website is down or there is an internal error, Please contact support!")
 
+
+class Sheri(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.group(name="sheri")
+    async def sheri(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
+    @checks.is_nsfw()
+    @sheri.group(name="nsfw")
+    async def sheri_nsfw(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
+    @sheri.group(name="sfw")
+    async def sheri_nsfw(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
+
+def setup(bot):
+    bot.add_cog(Sheri(bot))
