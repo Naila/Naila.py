@@ -52,6 +52,10 @@ class Sheri(commands.Cog):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
+    @sheri_nsfw.group(name="yiff")
+    async def sheri_nsfw_yiff(self, ctx):
+        await image_send(ctx, "yiff")
+
 
 def setup(bot):
     bot.add_cog(Sheri(bot))
