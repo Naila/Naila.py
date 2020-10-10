@@ -17,7 +17,7 @@ async def sheri_embed(ctx):
 
 
 async def image_send(ctx, endpoint: str):
-    async with httpx.AsyncClient as session:
+    async with httpx.AsyncClient() as session:
         data = await session.get(url=base_url + endpoint, headers={"Authorization": os.getenv("SHERI"),
                                                                    "User-Agent": "Naila Discord Bot - By Kanin#0001"})
         if data.status_code == 200:
