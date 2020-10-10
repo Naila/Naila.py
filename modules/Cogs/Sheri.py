@@ -41,21 +41,31 @@ class Sheri(commands.Cog):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
+    @sheri.group(name="sfw")
+    async def sheri_sfw(self, ctx):
+        if not ctx.invoked_subcommand:
+            await ctx.send_help(ctx.command)
+
     @checks.is_nsfw()
     @sheri.group(name="nsfw")
     async def sheri_nsfw(self, ctx):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
-    @sheri.group(name="sfw")
-    async def sheri_nsfw(self, ctx):
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
-
-    @sheri_nsfw.group(name="yiff")
+    @sheri_nsfw.command(name="yiff")
     async def sheri_nsfw_yiff(self, ctx):
+        """Shows Random NSFW Images from sheri.bot"""
         await image_send(ctx, "yiff")
 
+    @sheri_nsfw.command(name="gif")
+    async def sheri_nsfw_gif(self, ctx):
+        """Shows Random NSFW GIFs from sheri.bot"""
+        await image_send(ctx, "gif")
+
+    @sheri_nsfw.command(name="boobs")
+    async def sheri_nsfw_boobs(self, ctx):
+        """Shows Random NSFW Furry Boobs from sheri.bot"""
+        await image_send(ctx, "boob")
 
 def setup(bot):
     bot.add_cog(Sheri(bot))
