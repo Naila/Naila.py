@@ -60,34 +60,37 @@ class LiveCommands(commands.Cog):
 
     @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
     async def command_list(self, ctx):
-        core = self.get_commandlist()
-        command = core.command
-        count = core.count
-        proc = core.process
+        try:
+            core = self.get_commandlist()
+            command = core.command
+            count = core.count
+            proc = core.process
 
-        count, command, proc = (list(t) for t in zip(*sorted(zip(count, command, proc), reverse=True)))
+            count, command, proc = (list(t) for t in zip(*sorted(zip(count, command, proc), reverse=True)))
 
-        most_used_commands = command[0]
-        uses = count[0]
+            most_used_commands = command[0]
+            uses = count[0]
 
-        p = BeautifulTable()
-        p.set_style(STYLE_BOX_ROUNDED)
-        p.rows.separator = ""
-        p.column_headers = ["*", "Command", "Count", "Process"]
-        z = 0
-        for x in range(25):
-            try:
-                z += 1
-                p.append_row([x + 1, command[x], f'{count[x]:,}', f"{round(proc[x], 2)}"])
-            except (IndexError, RuntimeError):
-                z -= 1
-                break
+            p = BeautifulTable()
+            p.set_style(STYLE_BOX_ROUNDED)
+            p.rows.separator = ""
+            p.column_headers = ["*", "Command", "Count", "Process"]
+            z = 0
+            for x in range(25):
+                try:
+                    z += 1
+                    p.append_row([x + 1, command[x], f'{count[x]:,}', f"{round(proc[x], 2)}"])
+                except (IndexError, RuntimeError):
+                    z -= 1
+                    break
 
-        post = discord.Embed(color=await ctx.guildcolor())
-        post.title = f"Naila's top {z} commands:"
-        post.description = f"**Most used:** {most_used_commands} `[{uses:,}]`\n**Last command ran:** {core.last}"
-        post.description += f"```ml\n{p}```"
-        await ctx.send(embed=post)
+            post = discord.Embed(color=await ctx.guildcolor())
+            post.title = f"Naila's top {z} commands:"
+            post.description = f"**Most used:** {most_used_commands} `[{uses:,}]`\n**Last command ran:** {core.last}"
+            post.description += f"```ml\n{p}```"
+            await ctx.send(embed=post)
+        except ValueError:
+            return await ctx.send("Unable to post stats, Not enough data!")
 
     # @commands.command()
     # async def commandinfo(self, ctx, *, command: str):
