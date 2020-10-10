@@ -9,7 +9,8 @@ from requests.exceptions import HTTPError
 async def weeb(session, endpoint):
     async with session.get(
             url=f"https://api.weeb.sh/images/random?nsfw=False&type={endpoint}",
-            headers={"Authorization": os.getenv("WEEB")}
+            headers={"Authorization": os.getenv("WEEB"),
+                     "User-Agent": "Naila Discord Bot - By Kanin#0001"}
     ) as resp:
         if resp.status == 200:
             return (await resp.json())["url"]
@@ -19,7 +20,8 @@ async def weeb(session, endpoint):
 async def boobbot(session, endpoint):
     async with session.get(
             url=f"https://boob.bot/api/v2/img/{endpoint}",
-            headers={"key": os.getenv("BOOBBOT")}
+            headers={"key": os.getenv("BOOBBOT"),
+                     "User-Agent": "Naila Discord Bot - By Kanin#0001"}
     ) as resp:
         if resp.status == 200:
             return (await resp.json())["url"]
@@ -30,7 +32,8 @@ async def boobbot(session, endpoint):
 async def sheri(session, endpoint):
     async with session.get(
             url=f"https://sheri.bot/api/{endpoint}",
-            headers={"Authorization": os.getenv("SHERI")}
+            headers={"Authorization": os.getenv("SHERI"),
+                     "User-Agent": "Naila Discord Bot - By Kanin#0001"}
     ) as resp:
         if resp.status == 200:
             return (await resp.json())["url"]
