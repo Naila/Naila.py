@@ -58,7 +58,7 @@ class LiveCommands(commands.Cog):
             else:
                 pass
 
-    @commands.command(name="commandlist", aliases=["cmdlist"])
+    @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
     async def command_list(self, ctx):
         core = self.get_commandlist()
         command = core.command
