@@ -57,6 +57,11 @@ class Sheri(commands.Cog):
         """Shows Random Furry Boop Images"""
         await image_send(ctx, "boop")
 
+    @sheri_sfw.command(name="hug")
+    async def sheri_sfw_hug(self, ctx):
+        """Shows Random Furry Boop Images"""
+        await image_send(ctx, "hug")
+
     @checks.is_nsfw()
     @sheri.group(name="nsfw")
     async def sheri_nsfw(self, ctx):
