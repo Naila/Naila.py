@@ -26,6 +26,7 @@ webcolors = "*"
 aiohttp-jinja2 = "*"
 lru-dict = "*"
 beautifultable = "*"
+httpx = "*"
 
 [requires]
 python_version = "3.8"
