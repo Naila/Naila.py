@@ -20,8 +20,7 @@ class BotInfo(commands.Cog):
     async def apis(self, ctx):
         em = discord.Embed(color=await ctx.guildcolor())
         em.set_author(name="APIs we use:")
-        em.description = "https://and-here-is-my-code.glitch.me/\n" \
-                         "https://some-random-api.ml/\n" \
+        em.description = "https://some-random-api.ml/\n" \
                          "https://random-d.uk/\n" \
                          "https://thecatapi.com/\n" \
                          "https://thedogapi.com/\n" \

@@ -9,12 +9,12 @@ class Animals(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(description="Random bears!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def bear(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("bear"))
-        em.set_image(url=await Animal(ctx).image("bear"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random bears!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def bear(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("bear"))
+    #     em.set_image(url=await Animal(ctx).image("bear"))
+    #     await ctx.send(embed=em)
 
     @commands.command(description="Random birds!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -23,12 +23,12 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("bird"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random dolphins!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def dolphin(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("dolphin"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random dolphins!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def dolphin(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("dolphin"))
+    #     await ctx.send(embed=em)
 
     @commands.command(description="Random ducks!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -37,12 +37,12 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("duck"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random elephants!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def elephant(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("elephant"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random elephants!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def elephant(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("elephant"))
+    #     await ctx.send(embed=em)
 
     @commands.command(description="Random foxes!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -51,33 +51,33 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("fox"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random giraffes!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def giraffe(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("giraffe"))
-        em.set_image(url=await Animal(ctx).image("giraffe"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random giraffes!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def giraffe(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("giraffe"))
+    #     em.set_image(url=await Animal(ctx).image("giraffe"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random hippos!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def hippo(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("hippo"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random hippos!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def hippo(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("hippo"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random horses!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def horse(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("horse"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random horses!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def horse(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("horse"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random killer whales!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def killerwhale(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("killerwhale"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random killer whales!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def killerwhale(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("killerwhale"))
+    #     await ctx.send(embed=em)
 
     @commands.command(description="Random koalas!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -86,12 +86,12 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("koala"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random lions!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def lion(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("lion"))
-        em.set_image(url=await Animal(ctx).image("lion"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random lions!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def lion(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("lion"))
+    #     em.set_image(url=await Animal(ctx).image("lion"))
+    #     await ctx.send(embed=em)
 
     @commands.group(invoke_without_command=True, case_insensitive=True, description="Random cats!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -124,12 +124,12 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("panda"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random pigs!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def pig(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("pig"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random pigs!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def pig(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("pig"))
+    #     await ctx.send(embed=em)
 
     @commands.command(description="Random red pandas!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -138,33 +138,33 @@ class Animals(commands.Cog):
         em.set_image(url=await Animal(ctx).image("redpanda"))
         await ctx.send(embed=em)
 
-    @commands.command(description="Random sharks!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def shark(self, ctx):
-        em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("shark"))
-        em.set_image(url=await Animal(ctx).image("shark"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random sharks!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def shark(self, ctx):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("shark"))
+    #     em.set_image(url=await Animal(ctx).image("shark"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random snakes!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def snake(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("snake"))
-        em.set_image(url=await Animal(ctx).image("snake"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random snakes!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def snake(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("snake"))
+    #     em.set_image(url=await Animal(ctx).image("snake"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random spiders!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def spider(self, ctx):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("spider"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random spiders!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def spider(self, ctx):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("spider"))
+    #     await ctx.send(embed=em)
 
-    @commands.command(description="Random turtles!")
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def turtle(self, ctx: CustomContext):
-        em = discord.Embed(color=await ctx.guildcolor())
-        em.set_image(url=await Animal(ctx).image("turtle"))
-        await ctx.send(embed=em)
+    # @commands.command(description="Random turtles!")
+    # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    # async def turtle(self, ctx: CustomContext):
+    #     em = discord.Embed(color=await ctx.guildcolor())
+    #     em.set_image(url=await Animal(ctx).image("turtle"))
+    #     await ctx.send(embed=em)
 
     @commands.group(invoke_without_command=True, case_insensitive=True, description="Random dogs!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
