@@ -89,6 +89,11 @@ class Sheri(commands.Cog):
         """Shows Random NSFW Furry Boobs from sheri.bot"""
         await image_send(ctx, "boob")
 
+    @sheri_nsfw.command(name="booty")
+    async def sheri_nsfw_booty(self, ctx):
+        """Shows Random NSFW Furry booty from sheri.bot"""
+        await image_send(ctx, "booty")
+
 
 def setup(bot):
     bot.add_cog(Sheri(bot))
