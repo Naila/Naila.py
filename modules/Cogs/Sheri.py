@@ -59,8 +59,28 @@ class Sheri(commands.Cog):
 
     @sheri_sfw.command(name="hug")
     async def sheri_sfw_hug(self, ctx):
-        """Shows Random Furry Boop Images"""
+        """Shows Random Furry Hug Images"""
         await image_send(ctx, "hug")
+
+    @sheri_sfw.command(name="kiss")
+    async def sheri_sfw_kiss(self, ctx):
+        """Shows Random Furry Kiss Images"""
+        await image_send(ctx, "kiss")
+
+    @sheri_sfw.command(name="cuddle")
+    async def sheri_sfw_cuddle(self, ctx):
+        """Shows Random Furry Cuddle Images"""
+        await image_send(ctx, "cuddle")
+
+    @sheri_sfw.command(name="paws")
+    async def sheri_sfw_paws(self, ctx):
+        """Shows Random Furry paw Images"""
+        await image_send(ctx, "paws")
+
+    @sheri_sfw.command(name="blep")
+    async def sheri_sfw_blep(self, ctx):
+        """Shows Random Furry blep Images"""
+        await image_send(ctx, "blep")
 
     @checks.is_nsfw()
     @sheri.group(name="nsfw")
@@ -83,6 +103,16 @@ class Sheri(commands.Cog):
     async def sheri_nsfw_boobs(self, ctx):
         """Shows Random NSFW Furry Boobs from sheri.bot"""
         await image_send(ctx, "boob")
+
+    @sheri_nsfw.command(name="booty")
+    async def sheri_nsfw_booty(self, ctx):
+        """Shows Random NSFW Furry booty from sheri.bot"""
+        await image_send(ctx, "booty")
+
+    @sheri_nsfw.command(name="femboy")
+    async def sheri_nsfw_femboy(self, ctx):
+        """Shows Random NSFW Furry Femboy from sheri.bot"""
+        await image_send(ctx, "femboypresentation")
 
 
 def setup(bot):
