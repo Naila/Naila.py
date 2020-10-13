@@ -7,6 +7,8 @@ client_id = 337481187419226113
 
 support_invite = "https://discord.gg/WXGHfHH"
 
+intents = discord.Intents().all()
+
 permissions = discord.Permissions(get_integer(
     [
         "CREATE_INSTANT_INVITE",

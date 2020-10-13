@@ -85,8 +85,7 @@ class UserInfo(commands.Cog):
                 name="Joined this server on:", value=get_relative_delta(member.joined_at, True, True), inline=False
             )
             em.set_footer(
-                # text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1} • ID: {member.id}"
-                text=f"ID: {member.id}"
+                text=f"Member #{sorted(guild.members,key=lambda m: m.joined_at).index(member) + 1} • ID: {member.id}"
             )
             return await ctx.send(embed=em)
 
