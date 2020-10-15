@@ -28,6 +28,41 @@ owners = [
     173237945149423619  # Kanin | Please keep my ID here
 ]
 
+presences = [
+    {
+        "status": discord.Status.online,
+        "activity": {
+            "type": discord.Activity,
+            "prefix": discord.ActivityType.playing,
+            "text": "n!help | {GUILDS} guilds"
+        }
+    },
+    {
+        "status": discord.Status.online,
+        "activity": {
+            "type": discord.Activity,
+            "prefix": discord.ActivityType.watching,
+            "text": "you type n!help"
+        }
+    },
+    {
+        "status": discord.Status.online,
+        "activity": {
+            "type": discord.Activity,
+            "prefix": discord.ActivityType.playing,
+            "text": "n!help | {SUPPORT_INVITE}"
+        }
+    },
+    # {
+    #     "status": discord.Status.online,
+    #     "activity": {
+    #         "type": discord.Streaming,
+    #         "url": "https://twitch.tv/KaninDev",
+    #         "text": "Testing"
+    #     }
+    # },
+]
+
 colors = {
     "main": 0x009696,
     "error": 0xe74c3c

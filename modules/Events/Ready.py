@@ -2,14 +2,18 @@ import json
 import os
 import re
 from datetime import datetime
-
+from config import config
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 
 class Ready(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.presence = 0
+
+    def cog_unload(self):
+        self.loop_presence.stop()
 
     @commands.Cog.listener()
     async def on_connect(self):
@@ -40,13 +44,15 @@ class Ready(commands.Cog):
                f"**Lib version:** {self.bot.version['discord.py']}\n" \
                f"**Python version:** {self.bot.version['python']}"
         self.bot.log.info(re.sub("\*", "", info))
-        await self.bot.change_presence(
-            activity=discord.Game(
-                name="n!help | discord.gg/WXGHfHH | Mid rewrite.. please be patient",
-                type=discord.ActivityType.playing
-            ),
-            status=discord.Status.online
-        )
+        # await self.bot.change_presence(
+        #     activity=discord.Game(
+        #         name="n!help | discord.gg/WXGHfHH | Mid rewrite.. please be patient",
+        #         type=discord.ActivityType.playing
+        #     ),
+        #     status=discord.Status.online
+        # )
+        if not self.loop_presence.is_running() and config.presences:
+            self.loop_presence.start()
         if len(self.bot.cogs) == 1:
             self.starter_modules()
         webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
@@ -66,9 +72,34 @@ class Ready(commands.Cog):
         webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
         await webhook.send(embed=em, username="Shard ready/restarted", avatar_url=self.bot.user.avatar_url)
 
+    @tasks.loop(minutes=1)
+    async def loop_presence(self):
+        presence = config.presences[self.presence]
+        text = re.sub("{GUILDS}", str(len(self.bot.guilds)), presence["activity"]["text"])
+        text = re.sub("{SHARDS}", str(self.bot.shard_count), text)
+        text = re.sub("{USERS}", str(len(self.bot.guilds)), text)
+        text = re.sub("{SUPPORT_INVITE}", config.support_invite, text)
+
+        self.presence += 1
+        if self.presence == len(config.presences):
+            self.presence = 0
+
+        if presence["activity"]["type"] == discord.Streaming:
+            activity = discord.Streaming(name=text, url=presence["activity"]["url"])
+        else:
+            activity = discord.Activity(name=text, type=presence["activity"]["prefix"])
+
+        if "{SHARD}" in text:
+            for x in range(self.bot.shard_count):
+                text = re.sub("{SHARD}", str(x + 1), text)
+                activity.name = text
+                await self.bot.change_presence(activity=activity, status=presence["status"], shard_id=x)
+            return
+        await self.bot.change_presence(activity=activity, status=presence["status"])
+
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
-        blacklist = ["modules/Events/Ready", "modules/Cogs/Music", "modules/Cogs/MusicRewrite"]
+        blacklist = ["modules/Events/Ready", "modules/Cogs/Music"]
         if self.bot.debug:
             blacklist.append("modules/Events/Loops")
         for path in paths:
