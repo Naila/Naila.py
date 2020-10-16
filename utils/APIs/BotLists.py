@@ -24,7 +24,7 @@ class TopGG:
             bot.log.info("Posted to Top.gg")
         else:
             data = await resp.json()
-            raise HTTPError(f"BotList.space returned {data['code']}: {data['message']}", response=resp)
+            raise HTTPError(f"Top.gg returned {data['code']}: {data['message']}", response=resp)
 
 
 class BotListSpace:
