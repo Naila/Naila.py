@@ -3,6 +3,27 @@ from utils.functions.api import session_post, session_get
 from requests.exceptions import HTTPError
 
 
+class TopGG:
+    base_url = "https://top.gg/api"
+    headers = {
+        "Authorization": os.getenv("TOPGG")
+    }
+
+    async def post_bot_stats(self, bot):
+        bot.log.info("Posting to Top.gg")
+        resp = await session_post(
+            session=bot.session,
+            url=self.base_url + f"bots/{bot.user.id}/stats",
+            allowed_statuses=[200, 404],
+            headers=self.headers,
+            json={"server_count": len(bot.guilds), "shard_count": bot.shard_count}
+        )
+        if not resp:
+            bot.log.error("Top.gg didn't respond.. maybe it's down?")
+        else:
+            bot.log.info("Posted to Top.gg")
+
+
 class BotListSpace:
     base_url = "https://api.botlist.space/v1/"
     headers = {
@@ -55,8 +76,7 @@ class BotListSpace:
         bot.log.info("Posting to BotList.space")
         resp = await session_post(
             session=bot.session,
-            # url=self.base_url + f"bots/{bot.user.id}",
-            url=self.base_url + f"bots/337481187419226113",
+            url=self.base_url + f"bots/{bot.user.id}",
             allowed_statuses=[200, 400, 401, 403, 404],
             headers=self.headers,
             json={"server_count": len(bot.guilds)}
@@ -139,8 +159,7 @@ class DiscordBots:
         bot.log.info("Posting to DiscordBots")
         resp = await session_post(
             session=bot.session,
-            # url=self.base_url + f"bots/{bot.user.id}/stats",
-            url=self.base_url + "bots/337481187419226113/stats",
+            url=self.base_url + f"bots/{bot.user.id}/stats",
             headers=self.headers,
             json={"guildCount": len(bot.guilds), "shardCount": bot.shard_count}
         )

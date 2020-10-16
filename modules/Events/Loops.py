@@ -1,6 +1,6 @@
 from discord.ext import commands, tasks
 
-from utils.APIs.BotLists import BotListSpace, DiscordBots
+from utils.APIs.BotLists import BotListSpace, DiscordBots, TopGG
 from utils.database.Reminders import Reminders
 
 
@@ -25,6 +25,7 @@ class Loops(commands.Cog):
         )
         await BotListSpace().post_bot_stats(self.bot)
         await DiscordBots().post_bot_stats(self.bot)
+        await TopGG().post_bot_stats(self.bot)
         self.bot.log.info("Done posting")
 
 
