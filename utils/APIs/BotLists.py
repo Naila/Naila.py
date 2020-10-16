@@ -19,11 +19,12 @@ class TopGG:
             json={"server_count": len(bot.guilds), "shard_count": bot.shard_count}
         )
         if not resp:
-            return bot.log.error("Top.gg didn't respond.. maybe it's down?")
+            bot.log.error("Top.gg didn't respond.. maybe it's down?")
         if resp.status == 200:
-            return bot.log.info("Posted to Top.gg")
-        data = await resp.json()
-        raise HTTPError(f"BotList.space returned {data['code']}: {data['message']}", response=resp)
+            bot.log.info("Posted to Top.gg")
+        else:
+            data = await resp.json()
+            raise HTTPError(f"BotList.space returned {data['code']}: {data['message']}", response=resp)
 
 
 class BotListSpace:
