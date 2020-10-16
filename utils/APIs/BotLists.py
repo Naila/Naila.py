@@ -4,7 +4,7 @@ from requests.exceptions import HTTPError
 
 
 class TopGG:
-    base_url = "https://top.gg/api"
+    base_url = "https://top.gg/api/"
     headers = {
         "Authorization": os.getenv("TOPGG")
     }
