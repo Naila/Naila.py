@@ -26,8 +26,7 @@ class BotInfo(commands.Cog):
                          "https://thedogapi.com/\n" \
                          "https://weeb.sh/\n" \
                          "https://boob.bot/\n" \
-                         "https://sheri.bot/\n" \
-                         "https://nekos.life/"
+                         "https://sheri.bot/"
         await ctx.send(embed=em)
 
     @commands.command(description="Invite the bot or join the bots support server!")

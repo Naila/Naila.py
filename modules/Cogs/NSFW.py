@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from utils.checks import checks
-from utils.functions.api import boobbot, sheri, nekos
+from utils.functions.api import boobbot
 
 
 class NSFW(commands.Cog):
@@ -18,19 +18,19 @@ class NSFW(commands.Cog):
         em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
         return em
 
-    @staticmethod
-    async def sheri_embed(ctx):
-        em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://sheri.bot/\n")
-        em.set_author(name="Images provided by Sheri")
-        em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
-        return em
-
-    @staticmethod
-    async def nekos_embed(ctx):
-        em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://nekos.life/\n")
-        em.set_author(name="Images provided by Nekos.life")
-        em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
-        return em
+    # @staticmethod
+    # async def sheri_embed(ctx):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://sheri.bot/\n")
+    #     em.set_author(name="Images provided by Sheri")
+    #     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
+    #     return em
+    #
+    # @staticmethod
+    # async def nekos_embed(ctx):
+    #     em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://nekos.life/\n")
+    #     em.set_author(name="Images provided by Nekos.life")
+    #     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
+    #     return em
 
     @checks.is_nsfw()
     @commands.group(aliases=["bb"], case_insensitive=True, description="Porn from boob.bot")
