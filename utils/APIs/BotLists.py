@@ -14,17 +14,13 @@ class TopGG:
         resp = await session_post(
             session=bot.session,
             url=self.base_url + f"bots/{bot.user.id}/stats",
-            allowed_statuses=[200, 404],
             headers=self.headers,
             json={"server_count": len(bot.guilds), "shard_count": bot.shard_count}
         )
         if not resp:
             bot.log.error("Top.gg didn't respond.. maybe it's down?")
-        if resp.status == 200:
-            bot.log.info("Posted to Top.gg")
         else:
-            data = await resp.json()
-            bot.log.error(f"Top.gg returned {data['code']}: {data['message']}", response=resp)
+            bot.log.info("Posted to Top.gg")
 
 
 class BotListSpace:
