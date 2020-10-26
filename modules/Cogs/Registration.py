@@ -271,7 +271,10 @@ class Registration(commands.Cog):
             return await ctx.send_error(f"{author.mention} I cannot DM you!")
         except asyncio.TimeoutError:
             ctx.command.reset_cooldown(ctx)
-            return await author.send("Timed out!")
+            try:
+                return await author.send("Timed out!")
+            except discord.Forbidden:
+                return
         except discord.NotFound:
             return await ctx.send_error(f"I could not find {author}! Perhaps they left?")
 
