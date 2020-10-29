@@ -5,7 +5,7 @@ bot_version = "0.0.1"
 
 client_id = 337481187419226113
 
-support_invite = "https://discord.gg/WXGHfHH"
+support_invite = "https://discord.gg/mUA6Kse"
 
 intents = discord.Intents().all()
 
