@@ -5,7 +5,7 @@ import discord
 import psutil
 from discord.ext import commands
 from discord.utils import oauth_url
-
+from config import config
 from utils.checks import checks
 from utils.functions.time import get_bot_uptime
 from utils.functions.text import filesize_fix
@@ -32,10 +32,10 @@ class BotInfo(commands.Cog):
     @commands.command(description="Invite the bot or join the bots support server!")
     @checks.custom_bot_has_permissions(embed_links=True)
     async def invite(self, ctx):
-        perms = discord.Permissions(502656087)
         em = discord.Embed(color=await ctx.guildcolor())
-        em.description = "**Support server:** https://discord.gg/fox\n" \
-                         f"**Bot invite:** [Recommended perms]({oauth_url(self.bot.user.id, permissions=perms)}) |" \
+        em.description = "f**Support server:** {config.support_invite}\n" \
+                         f"**Bot invite:**" \
+                         f" [Recommended perms]({oauth_url(self.bot.user.id, permissions=config.permissions)}) |" \
                          f" [No perms]({oauth_url(self.bot.user.id)})"
         await ctx.send(embed=em)
 
