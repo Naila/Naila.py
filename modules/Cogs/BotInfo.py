@@ -33,7 +33,7 @@ class BotInfo(commands.Cog):
     @checks.custom_bot_has_permissions(embed_links=True)
     async def invite(self, ctx):
         em = discord.Embed(color=await ctx.guildcolor())
-        em.description = "f**Support server:** {config.support_invite}\n" \
+        em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
                          f" [Recommended perms]({oauth_url(self.bot.user.id, permissions=config.permissions)}) |" \
                          f" [No perms]({oauth_url(self.bot.user.id)})"
