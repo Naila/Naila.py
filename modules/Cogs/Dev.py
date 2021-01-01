@@ -171,6 +171,11 @@ class Dev(commands.Cog):
         raise Exception(f"Exception raised by {ctx.author}")
 
     @checks.is_owner()
+    @commands.command(hidden=True)
+    async def div0(self, ctx):
+        await ctx.send(1 / 0)
+
+    @checks.is_owner()
     @commands.command(hidden=True, description="Force a user to run a command")
     async def sudo(self, ctx, user: discord.Member, *, command):
         message = ctx.message
