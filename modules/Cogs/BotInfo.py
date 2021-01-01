@@ -32,11 +32,12 @@ class BotInfo(commands.Cog):
     @commands.command(description="Invite the bot or join the bots support server!")
     @checks.custom_bot_has_permissions(embed_links=True)
     async def invite(self, ctx):
+        invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
         em = discord.Embed(color=await ctx.guildcolor())
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
-                         f" [Recommended perms]({oauth_url(self.bot.user.id, permissions=config.permissions)}) |" \
-                         f" [No perms]({oauth_url(self.bot.user.id)})"
+                         f" [Recommended perms]({invite + f'&permissions={config.permissions}'}) |" \
+                         f" [No perms]({invite})"
         await ctx.send(embed=em)
 
     @commands.command(description="Various stats about the bot")

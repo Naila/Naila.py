@@ -17,11 +17,12 @@ class SlashCommands(commands.Cog):
 
     @cog_ext.cog_slash(name="invite")
     async def slash_invite(self, ctx: SlashContext):
+        invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
         em = discord.Embed(color=self.bot.color)
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
-                         f" [Recommended perms]({oauth_url(self.bot.user.id, permissions=config.permissions)}) |" \
-                         f" [No perms]({oauth_url(self.bot.user.id)})"
+                         f" [Recommended perms]({invite + f'&permissions={config.permissions}'}) |" \
+                         f" [No perms]({invite})"
         await ctx.send(embeds=[em])
 
 
