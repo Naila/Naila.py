@@ -93,9 +93,9 @@ class Animals(commands.Cog):
     #     em.set_image(url=await Animal(ctx).image("lion"))
     #     await ctx.send(embed=em)
 
-    @commands.group(invoke_without_command=True, case_insensitive=True, description="Random cats!")
+    @commands.group(aliases=["meow"], invoke_without_command=True, case_insensitive=True, description="Random cats!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def meow(self, ctx: CustomContext, *, breed: str = None):
+    async def cat(self, ctx: CustomContext, *, breed: str = None):
         if not ctx.invoked_subcommand:
             image, name, details = await Cat(ctx).image(breed)
             if not image:
@@ -105,15 +105,15 @@ class Animals(commands.Cog):
             em.set_image(url=image)
             await ctx.send(embed=em)
 
-    @meow.command(name="breeds", description="List the available cat breeds!")
+    @cat.command(name="breeds", description="List the available cat breeds!")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def meow_breeds(self, ctx: CustomContext, page: int = 1):
+    async def cat_breeds(self, ctx: CustomContext, page: int = 1):
         em = discord.Embed(color=await ctx.guildcolor())
         pages, breed_count = await Cat(ctx).breeds()
         if page > len(pages):
             return await ctx.send_error("There aren't that many pages!")
         em.description = pages[page - 1]
-        em.set_author(name=f"There are currently {breed_count} breeds to chose from!")
+        em.set_author(name=f"There are currently {breed_count} breeds to chose f rom!")
         em.set_footer(text=f"Page: {page}/{len(pages)}")
         await ctx.send(embed=em)
 
