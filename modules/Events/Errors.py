@@ -47,8 +47,8 @@ class Errors(commands.Cog):
         if isinstance(error, commands.CommandOnCooldown):
             return await ctx.send(self.format_retry_after(error.retry_after))
         ctx.command.reset_cooldown(ctx)
-        # if isinstance(error, commands.CommandInvokeError):
-        #     return await ctx.send_error(error.original)
+        if isinstance(error, commands.CommandInvokeError):
+            return await ctx.send_error(error.original)
         if isinstance(error, commands.MissingRequiredArgument):
             return await ctx.missing_argument()
         if isinstance(error, (commands.BadArgument, commands.BadUnionArgument)):
