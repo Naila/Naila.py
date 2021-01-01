@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b28d3cf06e4387657b0c1b2d26da04c9bbacff4db2d174199f1e70c031caa4ed"
+            "sha256": "584b7d5a4cf0ac860afcf425baf29e4407033e97cc00e85d5c2ec145bfce9f4a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -144,6 +144,14 @@
             "index": "pypi",
             "version": "==1.5.1"
         },
+        "discord-py-slash-command": {
+            "hashes": [
+                "sha256:9e3c4b0afbf86f47cc9780e461a02691cf4c71b9e6f0823ed8b2270c00b1cf2b",
+                "sha256:dced6ad336c4d47e1acb7d526de2937e916e7bb964078297a12c3d7e4f26d474"
+            ],
+            "index": "pypi",
+            "version": "==1.0.7"
+        },
         "h11": {
             "hashes": [
                 "sha256:3c6c61d69c6f13d41f1b80ab0322f1872702a3ba26e12aa864c928f6a43fbaab",
@@ -271,7 +279,7 @@
                 "sha256:fcfbb44c59af3f8ea984de67ec7c306f618a3ec771c2843804069917a8f2e255",
                 "sha256:feed85993dbdb1dbc29102f50bca65bdc68f2c0c8d352468c25b54874f23c39d"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==4.7.6"
         },
         "pillow": {
@@ -424,7 +432,7 @@
                 "sha256:471b71698eac1c2112a40ce2752bb2f4a4814c22a54a3eed3676bc0f5ca9f663",
                 "sha256:c4666eecec1d3f50960c6bdf61ab7bc350648da6c126e3cf6898d8cd4ddcd3de"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==1.2.0"
         },
         "soupsieve": {
@@ -495,7 +503,7 @@
                 "sha256:f18d68f2be6bf0e89f1521af2b1bb46e66ab0018faafa81d70f358153170a317",
                 "sha256:f379b7f83f23fe12823085cd6b906edc49df969eb99757f58ff382349a3303c6"
             ],
-            "markers": "python_full_version >= '3.5.0'",
+            "markers": "python_version >= '3.5'",
             "version": "==1.5.1"
         }
     },

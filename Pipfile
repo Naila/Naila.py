@@ -28,6 +28,7 @@ lru-dict = "*"
 beautifultable = "*"
 httpx = "*"
 beautifulsoup4 = "*"
+discord-py-slash-command = "*"
 
 [requires]
 python_version = "3.9"
