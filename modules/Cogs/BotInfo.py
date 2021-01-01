@@ -36,7 +36,7 @@ class BotInfo(commands.Cog):
         em = discord.Embed(color=await ctx.guildcolor())
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
-                         f" [Recommended perms]({invite + f'&permissions={config.permissions}'}) |" \
+                         f" [Recommended perms]({invite + f'&permissions={config.permissions.value}'}) |" \
                          f" [No perms]({invite})"
         await ctx.send(embed=em)
 

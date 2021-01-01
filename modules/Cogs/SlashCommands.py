@@ -21,7 +21,7 @@ class SlashCommands(commands.Cog):
         em = discord.Embed(color=self.bot.color)
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
-                         f" [Recommended perms]({invite + f'&permissions={config.permissions}'}) |" \
+                         f" [Recommended perms]({invite + f'&permissions={config.permissions.value}'}) |" \
                          f" [No perms]({invite})"
         await ctx.send(embeds=[em])
 
