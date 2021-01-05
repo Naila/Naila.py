@@ -226,3 +226,4 @@ dmypy.json
 config/config.py
 config/emojis.yml
 config/logging.yml
+utils/assets/locales/
