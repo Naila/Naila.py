@@ -99,7 +99,7 @@ class Ready(commands.Cog):
 
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
-        blacklist = ["modules/Events/Ready", "modules/Cogs/Music", "modules/Cogs/MusicRewrite"]
+        blacklist = ["modules/Events/Ready", "modules/Cogs/Music", "modules/Cogs/MusicRewrite", "modules/Events/BuiltinAPI"]
         if self.bot.debug:
             blacklist.append("modules/Events/Loops")
         for path in paths:
