@@ -32,249 +32,280 @@ class NSFW(commands.Cog):
     #     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
     #     return em
 
+    @commands.command(aliases=["bb"])
     @checks.is_nsfw()
-    @commands.group(aliases=["bb"], case_insensitive=True, description="Porn from boob.bot")
-    async def boobbot(self, ctx):
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
+    async def boobbot(self, ctx, old_command: str = None):
+        prefix = ctx.prefix
+        if not old_command:
+            return await ctx.send(
+                f"This command will be deleted soon, you can view the NSFW commands with {prefix}help NSFW"
+            )
+        return await ctx.send(f"You no longer have to prefix NSFW commands with `bb` {prefix}help NSFW")
 
-    @boobbot.command(name="boobs", description="Boobs")
+    @commands.command(aliases=["tits"], description="Boobs")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_boobs(self, ctx):
+    async def boobs(self, ctx):
         url = await boobbot(ctx.session, "boobs")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="butts", description="Butts")
+    @commands.command(aliases=["ass"], description="Butts")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_butts(self, ctx):
+    async def butts(self, ctx):
         url = await boobbot(ctx.session, "ass")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="4k", description="High quality porn")
+    @commands.command(name="4k", description="High quality porn")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_4k(self, ctx):
+    async def _4k(self, ctx):
         url = await boobbot(ctx.session, "4k")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="anal", description="Anal")
+    @commands.command(description="Anal")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_anal(self, ctx):
+    async def anal(self, ctx):
         url = await boobbot(ctx.session, "anal")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="bdsm", description="BDSM")
+    @commands.command(description="BDSM")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_bdsm(self, ctx):
+    async def bdsm(self, ctx):
         url = await boobbot(ctx.session, "bdsm")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="black", description="Black women")
+    @commands.command(name="black", description="Black women")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_black(self, ctx):
+    async def black(self, ctx):
         url = await boobbot(ctx.session, "black")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="bj", description="Blowjobs")
+    @commands.command(aliases=["bj"], description="Blowjobs")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_blowjob(self, ctx):
+    async def blowjob(self, ctx):
         url = await boobbot(ctx.session, "blowjob")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="bottomless", description="Bottomless girls")
+    @commands.command(description="Bottomless girls")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_bottomless(self, ctx):
+    async def bottomless(self, ctx):
         url = await boobbot(ctx.session, "bottomless")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="collared", description="Girls wearing collars")
+    @commands.command(description="Girls wearing collars")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_collared(self, ctx):
+    async def collared(self, ctx):
         url = await boobbot(ctx.session, "collared")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="cumsluts", description="Covered in cum")
+    @commands.command(description="Covered in cum")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_cumsluts(self, ctx):
+    async def cumsluts(self, ctx):
         url = await boobbot(ctx.session, "cumsluts")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="dp", description="Double penetration")
+    @commands.command(aliases=["dp"], description="Double penetration")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_dpgirls(self, ctx):
+    async def doublepenetration(self, ctx):
         url = await boobbot(ctx.session, "dpgirls")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="easter", description="Easter themed")
+    @commands.command(description="Easter themed")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_easter(self, ctx):
+    async def easter(self, ctx):
         url = await boobbot(ctx.session, "easter")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="futa", description="Hentai: Futa")
+    @commands.command(description="Hentai: Futa")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_futa(self, ctx):
+    async def futa(self, ctx):
         url = await boobbot(ctx.session, "futa")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="gay", description="Gay porn")
+    @commands.command(description="Gay porn")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_gay(self, ctx):
+    async def gay(self, ctx):
         url = await boobbot(ctx.session, "gay")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="gifs", description="Porn gifs")
+    @commands.command(description="Porn gifs")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_gifs(self, ctx):
+    async def gifs(self, ctx):
         url = await boobbot(ctx.session, "Gifs")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="group", description="Group porn")
+    @commands.command(description="Group porn")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_group(self, ctx):
+    async def group(self, ctx):
         url = await boobbot(ctx.session, "group")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="halloween", description="Halloween themed")
+    @commands.command(description="Halloween themed")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_halloween(self, ctx):
+    async def halloween(self, ctx):
         url = await boobbot(ctx.session, "halloween")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="hentai", description="Hentai")
+    @commands.command(description="Hentai")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_hentai(self, ctx):
+    async def hentai(self, ctx):
         url = await boobbot(ctx.session, "hentai")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="lesbians", description="Girl on girl")
+    @commands.command(description="Girl on girl")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_lesbians(self, ctx):
+    async def lesbians(self, ctx):
         url = await boobbot(ctx.session, "lesbians")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="pawg", description="Phat ass white girls")
+    @commands.command(description="Phat ass white girls")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_pawg(self, ctx):
+    async def pawg(self, ctx):
         url = await boobbot(ctx.session, "pawg")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="pegged", description="Women pegging men")
+    @commands.command(description="Women pegging men")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_pegged(self, ctx):
+    async def pegged(self, ctx):
         url = await boobbot(ctx.session, "pegged")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="dick", description="Dicks")
+    @commands.command(description="Dicks")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_dick(self, ctx):
+    async def dick(self, ctx):
         url = await boobbot(ctx.session, "penis")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="poke", description="Hentai: Pokemon")
+    @commands.command(description="Hentai: Pokemon")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_poke(self, ctx):
+    async def pokeporn(self, ctx):
         url = await boobbot(ctx.session, "PokePorn")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="pussy", description="Pussy")
+    @commands.command(description="Pussy")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_pussy(self, ctx):
+    async def pussy(self, ctx):
         url = await boobbot(ctx.session, "pussy")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="real", description="Real women")
+    @commands.command(description="Real women")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_real(self, ctx):
+    async def real(self, ctx):
         url = await boobbot(ctx.session, "real")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="redhead", description="Red heads")
+    @commands.command(description="Red heads")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_redhead(self, ctx):
+    async def redhead(self, ctx):
         url = await boobbot(ctx.session, "red")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="tatted", description="Tatted women")
+    @commands.command(description="Tatted women")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_tatted(self, ctx):
+    async def tatted(self, ctx):
         endpoint = random.choice(["tattoo", "wtats"])
         url = await boobbot(ctx.session, endpoint)
         em = await self.boobbot_embed(ctx)
@@ -282,78 +313,85 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="thighs", description="Thighs")
+    @commands.command(description="Thighs")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_thighs(self, ctx):
+    async def thighs(self, ctx):
         url = await boobbot(ctx.session, "thighs")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="tiny", description="Tiny girls")
+    @commands.command(description="Tiny girls")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_tiny(self, ctx):
+    async def tiny(self, ctx):
         url = await boobbot(ctx.session, "tiny")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="toys", description="Porn with toys")
+    @commands.command(description="Porn with toys")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_toys(self, ctx):
+    async def toys(self, ctx):
         url = await boobbot(ctx.session, "toys")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="traps", description="Traps")
+    @commands.command(description="Traps")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_traps(self, ctx):
+    async def traps(self, ctx):
         url = await boobbot(ctx.session, "traps")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="vday", description="Valentines themed")
+    @commands.command(description="Valentines themed")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_vday(self, ctx):
+    async def vday(self, ctx):
         url = await boobbot(ctx.session, "vday")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="xmas", description="Christmas themed")
+    @commands.command(description="Christmas themed")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_xmas(self, ctx):
+    async def xmas(self, ctx):
         url = await boobbot(ctx.session, "xmas")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="yaoi", description="Hentai: Boys' love")
+    @commands.command(description="Hentai: Boys' love")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_yaoi(self, ctx):
+    async def yaoi(self, ctx):
         url = await boobbot(ctx.session, "yaoi")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
 
-    @boobbot.command(name="yiff", description="Furry images")
+    @commands.command(description="Furry images")
+    @checks.is_nsfw()
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def boobbot_yiff(self, ctx):
+    async def yiff(self, ctx):
         url = await boobbot(ctx.session, "yiff")
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.send(embed=em)
-
 
     # @checks.is_nsfw()
     # @commands.group(case_insensitive=True, description="NSFW images from neko.life")
