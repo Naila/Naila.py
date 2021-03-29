@@ -3,7 +3,8 @@ from dataclasses import dataclass
 import discord
 
 from utils.ctx import CustomContext
-from ..functions import errors
+from utils.functions import errors
+
 
 # TODO: Rewrite all of this shitty code, literally all of the database code is poopoo
 

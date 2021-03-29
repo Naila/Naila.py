@@ -1,6 +1,8 @@
 import os
-from utils.functions.api import session_post, session_get
+
 from requests.exceptions import HTTPError
+
+from utils.functions.api import session_post, session_get
 
 
 class TopGG:

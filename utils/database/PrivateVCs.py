@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import discord
 from discord.ext.commands import AutoShardedBot as DiscordBot
-from datetime import datetime
 
 
 async def check(bot: DiscordBot, guild: discord.Guild):

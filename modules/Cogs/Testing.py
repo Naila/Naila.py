@@ -240,7 +240,7 @@ class Testing(commands.Cog):
         em = discord.Embed(color=color["decimal"])
 
         color_name, closest_name = self.get_color_name(color["rgb"])
-        author_name = color_name if color_name else f"Closest named color: {closest_name}"
+        author_name = color_name or f"Closest named color: {closest_name}"
         em.set_author(name=author_name)
 
         em.add_field(name="HEX:", value=f"#{color['hex']}")
@@ -274,7 +274,7 @@ class Testing(commands.Cog):
             decimal = int(hexa, 16)
         elif HEX_COLOR_RE.match(color):
             hexa = color.strip("#")
-            rgb = tuple(int(hexa[i:i+2], 16) for i in (0, 2, 4))
+            rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
             decimal = int(hexa, 16)
         elif color.lower().replace(" ", "_") in COLOR_NAMES_TO_HEX:
             hexa = COLOR_NAMES_TO_HEX[color.lower().replace(" ", "_")].strip("#")
@@ -317,8 +317,8 @@ class Testing(commands.Cog):
             light_draw = ImageDraw.Draw(light_image)
             dark_w, dark_h = dark_draw.textsize(dark_hex, font=font)
             light_w, light_h = light_draw.textsize(light_hex, font=font)
-            dark_draw.text(((200-dark_w)/2, (200-dark_h)), dark_hex, dark_font, font)
-            light_draw.text(((200-light_w)/2, (200-light_h)), light_hex, light_font, font)
+            dark_draw.text(((200 - dark_w) / 2, (200 - dark_h)), dark_hex, dark_font, font)
+            light_draw.text(((200 - light_w) / 2, (200 - light_h)), light_hex, light_font, font)
             blank.paste(dark_image, (coord, 0))
             blank.paste(light_image, (coord, 200))
         gradient_image = BytesIO()
@@ -335,7 +335,7 @@ class Testing(commands.Cog):
         min_colours = {}
         for name, hexa in COLOR_NAMES_TO_HEX.items():
             hexa = hexa.strip("#")
-            r_c, g_c, b_c = tuple(int(hexa[i:i+2], 16) for i in (0, 2, 4))
+            r_c, g_c, b_c = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
             rd = (r_c - requested_colour[0]) ** 2
             gd = (g_c - requested_colour[1]) ** 2
             bd = (b_c - requested_colour[2]) ** 2

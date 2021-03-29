@@ -1,6 +1,7 @@
-import discord
-import re
 import random
+import re
+
+import discord
 
 
 def find_mentions(messages, mention):

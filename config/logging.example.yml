@@ -1,4 +1,8 @@
 # Formatting various elements of the output https://humanfriendly.readthedocs.io/en/latest/_images/ansi-demo.png
+file:
+  backup_count: 5
+  max_MiB: 32
+
 formats:
   file: "[%(asctime)-3s][%(name)-2s][%(levelname)-1s][%(message)s][%(filename)s:%(lineno)d]"
   console: "[%(asctime)s][%(name)s][%(levelname)s][%(message)s][%(filename)s:%(lineno)d]"

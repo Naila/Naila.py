@@ -32,7 +32,7 @@ class NSFW(commands.Cog):
     #     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
     #     return em
 
-    @commands.command(aliases=["bb"])
+    @commands.command(aliases=["bb"], hidden=True)
     @checks.is_nsfw()
     async def boobbot(self, ctx, old_command: str = None):
         prefix = ctx.prefix

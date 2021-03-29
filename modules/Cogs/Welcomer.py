@@ -1,13 +1,12 @@
 from datetime import datetime
-from urllib.parse import quote as parse
 
 import discord
 from discord.ext import commands
-from utils.functions.images import createWelcomeImage
+
 from utils.checks import checks
 from utils.ctx import CustomContext
 from utils.database.GuildSettings import Guild, Welcomer as Welcome
-from utils.functions.api import welcomer
+from utils.functions.images import createWelcomeImage
 
 
 class Welcomer(commands.Cog):
@@ -35,8 +34,8 @@ class Welcomer(commands.Cog):
         if fmt not in [1, 2]:
             return await ctx.send_error("fmt must either be 1 or 2!")
         data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
-        background = background if background else data["welcomer_background"]
-        fmt = fmt if fmt else data["welcomer_type"]
+        background = background or data["welcomer_background"]
+        fmt = fmt or data["welcomer_type"]
         await self.welcomer_handler(member=ctx.author, ctx=ctx, background=background, fmt=fmt)
 
     @welcomer.command(name="embed", description="Toggle the embed")
@@ -184,11 +183,10 @@ class Welcomer(commands.Cog):
 
         guild = member.guild
         data = await Welcome().welcomer_data(self.bot, guild)
-        warning = ""
         if not data["welcomer_enabled"] or not data["welcomer_channel"]:
             if not ctx:
                 return
-            warning += "You either don't have welcomer enabled or don't have a channel set so this will not work!"
+            warning = "You either don't have welcomer enabled or don't have a channel set so this will not work!"
             return await ctx.send_error(warning)
         member_created = (datetime.utcnow() - member.created_at).days
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"

@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
+
 from utils.functions import errors
+
 
 # Decorators
 
@@ -26,6 +28,7 @@ def is_nsfw():
         if ctx.channel.is_nsfw():
             return True
         raise commands.NSFWChannelRequired(ctx.channel)
+
     return commands.check(predicate)
 
 
@@ -36,6 +39,7 @@ def guild_owner_or_permissions(**perms):
         if ctx.author.id == ctx.guild.owner.id:
             return True
         return check_permissions(ctx, perms)
+
     return commands.check(predicate)
 
 
@@ -44,6 +48,7 @@ def admin_or_permissions(**perms):
         if ctx.author.permissions_in(ctx.channel).manage_guild:
             return True
         return role_or_permissions(ctx, **perms)
+
     return commands.check(predicate)
 
 
@@ -52,6 +57,7 @@ def mod_or_permissions(**perms):
         if ctx.author.permissions_in(ctx.channel).manage_messages:
             return True
         return role_or_permissions(ctx, **perms)
+
     return commands.check(predicate)
 
 
@@ -79,6 +85,7 @@ def user_has_permissions(**perms):
             return True
 
         raise commands.MissingPermissions(missing)
+
     return commands.check(predicate)
 
 
@@ -89,6 +96,7 @@ def custom_user_has_permissions(**permissions):
         wrapped = deco(func)
         setattr(func, "user_perms", permissions)
         return wrapped
+
     return inner
 
 
@@ -104,6 +112,7 @@ def bot_has_permissions(**perms):
             return True
 
         raise errors.BotMissingPermissions(missing)
+
     return commands.check(predicate)
 
 
@@ -114,7 +123,9 @@ def custom_bot_has_permissions(**permissions):
         wrapped = deco(func)
         setattr(func, "bot_perms", permissions)
         return wrapped
+
     return inner
+
 
 # Utilities
 

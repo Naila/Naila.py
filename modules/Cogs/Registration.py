@@ -6,8 +6,8 @@ from discord.ext import commands
 
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
+from utils.ctx import CustomContext
 from utils.database.GuildSettings import Registration as Register
-
 
 roles = [
     "He/Him", "She/Her", "They/Them", "Mention", "No Mention", "18+", "<18",
@@ -315,6 +315,10 @@ class Registration(commands.Cog):
             if answered:
                 return answer
             await author.send("Invalid response!")
+
+    async def cog_command_error(self, ctx: CustomContext, error):
+        if isinstance(error, commands.CheckFailure):
+            return
 
 
 def setup(bot):

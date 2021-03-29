@@ -2,9 +2,11 @@ import json
 import os
 import re
 from datetime import datetime
-from config import config
+
 import discord
 from discord.ext import commands, tasks
+
+from config import config
 
 
 class Ready(commands.Cog):
@@ -99,7 +101,8 @@ class Ready(commands.Cog):
 
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
-        blacklist = ["modules/Events/Ready", "modules/Cogs/Music", "modules/Cogs/MusicRewrite", "modules/Events/BuiltinAPI"]
+        blacklist = ["modules/Events/Ready", "modules/Cogs/Music", "modules/Cogs/MusicRewrite",
+                     "modules/Events/BuiltinAPI"]
         if self.bot.debug:
             blacklist.append("modules/Events/Loops")
         for path in paths:

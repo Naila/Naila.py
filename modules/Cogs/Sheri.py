@@ -20,16 +20,15 @@ async def image_send(ctx, endpoint: str):
     async with httpx.AsyncClient() as session:
         data = await session.get(url=base_url + endpoint, headers={"Authorization": os.getenv("SHERI"),
                                                                    "User-Agent": "Naila Discord Bot - By Kanin#0001"})
-        if data.status_code == 200:
-            response = data.json()
-            embed = await sheri_embed(ctx)
-            embed.set_image(url=response['url'])
-            embed.add_field(name="Issue with image?",
-                            value="Report it to the sheri.bot using the below link\n"
-                                  f"{response['report_url']}")
-            return await ctx.send(embed=embed)
-        else:
+        if data.status_code != 200:
             return await ctx.send("Either the website is down or there is an internal error, Please contact support!")
+        response = data.json()
+        embed = await sheri_embed(ctx)
+        embed.set_image(url=response['url'])
+        embed.add_field(name="Issue with image?",
+                        value="Report it to the sheri.bot using the below link\n"
+                              f"{response['report_url']}")
+        return await ctx.send(embed=embed)
 
 
 class Sheri(commands.Cog):

@@ -3,7 +3,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from utils.functions.text import bold
+from utils.functions.text import bold, readable_list
 
 
 # Wow this got bad, will rewrite later
@@ -25,8 +25,8 @@ def get_relative_delta(time, append_days: bool = False, append_long: bool = Fals
     if delta.days:
         days = delta.days
         tme.append(f"{days} days" if days != 1 else "1 day")
-    if len(tme) == 0 or append_small:
-        if len(tme) == 0:
+    if not tme or append_small:
+        if not tme:
             append_days = False
         if delta.hours:
             hours = delta.hours
@@ -37,14 +37,13 @@ def get_relative_delta(time, append_days: bool = False, append_long: bool = Fals
         if delta.seconds and append_seconds:
             seconds = delta.seconds
             tme.append(f"{seconds} seconds" if seconds != 1 else "1 second")
-    fixed = f"{', '.join(tme[:-1])}, and {tme[-1]}" if len(tme) > 2 else " and ".join(tme)
+    fixed = readable_list(tme)
     msg += "in " if not past else ""
     msg += "\n" if append_long else ""
     msg += bold(fixed) if bold_string else fixed
     msg += " ago" if past else ""
-    if append_days:
-        if len(tme) != 1 and "days" not in tme[0]:
-            msg += f" ({(datetime.utcnow() - time).days} days)"
+    if append_days and len(tme) != 1 and "days" not in tme[0]:
+        msg += f" ({(datetime.utcnow() - time).days} days)"
     return msg
 
 

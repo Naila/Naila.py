@@ -1,11 +1,13 @@
+import asyncio
 import os
-import lavalink
-from lavalink import AudioTrack
 import re
+
+import lavalink
 from discord.ext import commands
 from discord.utils import escape_markdown
-import asyncio
-from utils.functions.music import Queue, draw_time, draw_vol, ensure_voice, enqueue_and_send, disconnect,\
+from lavalink import AudioTrack
+
+from utils.functions.music import Queue, draw_time, draw_vol, ensure_voice, enqueue_and_send, disconnect, \
     format_time, get_emoji, embed, get_thumbnail
 
 url_rx = re.compile("https?://(?:www\\.)?.+")
@@ -145,6 +147,7 @@ class Music(commands.Cog):
 
         def check(reacted, author):
             return reacted.message.id == message.id and author == ctx.author
+
         while True:
             try:
                 reaction, user = await self.bot.wait_for("reaction_add", check=check, timeout=60)

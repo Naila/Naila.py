@@ -4,11 +4,11 @@ from datetime import datetime
 import discord
 import psutil
 from discord.ext import commands
-from discord.utils import oauth_url
+
 from config import config
 from utils.checks import checks
-from utils.functions.time import get_bot_uptime
 from utils.functions.text import filesize_fix
+from utils.functions.time import get_bot_uptime
 
 
 class BotInfo(commands.Cog):

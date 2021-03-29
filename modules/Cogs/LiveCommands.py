@@ -4,6 +4,8 @@ import discord
 from beautifultable import BeautifulTable, STYLE_BOX_ROUNDED
 from discord.ext import commands
 
+from utils.checks import checks
+
 
 class TheCore:
     def __init__(self):
@@ -36,29 +38,26 @@ class LiveCommands(commands.Cog):
                 core.count.append(1)
                 core.process.append(0)
                 core.start.append(datetime.utcnow())
-                core.last = cmd
             else:
                 dex = core.command.index(cmd)
                 core.count[dex] += 1
                 core.start[dex] = datetime.utcnow()
                 core.process[dex] = 0
-                core.last = cmd
+            core.last = cmd
 
     @commands.Cog.listener()
     async def on_command_completion(self, ctx):
         core = self.get_commandlist()
         cmd = ctx.command.qualified_name.replace(" ", "_")
 
-        if ctx.valid:
-            if cmd in core.command:
-                dex = core.command.index(cmd)
-                now = datetime.utcnow()
-                start = core.start[dex]
-                core.process[dex] = abs((now - start).total_seconds())
-            else:
-                pass
+        if ctx.valid and cmd in core.command:
+            dex = core.command.index(cmd)
+            now = datetime.utcnow()
+            start = core.start[dex]
+            core.process[dex] = abs((now - start).total_seconds())
 
     @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
+    @checks.custom_bot_has_permissions(embed_links=True)
     async def command_list(self, ctx):
         try:
             core = self.get_commandlist()
@@ -67,9 +66,6 @@ class LiveCommands(commands.Cog):
             proc = core.process
 
             count, command, proc = (list(t) for t in zip(*sorted(zip(count, command, proc), reverse=True)))
-
-            most_used_commands = command[0]
-            uses = count[0]
 
             p = BeautifulTable()
             p.set_style(STYLE_BOX_ROUNDED)
@@ -86,37 +82,37 @@ class LiveCommands(commands.Cog):
 
             post = discord.Embed(color=await ctx.guildcolor())
             post.title = f"Naila's top {z} commands:"
-            post.description = f"**Most used:** {most_used_commands} `[{uses:,}]`\n**Last command ran:** {core.last}"
-            post.description += f"```ml\n{p}```"
+            post.description = f"```ml\n{p}```"
             await ctx.send(embed=post)
         except ValueError:
-            return await ctx.send("Unable to post stats, Not enough data!")
+            return await ctx.send_error("Unable to post stats, Not enough data!")
 
     # @commands.command()
+    # @checks.custom_bot_has_permissions(embed_links=True)
     # async def commandinfo(self, ctx, *, command: str):
-    #     the_command = self.bot.get_command(command)
+    #     command = self.bot.get_command(command)
     #
-    #     if the_command is None:
-    #         await ctx.send("No command found")
-    #     else:
-    #         command_stat = self.get_commandlist()
+    #     if command is None:
+    #         return await ctx.send_help(ctx.command)
     #
-    #         aliases = the_command.aliases
-    #         name = the_command.name
-    #         cog = the_command.cog_name
-    #         the_args = the_command.clean_params
-    #         the_checks = the_command.checks
-    #         # the_defaults = the_command.__defaults__
-    #         post = f"{name} info:\n" f"Aliases: {aliases}\n" f"Cog: {cog}\n\n"
-    #         post += f"Args&Variables: {dict(the_args)}\n\n"
-    #         post += f"Checks Req: {the_checks}"
-    #         if command in command_stat.command:
-    #             dex = command_stat.command.index(command)
-    #             times = command_stat.count[dex]
+    #     aliases = command.aliases
+    #     name = command.name
+    #     cog = command.cog_name
+    #     the_args = command.clean_params
+    #     the_checks = command.checks
+    #     # the_defaults = the_command.__defaults__
+    #     post = f"{name} info:\n" f"Aliases: {aliases}\n" f"Cog: {cog}\n\n"
+    #     post += f"Args&Variables: {dict(the_args)}\n\n"
+    #     post += f"Checks Req: {the_checks}"
     #
-    #             post += f"\n**Used: `{times}` times.**"
+    #     command_stat = self.get_commandlist()
+    #     if command in command_stat.command:
+    #         dex = command_stat.command.index(command)
+    #         times = command_stat.count[dex]
     #
-    #         await ctx.send(post)
+    #         post += f"\n**Used: `{times}` times.**"
+    #
+    #     await ctx.send(post)
 
 
 def setup(bot):

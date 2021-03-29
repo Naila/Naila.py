@@ -13,7 +13,8 @@ class Animal:
                 "bear": [{"url": "https://and-here-is-my-code.glitch.me/img/bear", "key": "Link"}],
                 "bird": [{"url": "https://some-random-api.ml/img/birb", "key": "link"}],
                 "dolphin": [{"url": "https://and-here-is-my-code.glitch.me/img/dolphin", "key": "Link"}],
-                "duck": [{"url": "https://random-d.uk/api/v2/quack", "key": "url"}],  # {"url": "https://and-here-is-my-code.glitch.me/img/duck", "key": "Link"},
+                "duck": [{"url": "https://random-d.uk/api/v2/quack", "key": "url"}],
+                # {"url": "https://and-here-is-my-code.glitch.me/img/duck", "key": "Link"},
                 "elephant": [{"url": "https://and-here-is-my-code.glitch.me/img/elephant", "key": "Link"}],
                 "fox": [{"url": "https://some-random-api.ml/img/fox", "key": "link"}],
                 "giraffe": [{"url": "https://and-here-is-my-code.glitch.me/img/giraffe", "key": "Link"}],
@@ -22,7 +23,8 @@ class Animal:
                 "killerwhale": [{"url": "https://and-here-is-my-code.glitch.me/img/killerwhale", "key": "Link"}],
                 "koala": [{"url": "https://some-random-api.ml/img/koala", "key": "link"}],
                 "lion": [{"url": "https://and-here-is-my-code.glitch.me/img/lion", "key": "Link"}],
-                "panda": [{"url": "https://some-random-api.ml/img/panda", "key": "link"}],  # {"url": "https://and-here-is-my-code.glitch.me/img/panda", "key": "Link"},
+                "panda": [{"url": "https://some-random-api.ml/img/panda", "key": "link"}],
+                # {"url": "https://and-here-is-my-code.glitch.me/img/panda", "key": "Link"},
                 "pig": [{"url": "https://and-here-is-my-code.glitch.me/img/pig", "key": "Link"}],
                 "redpanda": [{"url": "https://some-random-api.ml/img/red_panda", "key": "link"}],
                 "shark": [{"url": "https://and-here-is-my-code.glitch.me/img/shark", "key": "Link"}],
@@ -171,7 +173,6 @@ class Dog:
     async def image(self, breed: str = None):
         url = self.base + "images/search?has_breeds=1"
         if breed:
-            breeds = {}
             async with self.session.get(
                     url=self.base + "breeds",
                     headers={"x-api-key": os.getenv("DOG")}
@@ -179,8 +180,7 @@ class Dog:
                 if resp.status != 200:
                     return raise_for_status(resp)
                 breed_list = await resp.json()
-            for x in breed_list:
-                breeds[x["name"].lower()] = x["id"]
+            breeds = {x["name"].lower(): x["id"] for x in breed_list}
             if breed.lower() not in breeds:
                 return None, None, None
             url += f"&breed_id={breeds[breed.lower()]}"
@@ -198,7 +198,7 @@ class Dog:
                     if x == "Height":
                         height = f"**{x}:** {y['imperial']}in ({y['metric']}cm)\n"
                         continue
-                    if x == "Weight":
+                    elif x == "Weight":
                         weight = f"**{x}:** {y['imperial']}lb ({y['metric']}kg)\n"
                         continue
                     details += f"**{x}:** {y}\n"

@@ -27,9 +27,7 @@ class Dev(commands.Cog):
         paths = ["modules/Cogs", "modules/Events"]
         for path in paths:
             for file in os.listdir(path):
-                if not file.endswith(".py"):
-                    pass
-                else:
+                if file.endswith(".py"):
                     if path == paths[0]:
                         cog_list.append(file[:-3])
                     else:

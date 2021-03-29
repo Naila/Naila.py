@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
+
 from utils.APIs.Animals import Animal, Cat, Dog
-from utils.ctx import CustomContext
 from utils.checks import checks
+from utils.ctx import CustomContext
 
 
 class Animals(commands.Cog):

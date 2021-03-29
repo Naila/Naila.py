@@ -1,8 +1,8 @@
 import discord
-from config import config
 from discord.ext import commands
-from discord.utils import oauth_url
 from discord_slash import SlashCommand, SlashContext, cog_ext
+
+from config import config
 
 
 class SlashCommands(commands.Cog):

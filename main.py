@@ -1,56 +1,44 @@
-import asyncio
-import atexit
-import os
+import logging
+from logging.handlers import RotatingFileHandler
 from os.path import join, dirname
 
-import discord
-from discord.utils import oauth_url
-from discord.ext.commands import AutoShardedBot as DiscordBot
+import coloredlogs
+import yaml
 from dotenv import load_dotenv
 
-from utils.database.GuildSettings import Prefixes
-from utils import setup
-from utils.ctx import CustomContext
-from config import config
+from bot import Bot
 
 load_dotenv(join(dirname(__file__), "config/.env"))
 
-description = f"**Support server**: {config.support_invite}\n" \
-              f"**Bot invite**:" \
-              f" [Recommended perms]({oauth_url(config.client_id, permissions=config.permissions)}) |" \
-              f" [No perms]({oauth_url(config.client_id)})"
 
+def setup_logger():
+    logger = logging.getLogger()
 
-class Bot(DiscordBot):
-    def __init__(self):
-        atexit.register(lambda: asyncio.ensure_future(self.logout()))
-        super().__init__(
-            intents=config.intents,
-            command_prefix=Prefixes.get,
-            description=description,
-            case_insensitive=True,
-            activity=discord.Game(
-                name="Booting...",
-                type=discord.ActivityType.playing
-            ),
-            status=discord.Status.dnd
-        )
-        setup.bot(self)
-        try:
-            self.loop.run_until_complete(self.start(os.getenv("TOKEN")))
-        except (discord.errors.LoginFailure, discord.errors.HTTPException) as e:
-            self.log.error(f"Shit: {repr(e)}", exc_info=False)
-        except KeyboardInterrupt:
-            self.loop.run_until_complete(self.pool.close())
-            self.loop.run_until_complete(self.logout())
+    with open("config/logging.yml", "r") as log_config:
+        config = yaml.safe_load(log_config)
 
-    async def get_context(self, message, *, cls=None):
-        return await super().get_context(message, cls=cls or CustomContext)
+    coloredlogs.install(
+        level="INFO",
+        logger=logger,
+        fmt=config["formats"]["console"],
+        datefmt=config["formats"]["datetime"],
+        level_styles=config["levels"],
+        field_styles=config["fields"]
+    )
 
-    if __name__ != "__main__":
-        setup.logger()
+    max_bytes = int(config["file"]["max_MiB"]) * 1024 * 1024
+    file = RotatingFileHandler(
+        filename=f"logs/bot.log",
+        encoding="utf-8",
+        maxBytes=max_bytes,
+        backupCount=int(config["file"]["backup_count"])
+    )
+    file.setFormatter(logging.Formatter(config["formats"]["file"]))
+    file.setLevel(logging.WARNING)
+    logger.addHandler(file)
+    return logger
 
 
 if __name__ == "__main__":
-    setup.logger()
+    setup_logger()
     Bot()

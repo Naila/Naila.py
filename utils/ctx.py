@@ -1,74 +1,15 @@
-# from datetime import datetime
-import asyncio
-
 import discord
-# import json
 import yaml
 from dictor import dictor
 from discord.ext import commands
 
-# from typing import Union
-# from functools import reduce
 from modules.Cogs.Help import command_signature
-
-# import pathlib
-
-
-class _ContextDBAcquire:
-    __slots__ = ('ctx', 'timeout')
-
-    def __init__(self, ctx, timeout):
-        self.ctx = ctx
-        self.timeout = timeout
-
-    def __await__(self):
-        return self.ctx.db_acquire(self.timeout).__await__()
-
-    async def __aenter__(self):
-        await self.ctx.db_acquire(self.timeout)
-        return self.ctx.db
-
-    async def __aexit__(self, *args):
-        await self.ctx.release()
+from utils.functions.errors import TranslationError
 
 
 class CustomContext(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.pool = self.bot.pool
-        self._db = None
-        # self.emoji_dict = self.handle_file("config/emojis.yml")
-
-    async def db_acquire(self, timeout):
-        if self._db is None:
-            self._db = await self.pool.acquire(timeout=timeout)
-        return self._db
-
-    def acquire(self, *, timeout=None):
-        """Acquires a database connection from the pool. e.g. ::
-            async with ctx.acquire():
-                await ctx.db.execute(...)
-        or: ::
-            await ctx.acquire()
-            try:
-                await ctx.db.execute(...)
-            finally:
-                await ctx.release()
-        """
-        return _ContextDBAcquire(self, timeout)
-
-    async def release(self):
-        """Releases the database connection from the pool.
-        Useful if needed for "long" interactive commands where
-        we want to release the connection and re-acquire later.
-        Otherwise, this is called automatically by the bot.
-        """
-        # from source digging asyncpg source, releasing an already
-        # released connection does nothing
-
-        if self._db is not None:
-            await self.bot.pool.release(self._db)
-            self._db = None
 
     @property
     def session(self):
@@ -77,6 +18,32 @@ class CustomContext(commands.Context):
     @property
     def log(self):
         return self.bot.log
+
+    @property
+    def pool(self):
+        return self.bot.pool
+
+    @staticmethod
+    def translator(path: str, key: str, **kwargs) -> str:
+        lang = "en_US"  # Get users language
+        # TODO: Cache strings?
+        full_path = f"utils/assets/locales/{lang}/bot/{path}.yml"
+        try:
+            with open(full_path, "r") as file:
+                strings = yaml.safe_load(file)
+        except FileNotFoundError:
+            raise TranslationError("Invalid path provided")
+
+        string = dictor(strings, key)
+        if not string:
+            raise TranslationError("Invalid key provided")
+
+        try:
+            string = string.format(**kwargs)
+        except KeyError:
+            raise TranslationError("Invalid kwargs provided")
+
+        return string
 
     async def guildcolor(self):
         if not self.guild:
@@ -88,31 +55,24 @@ class CustomContext(commands.Context):
             emojis = yaml.safe_load(emojis)
         return self.bot.get_emoji(dictor(emojis, emoji))
 
-    # async def embed(self, footer_text: str = None, embed_dict: dict = None) -> discord.Embed:
-    #     footer = str(self.author)
-    #     if embed_dict:
-    #         em = discord.Embed().from_dict(embed_dict)
-    #         if em.footer.text != discord.Embed.Empty:
-    #             footer_text = em.footer.text
-    #     else:
-    #         em = discord.Embed()
-    #     em.color = await self.guildcolor()
-    #     if footer_text:
-    #         footer += f" • {footer_text}"
-    #     em.set_footer(icon_url=self.author.avatar_url_as(static_format="png"), text=footer)
-    #     return em
-    #
-    # async def respond(self, path: str, **kwargs):
-    #     # will get language for guild
-    #     response = self.handle_file("locales/en_US.json", path, **kwargs)
-    #     em = await self.embed(embed_dict=response["embed"])
-    #     print(em.to_dict())
-    #     await self.send(content=response["content"] if "content" in response else None, embed=em)
+    async def embed(self, footer_text: str = None, embed_dict: dict = None) -> discord.Embed:
+        footer = str(self.author)
+        if embed_dict:
+            em = discord.Embed().from_dict(embed_dict)
+            if em.footer.text != discord.Embed.Empty:
+                footer_text = em.footer.text
+        else:
+            em = discord.Embed()
+        em.color = await self.guildcolor()
+        if footer_text:
+            footer += f" • {footer_text}"
+        em.set_footer(icon_url=self.author.avatar_url_as(static_format="png"), text=footer)
+        return em
 
     async def missing_argument(self):
         channel = self.channel
         prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
-        command = self.invoked_subcommand if self.invoked_subcommand else self.command
+        command = self.invoked_subcommand or self.command
         em = discord.Embed(color=self.bot.error_color)
         em.title = "Missing required argument ❌"
         em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
@@ -170,74 +130,3 @@ class CustomContext(commands.Context):
     #
     #     recursive_search(data, emojis="emojis.yml" in file_path)
     #     return data
-
-    async def prompt(self, message, *, timeout=60.0, delete_after=True, reacquire=True, author_id=None):
-        """An interactive reaction confirmation dialog.
-        Parameters
-        -----------
-        message: str
-            The message to show along with the prompt.
-        timeout: float
-            How long to wait before returning.
-        delete_after: bool
-            Whether to delete the confirmation message after we're done.
-        reacquire: bool
-            Whether to release the database connection and then acquire it
-            again when we're done.
-        author_id: Optional[int]
-            The member who should respond to the prompt. Defaults to the author of the
-            Context's message.
-        Returns
-        --------
-        Optional[bool]
-            ``True`` if explicit confirm,
-            ``False`` if explicit deny,
-            ``None`` if deny due to timeout
-        """
-
-        if not self.channel.permissions_for(self.me).add_reactions:
-            raise RuntimeError("Bot does not have Add Reactions permission.")
-
-        fmt = f"{message}\n\nReact with ✅ to confirm or ❌ to deny."
-
-        author_id = author_id or self.author.id
-        msg = await self.send(fmt)
-
-        confirm = None
-
-        def check(payload):
-            nonlocal confirm
-
-            if payload.message_id != msg.id or payload.user_id != author_id:
-                return False
-
-            codepoint = str(payload.emoji)
-
-            if codepoint == "✅":
-                confirm = True
-                return True
-            if codepoint == "❌":
-                confirm = False
-                return True
-
-            return False
-
-        for emoji in ("✅", "❌"):
-            await msg.add_reaction(emoji)
-
-        if reacquire:
-            await self.release()
-
-        try:
-            await self.bot.wait_for("raw_reaction_add", check=check, timeout=timeout)
-        except asyncio.TimeoutError:
-            confirm = None
-
-        try:
-            if reacquire:
-                await self.acquire()
-
-            if delete_after:
-                await msg.delete()
-        finally:
-            return confirm

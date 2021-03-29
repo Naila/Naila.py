@@ -9,6 +9,7 @@ from utils.checks import checks
 from utils.functions import errors
 from utils.functions.api import weeb
 from utils.functions.images import ship
+from utils.functions.text import readable_list
 
 
 class Social(commands.Cog):
@@ -22,11 +23,11 @@ class Social(commands.Cog):
             raise commands.MissingRequiredArgument(ctx.command.params["users"])
         users = [x.mention for x in list(set(users)) if x is not ctx.author]
         if len(users) > 5:
-            raise errors.TooManyUsers
+            raise commands.BadArgument("You provided too many users!")
         if not users:
             raise errors.UsedOnSelf
         word = "was" if len(users) == 1 else "were"
-        users = f"{', '.join(users[:-1])}, and {users[-1]}" if len(users) > 2 else " and ".join(users)
+        users = readable_list(users)
         return users, word
 
     @staticmethod
@@ -35,8 +36,6 @@ class Social(commands.Cog):
         love = Decimal(str(random_integer / 10)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         love_emoji = "❤"
         empty_bar = "🖤"
-        bar = ""
-
         if random_integer == 0:
             empty_bar = "💔"
             love_message = "That's not good... maybe delete this and try again before they see?"
@@ -61,8 +60,7 @@ class Social(commands.Cog):
             love_emoji = "💛"
             love_message = "Go get married! I hope I'm invited ❤"
 
-        for i in range(10):
-            bar += love_emoji if i < love else empty_bar
+        bar = "".join(love_emoji if i < love else empty_bar for i in range(10))
 
         return f"**Love meter:** {bar} **{random_integer}%**\n**{love_message}**"
 

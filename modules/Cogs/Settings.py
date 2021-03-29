@@ -1,8 +1,8 @@
 import asyncio
 import re
 
-from discord.ext import commands
 import discord
+from discord.ext import commands
 from discord.ext.commands import BucketType
 
 from config import config
@@ -24,21 +24,23 @@ class Settings(commands.Cog):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
-    @botsettings.command(name="status")
+    # TODO: Add list and add/remove commands
+    @botsettings.group(name="status")
     async def botsettings_status(self, ctx: CustomContext):
-        if not ctx.invoked_subcommand:
-            em = discord.Embed()
-            msg = ""
-            for presence in config.presences:
-                msg += f"{ctx.emojis('status.' + str(presence['status']))}"
-                if presence["activity"]["type"] == discord.Streaming:
-                    msg += f"{ctx.emojis('status.streaming')}" \
-                           f" **Streaming** [{presence['activity']['text']}]({presence['activity']['url']})\n"
-                else:
-                    prefix = str(presence['activity']['prefix']).split(".")[-1].capitalize()
-                    msg += f" **{prefix}** {presence['activity']['text']}\n"
-            em.description = msg
-            await ctx.send(embed=em)
+        if ctx.invoked_subcommand:
+            return
+        em = discord.Embed()
+        msg = ""
+        for presence in config.presences:
+            msg += f"{ctx.emojis('status.' + str(presence['status']))}"
+            if presence["activity"]["type"] == discord.Streaming:
+                msg += f"{ctx.emojis('status.streaming')}" \
+                       f" **Streaming** [{presence['activity']['text']}]({presence['activity']['url']})\n"
+            else:
+                prefix = str(presence['activity']['prefix']).split(".")[-1].capitalize()
+                msg += f" **{prefix}** {presence['activity']['text']}\n"
+        em.description = msg
+        await ctx.send(embed=em)
 
     @commands.group(aliases=["gset"], description="Manage the settings for this guild")
     @commands.guild_only()
@@ -214,7 +216,7 @@ class Settings(commands.Cog):
 
     @gset_privatevc.command(name="category", aliases=["cat"], description="Set the Private VC category")
     async def gset_privatevc_category(self, ctx: CustomContext, *, category: discord.CategoryChannel):
-        if not category.guild == ctx.guild:
+        if category.guild != ctx.guild:
             return await ctx.send_error("Category must be in this guild!")
         vc = await category.create_voice_channel("Join for a private VC")
         await PrivateVCs.set_settings(self.bot, ctx.guild, category, vc)

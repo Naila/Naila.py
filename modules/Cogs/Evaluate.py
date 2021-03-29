@@ -14,7 +14,6 @@ from discord.ext import commands
 
 from utils.checks import checks
 
-
 ENV = {
     "contextlib": contextlib,
     "inspect": inspect,
@@ -54,7 +53,7 @@ class Evaluate(commands.Cog):
 
         self.env.update(env)
 
-        _code =\
+        _code = \
             f"""
 async def func():
     try:
@@ -118,9 +117,8 @@ async def func():
         for i, line in enumerate(lines):
             s = ">>> " if i == 0 else "... "
 
-            if i == len(lines) - 2:
-                if line.startswith("return"):
-                    line = line[6:].strip()
+            if i == len(lines) - 2 and line.startswith("return"):
+                line = line[6:].strip()
 
             res += s + line + "\n"
 

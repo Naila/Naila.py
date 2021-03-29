@@ -43,7 +43,6 @@ def clean_param(param):
         clean = f"{clean.split(':')[0]}:{args}" if args else clean
     clean = re.sub(r"\bstr\b|\bActionReason\b", "Text", clean)
     clean = re.sub(r"\bint\b", "Number", clean)
-    clean = re.sub(r"\bActionReason\b", "Text", clean)
     clean = re.sub(r"\bMemberID\b", "Member or ID", clean)
     return clean
 
