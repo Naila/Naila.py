@@ -5,12 +5,14 @@ import jinja2
 from aiohttp import web
 from discord.ext import commands
 
+from bot import Bot
+
 BLACKLISTED_EVENTS = ["presence_update"]
 
 
 class BuiltinAPI(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.runner = None
         self.app = web.Application()
         aiohttp_jinja2.setup(self.app, loader=jinja2.FileSystemLoader("utils/assets/templates"))

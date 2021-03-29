@@ -3,23 +3,24 @@ import asyncio
 import discord
 from discord.ext import commands
 
-from utils.ctx import CustomContext
+from bot import Bot
+from utils.ctx import Context
 from utils.database import PrivateVCs
 
 
 class PrivateVC(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.queued = []
 
     @commands.cooldown(5, 30, commands.BucketType.user)
     @commands.group(aliases=["pvc"])
-    async def privatevc(self, ctx: CustomContext):
+    async def privatevc(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @privatevc.command(name="add")
-    async def privatevc_add(self, ctx: CustomContext, *, member: discord.Member):
+    async def privatevc_add(self, ctx: Context, *, member: discord.Member):
         data = await PrivateVCs.fetch_data(self.bot, ctx.author)
         if not data:
             return await ctx.send_error("You don't have a private Voice Channel!")
@@ -40,7 +41,7 @@ class PrivateVC(commands.Cog):
         await ctx.send(f"{member.mention} now has access to your channels!")
 
     @privatevc.command(name="remove")
-    async def privatevc_remove(self, ctx: CustomContext, *, member: discord.Member):
+    async def privatevc_remove(self, ctx: Context, *, member: discord.Member):
         data = await PrivateVCs.fetch_data(self.bot, ctx.author)
         if not data:
             return await ctx.send_error("You don't have a private Voice Channel!")

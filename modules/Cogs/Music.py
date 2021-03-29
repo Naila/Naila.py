@@ -7,6 +7,7 @@ from discord.ext import commands
 from discord.utils import escape_markdown
 from lavalink import AudioTrack
 
+from bot import Bot
 from utils.functions.music import Queue, draw_time, draw_vol, ensure_voice, enqueue_and_send, disconnect, \
     format_time, get_emoji, embed, get_thumbnail
 
@@ -19,7 +20,7 @@ emojis = {
 
 class Music(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)

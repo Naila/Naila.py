@@ -2,13 +2,13 @@ from dataclasses import dataclass
 
 import discord
 
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.functions.time import parse_time
 
 
 @dataclass
 class Reminders:
-    ctx: CustomContext
+    ctx: Context
 
     async def add(self, location: int, expires: str, reminder: str):
         ctx = self.ctx

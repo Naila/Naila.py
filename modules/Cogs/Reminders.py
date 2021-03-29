@@ -1,5 +1,7 @@
 from discord.ext import commands
 
+from bot import Bot
+from utils.ctx import Context
 from utils.database.Reminders import Reminders as Reminder
 from utils.functions.text import escape, pagify
 from utils.functions.time import get_relative_delta, parse_time
@@ -7,15 +9,15 @@ from utils.functions.time import get_relative_delta, parse_time
 
 class Reminders(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @commands.group(case_insensitive=True)
-    async def remind(self, ctx):
+    async def remind(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @remind.command(name="me")
-    async def remind_me(self, ctx, time: str, *, reminder: str):
+    async def remind_me(self, ctx: Context, time: str, *, reminder: str):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.author.id, time, reminder)
@@ -25,7 +27,7 @@ class Reminders(commands.Cog):
         )
 
     @remind.command(name="here")
-    async def remind_here(self, ctx, time: str, *, reminder: str):
+    async def remind_here(self, ctx: Context, time: str, *, reminder: str):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.channel.id, time, escape(reminder, False, False, False))
@@ -35,7 +37,7 @@ class Reminders(commands.Cog):
         )
 
     @commands.command()
-    async def reminders(self, ctx):
+    async def reminders(self, ctx: Context):
         reminders = await Reminder(ctx).list()
         to_send = "**Your reminders:**\n"
         if reminders:
@@ -55,7 +57,7 @@ class Reminders(commands.Cog):
             await ctx.send(page)
 
     @commands.command(aliases=["delreminder"])
-    async def deletereminder(self, ctx, reminder_id: int):
+    async def deletereminder(self, ctx: Context, reminder_id: int):
         deleted = await Reminder(ctx).delete(reminder_id)
         if deleted == "UPDATE 1":
             return await ctx.send("I have deleted that reminder!")

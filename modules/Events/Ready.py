@@ -6,12 +6,13 @@ from datetime import datetime
 import discord
 from discord.ext import commands, tasks
 
+from bot import Bot
 from config import config
 
 
 class Ready(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.presence = 0
 
     def cog_unload(self):

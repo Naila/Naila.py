@@ -1,14 +1,15 @@
 import discord
 from discord.ext import commands
 
+from bot import Bot
 from utils.APIs.Animals import Animal, Cat, Dog
 from utils.checks import checks
-from utils.ctx import CustomContext
+from utils.ctx import Context
 
 
 class Animals(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     # @commands.command(description="Random bears!")
     # @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
@@ -19,7 +20,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random birds!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def bird(self, ctx: CustomContext):
+    async def bird(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("bird"))
         em.set_image(url=await Animal(ctx).image("bird"))
         await ctx.send(embed=em)
@@ -33,7 +34,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random ducks!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def duck(self, ctx: CustomContext):
+    async def duck(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor())
         em.set_image(url=await Animal(ctx).image("duck"))
         await ctx.send(embed=em)
@@ -47,7 +48,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random foxes!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def fox(self, ctx: CustomContext):
+    async def fox(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("fox"))
         em.set_image(url=await Animal(ctx).image("fox"))
         await ctx.send(embed=em)
@@ -82,7 +83,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random koalas!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def koala(self, ctx: CustomContext):
+    async def koala(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("koala"))
         em.set_image(url=await Animal(ctx).image("koala"))
         await ctx.send(embed=em)
@@ -96,7 +97,7 @@ class Animals(commands.Cog):
 
     @commands.group(aliases=["meow"], invoke_without_command=True, case_insensitive=True, description="Random cats!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def cat(self, ctx: CustomContext, *, breed: str = None):
+    async def cat(self, ctx: Context, *, breed: str = None):
         if not ctx.invoked_subcommand:
             image, name, details = await Cat(ctx).image(breed)
             if not image:
@@ -108,7 +109,7 @@ class Animals(commands.Cog):
 
     @cat.command(name="breeds", description="List the available cat breeds!")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def cat_breeds(self, ctx: CustomContext, page: int = 1):
+    async def cat_breeds(self, ctx: Context, page: int = 1):
         em = discord.Embed(color=await ctx.guildcolor())
         pages, breed_count = await Cat(ctx).breeds()
         if page > len(pages):
@@ -120,7 +121,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random pandas!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def panda(self, ctx: CustomContext):
+    async def panda(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor(), description=await Animal(ctx).fact("panda"))
         em.set_image(url=await Animal(ctx).image("panda"))
         await ctx.send(embed=em)
@@ -134,7 +135,7 @@ class Animals(commands.Cog):
 
     @commands.command(description="Random red pandas!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def redpanda(self, ctx: CustomContext):
+    async def redpanda(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor())
         em.set_image(url=await Animal(ctx).image("redpanda"))
         await ctx.send(embed=em)
@@ -169,7 +170,7 @@ class Animals(commands.Cog):
 
     @commands.group(invoke_without_command=True, case_insensitive=True, description="Random dogs!")
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def woof(self, ctx: CustomContext, *, breed: str = None):
+    async def woof(self, ctx: Context, *, breed: str = None):
         if not ctx.invoked_subcommand:
             image, name, details = await Dog(ctx).image(breed)
             if not image:
@@ -181,7 +182,7 @@ class Animals(commands.Cog):
 
     @woof.command(name="breeds", description="List the available dog breeds!")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def woof_breeds(self, ctx: CustomContext, page: int = 1):
+    async def woof_breeds(self, ctx: Context, page: int = 1):
         em = discord.Embed(color=await ctx.guildcolor())
         pages, breed_count = await Dog(ctx).breeds()
         if page > len(pages):

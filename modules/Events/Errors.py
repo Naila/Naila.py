@@ -6,8 +6,9 @@ import discord
 import sentry_sdk as sentry
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks.bot_checks import can_react, can_send
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.functions import errors
 from utils.functions.text import pagify, readable_list
 
@@ -17,7 +18,7 @@ from utils.functions.text import pagify, readable_list
 
 class Errors(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.error_count = 0
 
     @staticmethod
@@ -57,7 +58,7 @@ class Errors(commands.Cog):
         return f"You can try again in {timestr}!", delete_after
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: CustomContext, error):
+    async def on_command_error(self, ctx: Context, error):
         if isinstance(error, commands.CommandNotFound):
             return
         if not can_send(ctx):

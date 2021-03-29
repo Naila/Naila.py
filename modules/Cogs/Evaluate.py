@@ -12,7 +12,9 @@ import discord
 import psutil
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
+from utils.ctx import Context
 
 ENV = {
     "contextlib": contextlib,
@@ -31,12 +33,12 @@ ENV = {
 
 class Evaluate(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.process = psutil.Process()
         self.env = ENV
         self.stdout = io.StringIO()
 
-    async def _eval(self, ctx, code):
+    async def _eval(self, ctx: Context, code):
         if code == "exit()":
             self.env = ENV
             return await ctx.send(f"```Reset history!```")
@@ -87,7 +89,7 @@ async def func():
 
     @checks.is_owner()
     @commands.command(hidden=True, description="Evaluate code in a REPL like environment")
-    async def eval(self, ctx, *, code: str):
+    async def eval(self, ctx: Context, *, code: str):
         code = code.strip("`")
         if code.startswith("py\n"):
             code = "\n".join(code.split("\n")[1:])
@@ -109,7 +111,7 @@ async def func():
         if inp.startswith("_ = "):
             inp = inp[4:]
 
-        lines = [l for l in inp.split("\n") if l.strip()]
+        lines = [line for line in inp.split("\n") if line.strip()]
         if len(lines) != 1:
             lines += [""]
 
@@ -148,13 +150,13 @@ async def func():
 
     @checks.is_owner()
     @commands.group(hidden=True)
-    async def sql(self, ctx):
+    async def sql(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @checks.is_owner()
     @sql.command(name="execute")
-    async def sql_execute(self, ctx, *, query: str):
+    async def sql_execute(self, ctx: Context, *, query: str):
         query = query.strip("`")
         con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):
@@ -166,7 +168,7 @@ async def func():
 
     @checks.is_owner()
     @sql.command(name="fetch")
-    async def sql_fetch(self, ctx, *, query: str):
+    async def sql_fetch(self, ctx: Context, *, query: str):
         query = query.strip("`")
         con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):

@@ -3,7 +3,9 @@ from typing import Union
 import discord
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
+from utils.ctx import Context
 from utils.functions.time import get_relative_delta
 
 key_perms = ["kick_members", "ban_members", "administrator", "manage_channels", "manage_server", "manage_messages",
@@ -15,10 +17,10 @@ voice_perms = ["connect", "deafen_members", "move_members", "mute_members", "pri
 
 class UserInfo(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @staticmethod
-    def get_member_status(ctx, member):
+    def get_member_status(ctx: Context, member):
         path = "status.mobile." if member.is_on_mobile() else "status."
         status = f"{ctx.emojis(path + str(member.status))} {str(member.status).capitalize()}\n\n"
         if not member.activity:
@@ -46,7 +48,7 @@ class UserInfo(commands.Cog):
     @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
                     invoke_without_command=True, description="Check a members information!")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def user(self, ctx, *, member: discord.Member = None):
+    async def user(self, ctx: Context, *, member: discord.Member = None):
         if ctx.invoked_subcommand:
             return
         guild, message, member = ctx.guild, ctx.message, member or ctx.author
@@ -92,7 +94,7 @@ class UserInfo(commands.Cog):
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def user_permissions(self, ctx, user: discord.Member = None, *,
+    async def user_permissions(self, ctx: Context, user: discord.Member = None, *,
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
         user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
@@ -115,7 +117,7 @@ class UserInfo(commands.Cog):
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def user_avatar(self, ctx, user: discord.Member = None):
+    async def user_avatar(self, ctx: Context, user: discord.Member = None):
         if not user:
             user = ctx.author
         url = user.avatar_url_as(static_format="png", size=1024)

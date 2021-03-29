@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import discord
 
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.functions import errors
 
 
@@ -11,7 +11,7 @@ from utils.functions import errors
 
 @dataclass
 class Guild:
-    ctx: CustomContext = None
+    ctx: Context = None
 
     async def color(self, pool=None, guild: discord.Guild = None):
         guild = self.ctx.guild if self.ctx else guild
@@ -60,7 +60,7 @@ class Check:
 
 @dataclass
 class Registration:
-    ctx: CustomContext
+    ctx: Context
 
     async def data(self):
         ctx = self.ctx
@@ -105,7 +105,7 @@ class Registration:
 
 @dataclass
 class Welcomer:
-    ctx: CustomContext = None
+    ctx: Context = None
 
     @staticmethod
     async def welcomer_data(bot, guild: discord.Guild):
@@ -186,7 +186,7 @@ class Welcomer:
 
 @dataclass
 class Prefixes:
-    ctx: CustomContext
+    ctx: Context
 
     @staticmethod
     async def get(bot, message):

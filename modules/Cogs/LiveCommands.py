@@ -4,7 +4,9 @@ import discord
 from beautifultable import BeautifulTable, STYLE_BOX_ROUNDED
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
+from utils.ctx import Context
 
 
 class TheCore:
@@ -18,7 +20,7 @@ class TheCore:
 
 class LiveCommands(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.command = {}
 
     def get_commandlist(self):
@@ -28,7 +30,7 @@ class LiveCommands(commands.Cog):
         return self.command[1]
 
     @commands.Cog.listener()
-    async def on_command(self, ctx):
+    async def on_command(self, ctx: Context):
         core = self.get_commandlist()
 
         if ctx.valid:
@@ -46,7 +48,7 @@ class LiveCommands(commands.Cog):
             core.last = cmd
 
     @commands.Cog.listener()
-    async def on_command_completion(self, ctx):
+    async def on_command_completion(self, ctx: Context):
         core = self.get_commandlist()
         cmd = ctx.command.qualified_name.replace(" ", "_")
 
@@ -58,7 +60,7 @@ class LiveCommands(commands.Cog):
 
     @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def command_list(self, ctx):
+    async def command_list(self, ctx: Context):
         try:
             core = self.get_commandlist()
             command = core.command

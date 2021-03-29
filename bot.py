@@ -14,7 +14,7 @@ from discord.ext import commands
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 
 from config import config
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.database.GuildSettings import Prefixes
 
 
@@ -44,7 +44,7 @@ async def init_connection(conn):
 
 class Bot(commands.AutoShardedBot):
     async def get_context(self, message, *, cls=None):
-        return await super().get_context(message, cls=cls or CustomContext)
+        return await super().get_context(message, cls=cls or Context)
 
     class Embed(discord.Embed):
         def __init__(self, **kwargs):

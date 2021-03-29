@@ -6,7 +6,7 @@ from discord.utils import oauth_url
 
 from bot import Bot
 from config import regex, config
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.database.GuildSettings import Prefixes, Check
 
 
@@ -16,7 +16,7 @@ class Messages(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        ctx: CustomContext = await self.bot.get_context(message)
+        ctx: Context = await self.bot.get_context(message)
         # Adding some statistics
         self.bot.counter["messages"] += 1
         # Checking if the author of the message is a bot

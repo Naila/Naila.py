@@ -8,7 +8,9 @@ import discord
 from PIL import Image, ImageDraw, ImageFont
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
+from utils.ctx import Context
 from utils.functions.archive import format_data
 
 HEX_COLOR_RE = re.compile(r"^#?([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$")
@@ -170,7 +172,7 @@ COLOR_NAMES_TO_HEX = {
 
 class Testing(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.session = bot.session
 
     # @commands.command()
@@ -190,7 +192,7 @@ class Testing(commands.Cog):
 
     @checks.is_owner()
     @commands.command(description="TEST: Archive messages")
-    async def archive(self, ctx, messages: int):
+    async def archive(self, ctx: Context, messages: int):
         if messages > 1000:
             return await ctx.send_error("lol no")
         message_list = []
@@ -218,7 +220,7 @@ class Testing(commands.Cog):
 
     @checks.is_owner()
     @commands.command(description="An embed")
-    async def embed(self, ctx):
+    async def embed(self, ctx: Context):
         chan = "<#483061332766097419>"
         em = discord.Embed(description=chan, title=chan)
         em.set_author(name=chan)
@@ -229,7 +231,7 @@ class Testing(commands.Cog):
     @commands.command()
     @checks.is_owner()
     @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
-    async def color(self, ctx, *, color: Union[discord.Member, str] = None):
+    async def color(self, ctx: Context, *, color: Union[discord.Member, str] = None):
         valid = self.validate_color(color)
         if not valid:
             return await ctx.send_error("Invalid color!")

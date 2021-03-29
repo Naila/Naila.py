@@ -2,18 +2,19 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType
 
+from bot import Bot
 from config import config
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.functions.time import get_relative_delta
 
 
 class GuildList(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @commands.command()
     @commands.cooldown(1, 10800, BucketType.guild)
-    async def bump(self, ctx: CustomContext):
+    async def bump(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         if not guild:

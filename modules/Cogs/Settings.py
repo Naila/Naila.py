@@ -5,9 +5,10 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import BucketType
 
+from bot import Bot
 from config import config
 from utils.checks import checks
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.database import PrivateVCs
 from utils.database.GuildSettings import Prefixes
 from utils.functions import errors
@@ -16,17 +17,17 @@ from utils.functions.time import get_relative_delta
 
 class Settings(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @commands.group(aliases=["bset"], description="Manage the settings for the bot", hidden=True)
     @checks.is_owner()
-    async def botsettings(self, ctx: CustomContext):
+    async def botsettings(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     # TODO: Add list and add/remove commands
     @botsettings.group(name="status")
-    async def botsettings_status(self, ctx: CustomContext):
+    async def botsettings_status(self, ctx: Context):
         if ctx.invoked_subcommand:
             return
         em = discord.Embed()
@@ -45,19 +46,19 @@ class Settings(commands.Cog):
     @commands.group(aliases=["gset"], description="Manage the settings for this guild")
     @commands.guild_only()
     @checks.admin()
-    async def guildsettings(self, ctx):
+    async def guildsettings(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @guildsettings.group(name="listing")
-    async def gset_listing(self, ctx: CustomContext):
+    async def gset_listing(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @gset_listing.command(name="add")
     @commands.cooldown(1, 30, BucketType.guild)
     @checks.custom_bot_has_permissions(add_reactions=True, create_instant_invite=True)
-    async def gset_listing_add(self, ctx: CustomContext):
+    async def gset_listing_add(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         await self.bot.pool.release(con)
@@ -182,7 +183,7 @@ class Settings(commands.Cog):
 
     @gset_listing.command(name="remove")
     @checks.custom_bot_has_permissions(add_reactions=True)
-    async def gset_listing_remove(self, ctx: CustomContext):
+    async def gset_listing_remove(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         await self.bot.pool.release(con)
@@ -210,12 +211,12 @@ class Settings(commands.Cog):
 
     @guildsettings.group(name="privatevc", aliases=["pvc"], description="Private VC management")
     @checks.admin()
-    async def gset_privatevc(self, ctx):
+    async def gset_privatevc(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @gset_privatevc.command(name="category", aliases=["cat"], description="Set the Private VC category")
-    async def gset_privatevc_category(self, ctx: CustomContext, *, category: discord.CategoryChannel):
+    async def gset_privatevc_category(self, ctx: Context, *, category: discord.CategoryChannel):
         if category.guild != ctx.guild:
             return await ctx.send_error("Category must be in this guild!")
         vc = await category.create_voice_channel("Join for a private VC")
@@ -223,7 +224,7 @@ class Settings(commands.Cog):
         await ctx.send("Done!")
 
     @gset_privatevc.command(name="toggle", description="Toggle Private VC functionality")
-    async def gset_privatevc_toggle(self, ctx: CustomContext):
+    async def gset_privatevc_toggle(self, ctx: Context):
         settings = await PrivateVCs.fetch_settings(self.bot, ctx.guild)
         if not settings["category_id"]:
             return await ctx.send_error("You must set a category before you toggle Private VCs!")
@@ -234,13 +235,13 @@ class Settings(commands.Cog):
 
     @guildsettings.group(name="prefix", description="Prefix management")
     @checks.admin()
-    async def gset_prefix(self, ctx):
+    async def gset_prefix(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
     @gset_prefix.command(name="add", description="Add a prefix")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def gset_prefix_add(self, ctx, prefix: str):
+    async def gset_prefix_add(self, ctx: Context, prefix: str):
         try:
             await Prefixes(ctx).add(prefix)
         except errors.PrefixTooLong:
@@ -258,7 +259,7 @@ class Settings(commands.Cog):
 
     @gset_prefix.command(name="remove", description="Remove a prefix")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def gset_prefix_remove(self, ctx, prefix):
+    async def gset_prefix_remove(self, ctx: Context, prefix):
         try:
             await Prefixes(ctx).remove(prefix)
         except errors.PrefixNotFound:

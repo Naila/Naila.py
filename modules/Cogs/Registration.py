@@ -4,9 +4,10 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
-from utils.ctx import CustomContext
+from utils.ctx import Context
 from utils.database.GuildSettings import Registration as Register
 
 roles = [
@@ -45,7 +46,7 @@ default = [
 
 
 def registration_check():
-    async def predicate(ctx):
+    async def predicate(ctx: Context):
         guild, author = ctx.guild, ctx.author
         if not guild:
             raise commands.NoPrivateMessage
@@ -91,18 +92,18 @@ def registration_check():
 
 class Registration(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @commands.group(case_insensitive=True, description="Registration management")
     @commands.guild_only()
     @checks.admin()
-    async def setreg(self, ctx):
+    async def setreg(self, ctx: Context):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
     @setreg.command(name="channel", description="Set the output channel")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def setreg_channel(self, ctx, channel: discord.TextChannel):
+    async def setreg_channel(self, ctx: Context, channel: discord.TextChannel):
         update = await Register(ctx).update_channel(channel)
         if not update:
             return await ctx.send_error("That channel is already set!")
@@ -110,7 +111,7 @@ class Registration(commands.Cog):
 
     @setreg.command(name="toggle", description="Toggle registration")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def setreg_toggle(self, ctx):
+    async def setreg_toggle(self, ctx: Context):
         update = await Register(ctx).toggle()
         if update:
             return await ctx.send("Registration enabled.")
@@ -118,7 +119,7 @@ class Registration(commands.Cog):
 
     @setreg.command(name="roles", description="Create the roles required for registration")
     @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
-    async def setreg_roles(self, ctx):
+    async def setreg_roles(self, ctx: Context):
         guild = ctx.guild
 
         def check(m):
@@ -159,7 +160,7 @@ class Registration(commands.Cog):
     @setreg.command(name="banage",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
     @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
-    async def setreg_banage(self, ctx, age: int):
+    async def setreg_banage(self, ctx: Context, age: int):
         if age < 13:
             age = 13
             await ctx.send("You tried to set the age lower than the minimum (13) so I have set it to 13!")
@@ -169,7 +170,7 @@ class Registration(commands.Cog):
     @commands.guild_only()
     @commands.command(description="Unregister, allowing you to register again!")
     @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
-    async def unregister(self, ctx):
+    async def unregister(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
         if not can_manage_user(ctx, author):
             return await ctx.send("I don't have a role above you which means I can't manage your roles,"
@@ -186,7 +187,7 @@ class Registration(commands.Cog):
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
     @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
-    async def register(self, ctx):
+    async def register(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
 
         # Data
@@ -279,14 +280,14 @@ class Registration(commands.Cog):
             return await ctx.send_error(f"I could not find {author}! Perhaps they left?")
 
     @staticmethod
-    def get_role(ctx, role):
+    def get_role(ctx: Context, role):
         guild = ctx.guild
         if isinstance(role, int):
             return guild.get_role(role)
         return discord.utils.get(guild.roles, name=role)
 
     @staticmethod
-    async def ask_question(ctx, question):
+    async def ask_question(ctx: Context, question):
         guild, author = ctx.guild, ctx.author
         answer = ""
 
@@ -316,7 +317,7 @@ class Registration(commands.Cog):
                 return answer
             await author.send("Invalid response!")
 
-    async def cog_command_error(self, ctx: CustomContext, error):
+    async def cog_command_error(self, ctx: Context, error):
         if isinstance(error, commands.CheckFailure):
             return
 

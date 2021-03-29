@@ -7,7 +7,7 @@ from modules.Cogs.Help import command_signature
 from utils.functions.errors import TranslationError
 
 
-class CustomContext(commands.Context):
+class Context(commands.Context):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

@@ -1,12 +1,13 @@
 from discord.ext import commands, tasks
 
+from bot import Bot
 from utils.APIs.BotLists import BotListSpace, DiscordBots, TopGG
 from utils.database.Reminders import Reminders
 
 
 class Loops(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
         self.ten_second_loop.start()
         self.botlists.start()
 

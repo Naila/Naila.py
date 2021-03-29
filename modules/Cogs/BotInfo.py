@@ -5,19 +5,21 @@ import discord
 import psutil
 from discord.ext import commands
 
+from bot import Bot
 from config import config
 from utils.checks import checks
+from utils.ctx import Context
 from utils.functions.text import filesize_fix
 from utils.functions.time import get_bot_uptime
 
 
 class BotInfo(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @commands.command(description="List of APIs we use")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def apis(self, ctx):
+    async def apis(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor())
         em.set_author(name="APIs we use:")
         em.description = "https://some-random-api.ml/\n" \
@@ -31,7 +33,7 @@ class BotInfo(commands.Cog):
 
     @commands.command(description="Invite the bot or join the bots support server!")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def invite(self, ctx):
+    async def invite(self, ctx: Context):
         invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
         em = discord.Embed(color=await ctx.guildcolor())
         em.description = f"**Support server:** {config.support_invite}\n" \
@@ -42,7 +44,7 @@ class BotInfo(commands.Cog):
 
     @commands.command(description="Various stats about the bot")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def stats(self, ctx):
+    async def stats(self, ctx: Context):
         bot = self.bot
         text, voice, category, news = 0, 0, 0, 0
         for channel in self.bot.get_all_channels():

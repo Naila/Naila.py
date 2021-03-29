@@ -5,18 +5,20 @@ import discord
 import requests
 from discord.ext import commands
 
+from bot import Bot
 from utils.checks import checks
+from utils.ctx import Context
 from utils.functions.text import pagify
 
 
 class Dev(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Bot = bot
 
     @checks.is_owner()
     @commands.command(description="List all modules on the bot")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def modules(self, ctx):
+    async def modules(self, ctx: Context):
         cog_list, cogs_loaded, cogs_unloaded = [], "```diff\n+\t", ""
         event_list, events_loaded, events_unloaded = [], "```diff\n+\t", ""
         cogs, events = [], []
@@ -60,13 +62,13 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Load a module")
-    async def load(self, ctx):
+    async def load(self, ctx: Context):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
     @checks.is_owner()
     @load.command(name="cog", aliases=["c"], description="Load a cog")
-    async def load_cog(self, ctx, cog_name: str):
+    async def load_cog(self, ctx: Context, cog_name: str):
         cog_name = cog_name.replace(".py", "")
         try:
             self.bot.load_extension(f"modules.Cogs.{cog_name}")
@@ -78,7 +80,7 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @load.command(name="event", aliases=["e"], description="Load an event")
-    async def load_event(self, ctx, event_name: str):
+    async def load_event(self, ctx: Context, event_name: str):
         event_name = event_name.replace(".py", "")
         try:
             self.bot.load_extension(f"modules.Events.{event_name}")
@@ -90,13 +92,13 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Unload a module")
-    async def unload(self, ctx):
+    async def unload(self, ctx: Context):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
     @checks.is_owner()
     @unload.command(name="cog", aliases=["c"], description="Unload a cog")
-    async def unload_cog(self, ctx, cog_name: str):
+    async def unload_cog(self, ctx: Context, cog_name: str):
         cog_name = cog_name.replace(".py", "")
         try:
             self.bot.unload_extension(f"modules.Cogs.{cog_name}")
@@ -108,7 +110,7 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @unload.command(name="event", aliases=["e"], description="Unload an event")
-    async def unload_event(self, ctx, event_name: str):
+    async def unload_event(self, ctx: Context, event_name: str):
         event_name = event_name.replace(".py", "")
         try:
             self.bot.unload_extension(f"modules.Events.{event_name}")
@@ -120,13 +122,13 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Reload a module")
-    async def reload(self, ctx):
+    async def reload(self, ctx: Context):
         if not ctx.invoked_subcommand:
             return await ctx.send_help(ctx.command)
 
     @checks.is_owner()
     @reload.command(name="cog", aliases=["c"], description="Reload a cog")
-    async def reload_cog(self, ctx, cog_name: str):
+    async def reload_cog(self, ctx: Context, cog_name: str):
         cog_name = cog_name.replace(".py", "")
         try:
             self.bot.reload_extension(f"modules.Cogs.{cog_name}")
@@ -138,7 +140,7 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @reload.command(name="event", aliases=["e"], description="Reload an event")
-    async def reload_event(self, ctx, event_name: str):
+    async def reload_event(self, ctx: Context, event_name: str):
         event_name = event_name.replace(".py", "")
         try:
             self.bot.reload_extension(f"modules.Events.{event_name}")
@@ -150,7 +152,7 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @commands.command(hidden=True, description="Pull updates from git")
-    async def pull(self, ctx):
+    async def pull(self, ctx: Context):
         paged = pagify(
             subprocess.Popen(
                 ["git", "pull"],
@@ -164,18 +166,13 @@ class Dev(commands.Cog):
 
     @checks.is_owner()
     @commands.command(name="raise", hidden=True, description="Raise a test exception")
-    async def _raise(self, ctx):
+    async def _raise(self, ctx: Context):
         await ctx.send("Raising a test exception..")
         raise Exception(f"Exception raised by {ctx.author}")
 
     @checks.is_owner()
-    @commands.command(hidden=True)
-    async def div0(self, ctx):
-        await ctx.send(1 / 0)
-
-    @checks.is_owner()
     @commands.command(hidden=True, description="Force a user to run a command")
-    async def sudo(self, ctx, user: discord.Member, *, command):
+    async def sudo(self, ctx: Context, user: discord.Member, *, command):
         message = ctx.message
         prefix = await self.bot.get_prefix(message)
         message.author = user
@@ -185,7 +182,7 @@ class Dev(commands.Cog):
     @checks.is_owner()
     @commands.command(hidden=True, description="Send a file to someone")
     @checks.custom_bot_has_permissions(add_reactions=True)
-    async def sendfile(self, ctx, user: discord.Member, path: str):
+    async def sendfile(self, ctx: Context, user: discord.Member, path: str):
         url = "https://haste.ourmainfra.me/"
         f = open(path, "r")
         response = requests.post(f"{url}documents", headers={"Accept": "application/json"},
