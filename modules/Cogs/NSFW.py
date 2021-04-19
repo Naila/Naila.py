@@ -39,10 +39,10 @@ class NSFW(commands.Cog):
     async def boobbot(self, ctx: Context, old_command: str = None):
         prefix = ctx.prefix
         if not old_command:
-            return await ctx.send(
+            return await ctx.reply(
                 f"This command will be deleted soon, you can view the NSFW commands with {prefix}help NSFW"
             )
-        return await ctx.send(f"You no longer have to prefix NSFW commands with `bb` {prefix}help NSFW")
+        return await ctx.reply(f"You no longer have to prefix NSFW commands with `bb` {prefix}help NSFW")
 
     @commands.command(aliases=["tits"], description="Boobs")
     @checks.is_nsfw()
@@ -52,7 +52,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(aliases=["ass"], description="Butts")
     @checks.is_nsfw()
@@ -62,7 +62,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(name="4k", description="High quality porn")
     @checks.is_nsfw()
@@ -72,7 +72,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Anal")
     @checks.is_nsfw()
@@ -82,7 +82,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="BDSM")
     @checks.is_nsfw()
@@ -92,7 +92,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(name="black", description="Black women")
     @checks.is_nsfw()
@@ -102,7 +102,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(aliases=["bj"], description="Blowjobs")
     @checks.is_nsfw()
@@ -112,7 +112,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Bottomless girls")
     @checks.is_nsfw()
@@ -122,7 +122,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Girls wearing collars")
     @checks.is_nsfw()
@@ -132,7 +132,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Covered in cum")
     @checks.is_nsfw()
@@ -142,7 +142,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(aliases=["dp"], description="Double penetration")
     @checks.is_nsfw()
@@ -152,7 +152,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Easter themed")
     @checks.is_nsfw()
@@ -162,7 +162,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Hentai: Futa")
     @checks.is_nsfw()
@@ -172,7 +172,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Gay porn")
     @checks.is_nsfw()
@@ -182,7 +182,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Porn gifs")
     @checks.is_nsfw()
@@ -192,7 +192,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Group porn")
     @checks.is_nsfw()
@@ -202,7 +202,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Halloween themed")
     @checks.is_nsfw()
@@ -212,7 +212,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Hentai")
     @checks.is_nsfw()
@@ -222,7 +222,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Girl on girl")
     @checks.is_nsfw()
@@ -232,7 +232,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Phat ass white girls")
     @checks.is_nsfw()
@@ -242,7 +242,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Women pegging men")
     @checks.is_nsfw()
@@ -252,7 +252,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Dicks")
     @checks.is_nsfw()
@@ -262,7 +262,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Hentai: Pokemon")
     @checks.is_nsfw()
@@ -272,7 +272,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Pussy")
     @checks.is_nsfw()
@@ -282,7 +282,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Real women")
     @checks.is_nsfw()
@@ -292,7 +292,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Red heads")
     @checks.is_nsfw()
@@ -302,7 +302,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Tatted women")
     @checks.is_nsfw()
@@ -313,7 +313,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Thighs")
     @checks.is_nsfw()
@@ -323,7 +323,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Tiny girls")
     @checks.is_nsfw()
@@ -333,7 +333,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Porn with toys")
     @checks.is_nsfw()
@@ -343,7 +343,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Traps")
     @checks.is_nsfw()
@@ -353,7 +353,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Valentines themed")
     @checks.is_nsfw()
@@ -363,7 +363,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Christmas themed")
     @checks.is_nsfw()
@@ -373,7 +373,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Hentai: Boys' love")
     @checks.is_nsfw()
@@ -383,7 +383,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Furry images")
     @checks.is_nsfw()
@@ -393,7 +393,7 @@ class NSFW(commands.Cog):
         em = await self.boobbot_embed(ctx)
         em.set_image(url=url)
         em.description += f"**Image URL:** [Click Here]({url})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     # @checks.is_nsfw()
     # @commands.group(case_insensitive=True, description="NSFW images from neko.life")
@@ -408,7 +408,7 @@ class NSFW(commands.Cog):
     #     em = await self.nekos_embed(ctx)
     #     em.set_image(url=url)
     #     em.description += f"**Image URL:** [Click Here]({url})"
-    #     await ctx.send(embed=em)
+    #     await ctx.reply(embed=em)
     #
     # @nneko.command(name="ngif", description="Neko gifs")
     # @checks.custom_bot_has_permissions(embed_links=True)
@@ -417,26 +417,26 @@ class NSFW(commands.Cog):
     #     em = await self.nekos_embed(ctx)
     #     em.set_image(url=url)
     #     em.description += f"**Image URL:** [Click Here]({url})"
-    #     await ctx.send(embed=em)
+    #     await ctx.reply(embed=em)
 
     # TODO: SFW image commands
     # @neko.command(name="")
     # async def neko_sfw(self, ctx):
     #     """SFW Nekos"""
     #     url = await self.make_embed(ctx, "neko", "neko")
-    #     await ctx.send(embed=em)
+    #     await ctx.reply(embed=em)
     #
     # @neko.command(name="gif")
     # async def neko_gif(self, ctx):
     #     """SFW Neko gifs"""
     #     url = await self.make_embed(ctx, "neko", "ngif")
-    #     await ctx.send(embed=em)
+    #     await ctx.reply(embed=em)
     #
     # @neko.command(name="")
     # async def neko_kitsune(self, ctx):
     #     """SFW fox girls"""
     #     url = await self.make_embed(ctx, "neko", "fox_girl")
-    #     await ctx.send(embed=em)
+    #     await ctx.reply(embed=em)
 
 
 def setup(bot):

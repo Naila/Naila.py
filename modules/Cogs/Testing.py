@@ -187,8 +187,8 @@ class Testing(commands.Cog):
     #     ) as resp:
     #         if resp.status != 204:
     #             resp = await resp.json()
-    #             return await ctx.send(resp)
-    #         await ctx.send("Uploaded!")
+    #             return await ctx.reply(resp)
+    #         await ctx.reply("Uploaded!")
 
     @checks.is_owner()
     @commands.command(description="TEST: Archive messages")
@@ -204,7 +204,7 @@ class Testing(commands.Cog):
         df = BytesIO()
         df.write(json.dumps(data, indent=2).encode("utf8"))
         df.seek(0)
-        await ctx.send(file=discord.File(df, filename="data.json"))
+        await ctx.reply(file=discord.File(df, filename="data.json"))
         data = json.loads(json.dumps(data).encode("utf8"))
         resp = await self.session.post(
             "https://archive.naila.bot",
@@ -216,7 +216,7 @@ class Testing(commands.Cog):
         file = BytesIO()
         file.write(resp.encode("utf8"))
         file.seek(0)
-        await ctx.send(file=discord.File(file, filename=f"{ctx.channel.name}.html"))
+        await ctx.reply(file=discord.File(file, filename=f"{ctx.channel.name}.html"))
 
     @checks.is_owner()
     @commands.command(description="An embed")
@@ -226,7 +226,7 @@ class Testing(commands.Cog):
         em.set_author(name=chan)
         em.add_field(name=chan, value=chan)
         em.set_footer(text=chan)
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command()
     @checks.is_owner()
@@ -251,7 +251,7 @@ class Testing(commands.Cog):
 
         em.set_thumbnail(url=f"attachment://{color['hex']}.png")
         em.set_image(url=f"attachment://{color['hex']}-gradient.png")
-        await ctx.send(
+        await ctx.reply(
             embed=em,
             files=[
                 discord.File(fp=color_image, filename=f"{color['hex']}.png"),

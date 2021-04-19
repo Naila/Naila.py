@@ -49,11 +49,12 @@ def clean_param(param):
 
 class MyHelpCommand(commands.MinimalHelpCommand):
     async def send_pages(self):
+        ctx = self.context
         destination = self.get_destination()
         for page in self.paginator.pages:
-            em = discord.Embed(description=page, color=11533055)
+            em = discord.Embed(description=page, color=ctx.bot.color)
             em.set_author(name="Here is the help you requested!")
-            await destination.send(embed=em)
+            await destination.send(embed=em, reference=ctx.message)
 
     def get_opening_note(self):
         return None

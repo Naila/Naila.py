@@ -71,7 +71,7 @@ class Errors(commands.Cog):
                 return ctx.log.error(f"Failed to respond to command in {ctx.guild.name}")
         if isinstance(error, commands.CommandOnCooldown):
             string, delete_after = self.format_retry_after(error.retry_after)
-            return await ctx.send(string, delete_after=delete_after)
+            return await ctx.reply(string, delete_after=delete_after)
         ctx.command.reset_cooldown(ctx)
         # if isinstance(error, commands.CommandInvokeError):
         #     return await ctx.send_error(error.original)
@@ -89,7 +89,7 @@ class Errors(commands.Cog):
             if isinstance(error, errors.BotMissingPermissions):
                 if "embed_links" in error.missing_perms:
                     # noinspection PyTypeChecker
-                    return await ctx.send(error)
+                    return await ctx.reply(error)
                 return await ctx.send_error(error)
             if isinstance(error, errors.UserMissingPermissions):
                 return await ctx.send_error(error)

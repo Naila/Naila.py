@@ -26,8 +26,8 @@ class Welcomer(commands.Cog):
     async def welcomer_toggle(self, ctx: Context):
         update = await Welcome(ctx).toggle_welcomer()
         if update:
-            return await ctx.send("I have enabled welcomer!")
-        await ctx.send("I have disabled welcomer!")
+            return await ctx.reply("I have enabled welcomer!")
+        await ctx.reply("I have disabled welcomer!")
 
     @welcomer.command(name="test", description="Test what welcomer will look like")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -44,22 +44,22 @@ class Welcomer(commands.Cog):
     async def welcomer_embed(self, ctx: Context):
         data = await Welcome(ctx).toggle_welcomer_embed()
         if data:
-            return await ctx.send("Embeds have been enabled for welcomer!")
-        await ctx.send("Embeds have been disabled for welcomer!")
+            return await ctx.reply("Embeds have been enabled for welcomer!")
+        await ctx.reply("Embeds have been disabled for welcomer!")
 
     @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
     @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_text(self, ctx: Context, *, text: str):
         data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
         if text == "--current":
-            return await ctx.send(f"Current text:\n```{data['welcomer_content']}```")
+            return await ctx.reply(f"Current text:\n```{data['welcomer_content']}```")
         if text == "--clear":
             await Welcome(ctx).set_welcomer_text()
-            return await ctx.send("Welcomer text has been cleared!")
+            return await ctx.reply("Welcomer text has been cleared!")
         if len(text) >= 1800:
             return await ctx.send_error("Text must be less than 1800 characters!")
         await Welcome(ctx).set_welcomer_text(text)
-        await ctx.send("Welcomer text has been set!")
+        await ctx.reply("Welcomer text has been set!")
 
     @welcomer.command(name="type", description="Change the image type | 1 or 2")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -67,13 +67,13 @@ class Welcomer(commands.Cog):
         if image_type not in [1, 2]:
             return await ctx.send_error("Type must be 1 or 2!")
         await Welcome(ctx).set_welcomer_type(image_type)
-        await ctx.send("Type set!")
+        await ctx.reply("Type set!")
 
     @welcomer.command(name="channel", description="Set the output channel")
     @checks.custom_bot_has_permissions(embed_links=True)
     async def welcomer_channel(self, ctx: Context, channel: discord.TextChannel):
         await Welcome(ctx).set_welcomer_channel(channel)
-        await ctx.send(f"Channel set to {channel.mention}!")
+        await ctx.reply(f"Channel set to {channel.mention}!")
 
     # TODO: Fix auto roles and extend on welcomers functionality
     # @welcomer.group(name="userroles")
@@ -90,9 +90,9 @@ class Welcomer(commands.Cog):
     #     if len(db["user_roles"]) <= 3 and role.id not in db["user_roles"]:
     #         db["user_roles"].append(str(role.id))
     #         await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)
-    #         await ctx.send(f"I have added the **{role.name}** role to the list of auto roles!")
+    #         await ctx.reply(f"I have added the **{role.name}** role to the list of auto roles!")
     #     else:
-    #         await ctx.send("You already have set 3 roles or this role is already set!")
+    #         await ctx.reply("You already have set 3 roles or this role is already set!")
     #
     # @_userroles.command(name="remove")
     # async def _remove(self, ctx, role: discord.Role):
@@ -102,9 +102,9 @@ class Welcomer(commands.Cog):
     #     if str(role.id) in db["user_roles"]:
     #         db["user_roles"].remove(str(role.id))
     #         await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)
-    #         await ctx.send(f"I have removed the **{role.name}** role from the list of auto roles!")
+    #         await ctx.reply(f"I have removed the **{role.name}** role from the list of auto roles!")
     #     else:
-    #         await ctx.send("Role wasn't in the list of auto roles!")
+    #         await ctx.reply("Role wasn't in the list of auto roles!")
     #
     # @_userroles.command(name="list")
     # async def _list(self, ctx):
@@ -115,9 +115,9 @@ class Welcomer(commands.Cog):
     #     if db["user_roles"]:
     #         for role_id in db["user_roles"]:
     #             role_list.append(guild.get_role(int(role_id)).name)
-    #         await ctx.send(", ".join(role_list))
+    #         await ctx.reply(", ".join(role_list))
     #     else:
-    #         await ctx.send("You don't have any user roles set!")
+    #         await ctx.reply("You don't have any user roles set!")
     #
     # @welcomer.group(name="botroles")
     # async def _botroles(self, ctx):
@@ -134,9 +134,9 @@ class Welcomer(commands.Cog):
     #     if len(db["bot_roles"]) <= 3 and role.id not in db["bot_roles"]:
     #         db["bot_roles"].append(str(role.id))
     #         await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)
-    #         await ctx.send(f"I have added the **{role.name}** role to the list of auto roles!")
+    #         await ctx.reply(f"I have added the **{role.name}** role to the list of auto roles!")
     #     else:
-    #         await ctx.send("You already have set 3 roles or this role is already set!")
+    #         await ctx.reply("You already have set 3 roles or this role is already set!")
     #
     # @_botroles.command(name="remove")
     # async def __remove(self, ctx, role: discord.Role):
@@ -146,9 +146,9 @@ class Welcomer(commands.Cog):
     #     if str(role.id) in db["bot_roles"]:
     #         db["bot_roles"].remove(str(role.id))
     #         await r.table("welcomer").insert(db, conflict="update").run(self.bot.conn)
-    #         await ctx.send(f"I have removed the **{role.name}** role from the list of auto roles!")
+    #         await ctx.reply(f"I have removed the **{role.name}** role from the list of auto roles!")
     #     else:
-    #         await ctx.send("Role wasn't in the list of auto roles!")
+    #         await ctx.reply("Role wasn't in the list of auto roles!")
     #
     # @_botroles.command(name="list")
     # async def __list(self, ctx):
@@ -159,9 +159,9 @@ class Welcomer(commands.Cog):
     #     if db["bot_roles"]:
     #         for role_id in db["bot_roles"]:
     #             role_list.append(guild.get_role(int(role_id)).name)
-    #         await ctx.send(", ".join(role_list))
+    #         await ctx.reply(", ".join(role_list))
     #     else:
-    #         await ctx.send("You don't have any bot roles set!")
+    #         await ctx.reply("You don't have any bot roles set!")
 
     @commands.Cog.listener()
     async def on_member_join(self, member):

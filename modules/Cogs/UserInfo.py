@@ -89,7 +89,7 @@ class UserInfo(commands.Cog):
         em.set_footer(
             text=f"Member #{len([x for x in guild.members if x.joined_at < member.joined_at]) + 1} • ID: {member.id}"
         )
-        return await ctx.send(embed=em)
+        return await ctx.reply(embed=em)
 
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
@@ -113,7 +113,7 @@ class UserInfo(commands.Cog):
         desc = f"```diff\n{end}\n```"
         em = discord.Embed(color=user.color, description=desc)
         em.set_author(name=f"{user.name}'s permissions in {channel}:")
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -125,7 +125,7 @@ class UserInfo(commands.Cog):
         em.description = f"[Open image]({url})"
         em.set_image(url=url)
         em.set_author(name=f"{user.name}'s avatar")
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
 
 def setup(bot):

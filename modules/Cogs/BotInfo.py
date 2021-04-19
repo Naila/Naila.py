@@ -29,7 +29,7 @@ class BotInfo(commands.Cog):
                          "https://weeb.sh/\n" \
                          "https://boob.bot/\n" \
                          "https://sheri.bot/"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Invite the bot or join the bots support server!")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -40,7 +40,7 @@ class BotInfo(commands.Cog):
                          f"**Bot invite:**" \
                          f" [Recommended perms]({invite + f'&permissions={config.permissions.value}'}) |" \
                          f" [No perms]({invite})"
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.command(description="Various stats about the bot")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -109,7 +109,7 @@ class BotInfo(commands.Cog):
             text=datetime.utcnow().strftime(bot.config.time_format),
             icon_url=bot.user.avatar_url
         )
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
 
 def setup(bot):

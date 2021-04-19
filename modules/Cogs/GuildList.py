@@ -19,7 +19,7 @@ class GuildList(commands.Cog):
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         if not guild:
             await self.bot.pool.release(con)
-            return await ctx.send("This guild is not listed!")
+            return await ctx.reply("This guild is not listed!")
 
         nsfw = await con.fetchrow("SELECT * FROM guildlist_guildtags WHERE guild_pk=$1 AND tag_pk=1", guild["id"])
         await self.bot.pool.release(con)
@@ -54,7 +54,7 @@ class GuildList(commands.Cog):
             text=f"Bumped by {ctx.author}",
             icon_url=ctx.author.avatar_url
         )
-        await ctx.send(embed=emb)
+        await ctx.reply(embed=emb)
 
 
 def setup(bot):

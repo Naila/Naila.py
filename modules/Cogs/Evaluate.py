@@ -41,7 +41,7 @@ class Evaluate(commands.Cog):
     async def _eval(self, ctx: Context, code):
         if code == "exit()":
             self.env = ENV
-            return await ctx.send(f"```Reset history!```")
+            return await ctx.reply(f"```Reset history!```")
 
         env = {
             "message": ctx.message,
@@ -81,11 +81,11 @@ async def func():
         end = time.time()
         out, embed = self._format(code, res)
         try:
-            await ctx.send(f"```py\n{out}\n\n# Time to execute: {round((end - start) * 1000, 3)}ms```", embed=embed)
+            await ctx.reply(f"```py\n{out}\n\n# Time to execute: {round((end - start) * 1000, 3)}ms```", embed=embed)
         except discord.HTTPException:
             data = BytesIO(out.encode('utf-8'))
-            await ctx.send(content=f"The result was a bit too long.. so here is a text file instead 🎁",
-                           file=discord.File(data, filename=f'Result.txt'))
+            await ctx.reply(content=f"The result was a bit too long.. so here is a text file instead 🎁",
+                            file=discord.File(data, filename=f'Result.txt'))
 
     @checks.is_owner()
     @commands.command(hidden=True, description="Evaluate code in a REPL like environment")
@@ -163,7 +163,7 @@ async def func():
             query = "\n".join(query.split("\n")[1:])
 
         command = await con.execute(query)
-        await ctx.send(f"```py\n{command}```")
+        await ctx.reply(f"```py\n{command}```")
         await self.bot.pool.release(con)
 
     @checks.is_owner()
@@ -175,7 +175,7 @@ async def func():
             query = "\n".join(query.split("\n")[1:])
 
         command = await con.fetch(query)
-        await ctx.send(f"```py\n{command}```")
+        await ctx.reply(f"```py\n{command}```")
         await self.bot.pool.release(con)
 
 

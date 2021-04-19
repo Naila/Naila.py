@@ -85,7 +85,7 @@ class LiveCommands(commands.Cog):
             post = discord.Embed(color=await ctx.guildcolor())
             post.title = f"Naila's top {z} commands:"
             post.description = f"```ml\n{p}```"
-            await ctx.send(embed=post)
+            await ctx.reply(embed=post)
         except ValueError:
             return await ctx.send_error("Unable to post stats, Not enough data!")
 
@@ -114,7 +114,7 @@ class LiveCommands(commands.Cog):
     #
     #         post += f"\n**Used: `{times}` times.**"
     #
-    #     await ctx.send(post)
+    #     await ctx.reply(post)
 
 
 def setup(bot):

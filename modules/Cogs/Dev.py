@@ -58,7 +58,7 @@ class Dev(commands.Cog):
         events_loaded += f"\n-\t{events_unloaded}```" if events_unloaded else "```"
         em.add_field(name="Cogs:", value=cogs_loaded)
         em.add_field(name="Events:", value=events_loaded, inline=False)
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Load a module")
@@ -76,7 +76,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} is already loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
-        await ctx.send(f"Cog {cog_name} has now been loaded!")
+        await ctx.reply(f"Cog {cog_name} has now been loaded!")
 
     @checks.is_owner()
     @load.command(name="event", aliases=["e"], description="Load an event")
@@ -88,7 +88,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Event {event_name} is already loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Event {event_name} could not be found!")
-        await ctx.send(f"Event {event_name} has now been loaded!")
+        await ctx.reply(f"Event {event_name} has now been loaded!")
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Unload a module")
@@ -106,7 +106,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} is not loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
-        await ctx.send(f"Cog {cog_name} is now unloaded!")
+        await ctx.reply(f"Cog {cog_name} is now unloaded!")
 
     @checks.is_owner()
     @unload.command(name="event", aliases=["e"], description="Unload an event")
@@ -118,7 +118,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Event {event_name} is not loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Event {event_name} could not be found!")
-        await ctx.send(f"Event {event_name} is now unloaded!")
+        await ctx.reply(f"Event {event_name} is now unloaded!")
 
     @checks.is_owner()
     @commands.group(hidden=True, case_insensitive=True, description="Reload a module")
@@ -136,7 +136,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Cog {cog_name} is not loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Cog {cog_name} could not be found!")
-        await ctx.send(f"Cog {cog_name} has been reloaded!")
+        await ctx.reply(f"Cog {cog_name} has been reloaded!")
 
     @checks.is_owner()
     @reload.command(name="event", aliases=["e"], description="Reload an event")
@@ -148,7 +148,7 @@ class Dev(commands.Cog):
             return await ctx.send_error(f"Event {event_name} is not loaded!")
         except commands.ExtensionNotFound:
             return await ctx.send_error(f"Event {event_name} could not be found!")
-        await ctx.send(f"Event {event_name} has been reloaded!")
+        await ctx.reply(f"Event {event_name} has been reloaded!")
 
     @checks.is_owner()
     @commands.command(hidden=True, description="Pull updates from git")
@@ -162,12 +162,12 @@ class Dev(commands.Cog):
         )
         for page in paged:
             p = f"```css\n{page}```"
-            await ctx.send(p)
+            await ctx.reply(p)
 
     @checks.is_owner()
     @commands.command(name="raise", hidden=True, description="Raise a test exception")
     async def _raise(self, ctx: Context):
-        await ctx.send("Raising a test exception..")
+        await ctx.reply("Raising a test exception..")
         raise Exception(f"Exception raised by {ctx.author}")
 
     @checks.is_owner()

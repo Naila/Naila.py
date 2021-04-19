@@ -41,7 +41,7 @@ class Settings(commands.Cog):
                 prefix = str(presence['activity']['prefix']).split(".")[-1].capitalize()
                 msg += f" **{prefix}** {presence['activity']['text']}\n"
         em.description = msg
-        await ctx.send(embed=em)
+        await ctx.reply(embed=em)
 
     @commands.group(aliases=["gset"], description="Manage the settings for this guild")
     @commands.guild_only()
@@ -63,7 +63,7 @@ class Settings(commands.Cog):
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         await self.bot.pool.release(con)
         if guild:
-            return await ctx.send("This guild is already listed!")
+            return await ctx.reply("This guild is already listed!")
 
         def check(m: discord.Message):
             return m.channel == ctx.channel and m.author == ctx.author
@@ -71,18 +71,18 @@ class Settings(commands.Cog):
         def rcheck(r: discord.Reaction, u: discord.User):
             return u.id == ctx.author.id and str(r.emoji) in ["✅", "❌"]
 
-        msg = await ctx.send("This will add your server to a public list, do you wish to continue?")
+        msg = await ctx.reply("This will add your server to a public list, do you wish to continue?")
         await msg.add_reaction("✅")
         await msg.add_reaction("❌")
         try:
             reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=rcheck)
         except asyncio.TimeoutError:
-            return ctx.send("Timed out.")
+            return ctx.reply("Timed out.")
         if str(reaction.emoji) == "❌":
-            return await ctx.send("Okay, cancelled!")
+            return await ctx.reply("Okay, cancelled!")
 
         data = {}
-        await ctx.send(
+        await ctx.reply(
             "Okay, lets continue then. What channel would you like people to join when invited?"
             " Simply mention the channel.\n\nThe info given during setup CAN be changed later!"
         )
@@ -90,24 +90,24 @@ class Settings(commands.Cog):
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
-                return await ctx.send("Timed out.")
+                return await ctx.reply("Timed out.")
             resp = response.content.lower()
             if not re.match(r"<#[0-9]+>", resp):
-                await ctx.send("Mention the channel please!")
+                await ctx.reply("Mention the channel please!")
             else:
                 ch: discord.TextChannel = ctx.guild.get_channel(int(resp.strip("<#>")))
                 if not ch:
-                    await ctx.send("Invalid channel!")
+                    await ctx.reply("Invalid channel!")
                 elif not ctx.guild.me.permissions_in(ch).create_instant_invite:
-                    await ctx.send("I don't have permissions to create an invite in this channel!")
+                    await ctx.reply("I don't have permissions to create an invite in this channel!")
                 else:
                     invite: discord.Invite = await ch.create_invite(reason="[ Guild List ] This invite will be used!")
                     data["invite"] = invite.url
-                    await ctx.send(f"The invite {invite.url} was created and will be used for listing purposes!")
+                    await ctx.reply(f"The invite {invite.url} was created and will be used for listing purposes!")
                     break
             if not response:
-                return await ctx.send("Timed out.")
-        await ctx.send(
+                return await ctx.reply("Timed out.")
+        await ctx.reply(
             "Is this guild NSFW focused? (yes or no)"
             " You **MUST** say yes if anything public facing (icon, invite splash, banner, etc) are NSFW!\n\n"
             "You will have the opportunity to add other tags to the server later, this is important for listing!"
@@ -116,10 +116,10 @@ class Settings(commands.Cog):
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
-                return await ctx.send("Timed out.")
+                return await ctx.reply("Timed out.")
             resp = response.content.lower()
             if resp not in ["yes", "no"]:
-                await ctx.send("Invalid response!")
+                await ctx.reply("Invalid response!")
             else:
                 if resp == "yes":
                     data["nsfw"] = True
@@ -127,33 +127,33 @@ class Settings(commands.Cog):
                     data["nsfw"] = False
                 break
             if not response:
-                return await ctx.send("Timed out.")
-        await ctx.send("Give us a brief description of this guild, max 140 characters!")
+                return await ctx.reply("Timed out.")
+        await ctx.reply("Give us a brief description of this guild, max 140 characters!")
         while True:
             try:
                 response = await ctx.bot.wait_for("message", timeout=60, check=check)
             except asyncio.TimeoutError:
-                return await ctx.send("Timed out.")
+                return await ctx.reply("Timed out.")
             if len(response.content) > 140:
-                await ctx.send("Brief description must be shorter!")
+                await ctx.reply("Brief description must be shorter!")
             else:
                 data["brief"] = response.content
                 break
             if not response:
-                return await ctx.send("Timed out.")
-        await ctx.send("Now your long description! Just say \"no\" if you don't want to provide this atm!")
+                return await ctx.reply("Timed out.")
+        await ctx.reply("Now your long description! Just say \"no\" if you don't want to provide this atm!")
         while True:
             try:
                 response = await ctx.bot.wait_for("message", timeout=300, check=check)
             except asyncio.TimeoutError:
-                return await ctx.send("Timed out.")
+                return await ctx.reply("Timed out.")
             if response.content.lower() == "no":
                 data["desc"] = None
             else:
                 data["desc"] = response.content
             break
 
-        msg = await ctx.send("Listing..")
+        msg = await ctx.reply("Listing..")
         home: discord.Guild = self.bot.get_guild(294505571317710849)
         out_ch: discord.TextChannel = home.get_channel(770386941677404211 if data["nsfw"] else 770386909972660274)
         em = discord.Embed(color=await ctx.guildcolor(), description=data["desc"] if data["desc"] else data["brief"])
@@ -188,26 +188,26 @@ class Settings(commands.Cog):
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         await self.bot.pool.release(con)
         if not guild:
-            return await ctx.send("This guild is not listed!")
+            return await ctx.reply("This guild is not listed!")
 
         def rcheck(r: discord.Reaction, u: discord.User):
             return u.id == ctx.author.id and str(r.emoji) in ["✅", "❌"]
 
-        msg = await ctx.send("This will delete your server from our system, do you want to continue?")
+        msg = await ctx.reply("This will delete your server from our system, do you want to continue?")
         await msg.add_reaction("✅")
         await msg.add_reaction("❌")
         try:
             reaction, user = await self.bot.wait_for("reaction_add", timeout=60.0, check=rcheck)
         except asyncio.TimeoutError:
-            return ctx.send("Timed out.")
+            return ctx.reply("Timed out.")
         if str(reaction.emoji) == "❌":
-            return await ctx.send("Okay, cancelled!")
+            return await ctx.reply("Okay, cancelled!")
 
         con = await self.bot.pool.acquire()
         await con.execute("DELETE FROM guildlist_guildtags WHERE guild_pk=$1", guild["id"])
         await con.execute("DELETE FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
         await self.bot.pool.release(con)
-        await ctx.send("Removed!")
+        await ctx.reply("Removed!")
 
     @guildsettings.group(name="privatevc", aliases=["pvc"], description="Private VC management")
     @checks.admin()
@@ -221,7 +221,7 @@ class Settings(commands.Cog):
             return await ctx.send_error("Category must be in this guild!")
         vc = await category.create_voice_channel("Join for a private VC")
         await PrivateVCs.set_settings(self.bot, ctx.guild, category, vc)
-        await ctx.send("Done!")
+        await ctx.reply("Done!")
 
     @gset_privatevc.command(name="toggle", description="Toggle Private VC functionality")
     async def gset_privatevc_toggle(self, ctx: Context):
@@ -230,8 +230,8 @@ class Settings(commands.Cog):
             return await ctx.send_error("You must set a category before you toggle Private VCs!")
         status = await PrivateVCs.toggle(self.bot, ctx.guild)
         if status:
-            return await ctx.send("I have enabled Private VCs!")
-        await ctx.send("I have disabled Private VCs!")
+            return await ctx.reply("I have enabled Private VCs!")
+        await ctx.reply("I have disabled Private VCs!")
 
     @guildsettings.group(name="prefix", description="Prefix management")
     @checks.admin()
@@ -250,7 +250,7 @@ class Settings(commands.Cog):
             return await ctx.send_error("This guild already has 10 custom prefixes, remove some before adding more.")
         except errors.DuplicatePrefix:
             return await ctx.send_error("This prefix already exists here or is a default prefix!")
-        await ctx.send(
+        await ctx.reply(
             embed=discord.Embed(
                 color=await ctx.guildcolor(),
                 description=f"Prefix `{prefix}` added! Current prefixes:\n{await Prefixes(ctx).list()}"
@@ -264,7 +264,7 @@ class Settings(commands.Cog):
             await Prefixes(ctx).remove(prefix)
         except errors.PrefixNotFound:
             return await ctx.send_error("That prefix could not be found, please try again!")
-        await ctx.send(
+        await ctx.reply(
             embed=discord.Embed(
                 color=await ctx.guildcolor(),
                 description=f"Prefix `{prefix}` removed! Current prefixes:\n{await Prefixes(ctx).list()}"

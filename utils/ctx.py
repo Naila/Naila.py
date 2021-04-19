@@ -70,25 +70,22 @@ class Context(commands.Context):
         return em
 
     async def missing_argument(self):
-        channel = self.channel
         prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
         command = self.invoked_subcommand or self.command
         em = discord.Embed(color=self.bot.error_color)
         em.title = "Missing required argument ❌"
         em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
-        await channel.send(embed=em)
+        await self.reply(embed=em)
 
     async def send_error(self, content):
-        channel = self.channel
         em = discord.Embed(color=self.bot.error_color, title="Error ❌")
         em.description = str(content)
-        await channel.send(embed=em)
+        await self.reply(embed=em)
 
     async def bad_argument(self, content):
-        channel = self.channel
         em = discord.Embed(color=self.bot.error_color, title="Invalid argument ❌")
         em.description = str(content)
-        await channel.send(embed=em)
+        await self.reply(embed=em)
 
     # def handle_file(self, file_path: str, path: str = None, **kwargs) -> dict:
     #     with open(file_path, "r") as file:

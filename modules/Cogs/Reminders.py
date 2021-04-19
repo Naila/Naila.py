@@ -21,7 +21,7 @@ class Reminders(commands.Cog):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.author.id, time, reminder)
-        await ctx.send(
+        await ctx.reply(
             f"{ctx.author.mention}, I will remind you about this"
             f" {get_relative_delta(parse_time(time), append_small=True, bold_string=True)}"
         )
@@ -31,7 +31,7 @@ class Reminders(commands.Cog):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
         await Reminder(ctx).add(ctx.channel.id, time, escape(reminder, False, False, False))
-        await ctx.send(
+        await ctx.reply(
             f"{ctx.author.mention}, I will remind you about this"
             f" {get_relative_delta(parse_time(time), append_small=True, bold_string=True)}"
         )
@@ -54,13 +54,13 @@ class Reminders(commands.Cog):
                    f"Remove a reminder with `{ctx.prefix}delreminder <id>`"
         pages = pagify(to_send)
         for page in pages:
-            await ctx.send(page)
+            await ctx.reply(page)
 
     @commands.command(aliases=["delreminder"])
     async def deletereminder(self, ctx: Context, reminder_id: int):
         deleted = await Reminder(ctx).delete(reminder_id)
         if deleted == "UPDATE 1":
-            return await ctx.send("I have deleted that reminder!")
+            return await ctx.reply("I have deleted that reminder!")
         await ctx.send_error("Hmm I couldn't seem to find that reminder for you, make sure the id is correct!")
 
 

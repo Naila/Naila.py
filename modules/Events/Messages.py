@@ -46,12 +46,12 @@ class Messages(commands.Cog):
                 description="\n".join(invites),
                 title=f"Invite {self.bot.user.name} to:"
             )
-            await ctx.send(embed=em, reference=message)
+            await ctx.reply(embed=em)
         else:
             await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes
         if re.match(f"<@!?{self.bot.user.id}>", message.content):
-            await ctx.send(f"My prefixes here are:\n{await Prefixes(ctx).list()}", reference=message)
+            await ctx.reply(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
 
     @commands.Cog.listener()
     async def on_command(self, ctx):
