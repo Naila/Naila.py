@@ -38,8 +38,9 @@ class Messages(commands.Cog):
                         url = oauth_url(
                             self.bot.user.id,
                             permissions=config.permissions,
-                            guild=guild
-                        ).replace("scope=bot", "scope=applications.commands+bot")
+                            guild=guild,
+                            scopes=["bot", "applications.commands"]
+                        )
                         invites.append(f"[{guild.name}]({url})")
             em = discord.Embed(
                 color=self.bot.color,
