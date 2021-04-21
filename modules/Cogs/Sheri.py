@@ -1,7 +1,6 @@
 import os
 
 import discord
-import httpx
 from discord.ext import commands
 
 from bot import Bot
@@ -19,18 +18,19 @@ async def sheri_embed(ctx: Context):
 
 
 async def image_send(ctx: Context, endpoint: str):
-    async with httpx.AsyncClient() as session:
-        data = await session.get(url=base_url + endpoint, headers={"Authorization": os.getenv("SHERI"),
-                                                                   "User-Agent": "Naila Discord Bot - By Kanin#0001"})
-        if data.status_code != 200:
+    async with ctx.session.get(
+            url=base_url + endpoint,
+            headers={"Authorization": os.getenv("SHERI"), "User-Agent": "Naila Discord Bot - By Kanin#0001"}
+    ) as resp:
+        if resp.status != 200:
             return await ctx.reply("Either the website is down or there is an internal error, Please contact support!")
-        response = data.json()
-        embed = await sheri_embed(ctx)
-        embed.set_image(url=response['url'])
-        embed.add_field(name="Issue with image?",
-                        value="Report it to the sheri.bot using the below link\n"
-                              f"{response['report_url']}")
-        return await ctx.reply(embed=embed)
+        result = await resp.json()
+    embed = await sheri_embed(ctx)
+    embed.set_image(url=result['url'])
+    embed.add_field(name="Issue with image?",
+                    value="Report it to the sheri.bot using the below link\n"
+                          f"{result['report_url']}")
+    return await ctx.reply(embed=embed)
 
 
 class Sheri(commands.Cog):

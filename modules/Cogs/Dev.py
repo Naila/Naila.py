@@ -2,7 +2,6 @@ import os
 import subprocess
 
 import discord
-import requests
 from discord.ext import commands
 
 from bot import Bot
@@ -15,6 +14,7 @@ class Dev(commands.Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
+    # TODO: Rewrite
     @checks.is_owner()
     @commands.command(description="List all modules on the bot")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -178,17 +178,6 @@ class Dev(commands.Cog):
         message.author = user
         message.content = prefix + command
         await self.bot.invoke(await self.bot.get_context(message))
-
-    @checks.is_owner()
-    @commands.command(hidden=True, description="Send a file to someone")
-    @checks.custom_bot_has_permissions(add_reactions=True)
-    async def sendfile(self, ctx: Context, user: discord.Member, path: str):
-        url = "https://haste.ourmainfra.me/"
-        f = open(path, "r")
-        response = requests.post(f"{url}documents", headers={"Accept": "application/json"},
-                                 data=f.read().encode("utf-8"))
-        await user.send(f"{ctx.author} has told me to send this to you:\n{url}{response.json()['key']}")
-        await ctx.message.add_reaction("✅")
 
 
 def setup(bot):

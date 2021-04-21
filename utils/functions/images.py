@@ -2,15 +2,18 @@ import os
 import random
 from io import BytesIO
 
-import requests
 from PIL import Image, ImageOps, ImageDraw, ImageFont
 
 
-def ship(avatar_1, avatar_2):
+async def ship(session, avatar_1, avatar_2):
     path = "utils/assets/ship/"
     background = Image.new("RGBA", (600, 200), (0, 0, 0, 0))
-    avatar_1 = Image.open(requests.get(avatar_1, stream=True).raw).resize((200, 200), Image.LANCZOS).convert("RGBA")
-    avatar_2 = Image.open(requests.get(avatar_2, stream=True).raw).resize((200, 200), Image.LANCZOS).convert("RGBA")
+    avatar_1 = Image.open(BytesIO(await (await session.get(str(avatar_1))).read())).resize((200, 200),
+                                                                                           Image.LANCZOS).convert(
+        "RGBA")
+    avatar_2 = Image.open(BytesIO(await (await session.get(str(avatar_2))).read())).resize((200, 200),
+                                                                                           Image.LANCZOS).convert(
+        "RGBA")
     heart = Image.open(path + random.choice([x for x in os.listdir(path)])).convert("RGBA")
     background.paste(avatar_1, (0, 0), avatar_1)
     background.paste(heart, (201, 0), heart)
@@ -25,12 +28,12 @@ def getSuffix(num):
     return "th" if 10 <= num % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(num % 10, "th")
 
 
-def getImage(url):
-    return Image.open(requests.get(url, stream=True).raw)
+async def getImage(session, url):
+    return Image.open(await (await session.get(str(url)).read()))
 
 
 # TODO: Rewrite this shit
-def createWelcomeImage(fmt, user_name, guild_name, url, member_count, color=None):
+async def createWelcomeImage(session, fmt, user_name, guild_name, url, member_count, color=None):
     if not color:
         color = (255, 255, 255)
     else:
@@ -45,7 +48,7 @@ def createWelcomeImage(fmt, user_name, guild_name, url, member_count, color=None
         ProfileArea = Image.new("L", (512, 512), 0)
         draw = ImageDraw.Draw(ProfileArea)
         draw.ellipse(((0, 0), (512, 512)), fill=255)
-        ProfilePicture = getImage(url)
+        ProfilePicture = Image.open(BytesIO(await (await session.get(str(url))).read()))
         ProfileAreaOutput = ImageOps.fit(ProfilePicture, (512, 512))
         ProfileAreaOutput.putalpha(ProfileArea)
         drawtwo = ImageDraw.Draw(WelcomePicture)
@@ -100,7 +103,7 @@ def createWelcomeImage(fmt, user_name, guild_name, url, member_count, color=None
         ProfileArea = Image.new("L", (drawlwh, drawlwh), 0)
         draw = ImageDraw.Draw(ProfileArea)
         draw.ellipse(((0, 0), (drawlwh, drawlwh)), fill=255)
-        ProfilePicture = getImage(url)
+        ProfilePicture = Image.open(BytesIO(await (await session.get(str(url))).read()))
         ProfileAreaOutput = ImageOps.fit(ProfilePicture, (drawlwh, drawlwh))
         # WelcomePicture.paste(ProfileAreaOutput, (44, 44), ProfileArea)
         drawtwo = ImageDraw.Draw(WelcomePicture)

@@ -31,13 +31,12 @@ class Welcomer(commands.Cog):
 
     @welcomer.command(name="test", description="Test what welcomer will look like")
     @checks.custom_bot_has_permissions(embed_links=True)
-    async def welcomer_test(self, ctx: Context, fmt: int = 2, background: str = None):
+    async def welcomer_test(self, ctx: Context, fmt: int = 2):
         if fmt not in [1, 2]:
             return await ctx.send_error("fmt must either be 1 or 2!")
         data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
-        background = background or data["welcomer_background"]
         fmt = fmt or data["welcomer_type"]
-        await self.welcomer_handler(member=ctx.author, ctx=ctx, background=background, fmt=fmt)
+        await self.welcomer_handler(member=ctx.author, ctx=ctx, fmt=fmt)
 
     @welcomer.command(name="embed", description="Toggle the embed")
     @checks.custom_bot_has_permissions(embed_links=True)
@@ -179,9 +178,7 @@ class Welcomer(commands.Cog):
         message = message.replace("{GUILD_COUNT_BOTS}", str(len([i for i in guild.members if i.bot])))
         return message
 
-    async def welcomer_handler(self, member: discord.Member, ctx: Context = None,
-                               background: str = None, fmt: int = None):
-
+    async def welcomer_handler(self, member: discord.Member, ctx: Context = None, fmt: int = None):
         guild = member.guild
         data = await Welcome().welcomer_data(self.bot, guild)
         if not data["welcomer_enabled"] or not data["welcomer_channel"]:
@@ -193,7 +190,6 @@ class Welcomer(commands.Cog):
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = ctx.channel if ctx else self.bot.get_channel(data["welcomer_channel"])
         color = await Guild().color(self.bot.pool, guild)
-        background = background or data["welcomer_background"]
         fmt = fmt or data["welcomer_type"]
         content = self.build_message(data["welcomer_content"], member, guild)
         embed = data["welcomer_embed"]
@@ -221,7 +217,8 @@ class Welcomer(commands.Cog):
         # if background:
         #     params["background"] = background
         # image = await welcomer(self.bot.session, params)
-        image = createWelcomeImage(
+        image = await createWelcomeImage(
+            session=self.bot.session,
             fmt=str(fmt),
             url=member.avatar_url_as(format="png"),
             user_name=str(member),
