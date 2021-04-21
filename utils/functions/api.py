@@ -52,7 +52,7 @@ async def nekos(session, endpoint):
 
 async def welcomer(session, params: dict = None):
     if params:
-        params = "?" + "&".join([f"{x}={y}" for x, y in params.items()])
+        params = "?{0}".format("&".join(f"{x}={y}" for x, y in params.items()))
     async with session.get(
             url=f"https://ourmainfra.me/api/v2/welcomer/{params}",
             headers={"Authorization": os.getenv("MAINFRAME_TOKEN")}
@@ -85,13 +85,15 @@ async def session_get(session, url, allowed_statuses: list = None, headers: dict
 
 
 async def session_post(session, url, allowed_statuses: list = None, headers: dict = None, json: dict = None):
-    allowed_statuses = allowed_statuses or [200]
     async with session.post(url, headers=headers, json=json) as resp:
         if not resp:
             return None
+
+        allowed_statuses = allowed_statuses or [200]
         if resp.status not in allowed_statuses:
             print(resp.reason)
             return None
+
         return resp
 
 

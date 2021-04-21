@@ -50,7 +50,7 @@ class Messages(commands.Cog):
         else:
             await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes
-        if re.match(f"<@!?{self.bot.user.id}>", message.content):
+        if re.fullmatch(f"<@!?{self.bot.user.id}>", message.content):
             await ctx.reply(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
 
     @commands.Cog.listener()

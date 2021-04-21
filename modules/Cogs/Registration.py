@@ -183,9 +183,11 @@ class Registration(commands.Cog):
         await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
         await ctx.reply("Done, you may now register again!")
 
+    # TODO: Rewrite
     @registration_check()
-    @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command(description="Register in this guild!")
+    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.max_concurrency(1, commands.BucketType.user)
     @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
     async def register(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
