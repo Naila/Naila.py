@@ -1,7 +1,6 @@
 import os
 from io import BytesIO
 
-import aiohttp
 from requests.exceptions import HTTPError
 
 
@@ -73,27 +72,20 @@ async def upload_to_cdn(session, files: dict = None):
         return True
 
 
+# TODO: Modify these to use everywhere
 async def session_get(session, url, allowed_statuses: list = None, headers: dict = None):
-    allowed_statuses = allowed_statuses or [200]
-    try:
-        async with session.post(url, headers=headers) as resp:
-            if resp.status not in allowed_statuses:
-                return raise_for_status(resp)
-            return resp
-    except aiohttp.ClientConnectionError:
-        return None
+    async with session.get(url, headers=headers) as resp:
+        allowed_statuses = allowed_statuses or [200]
+        if resp.status not in allowed_statuses:
+            return raise_for_status(resp)
+        return resp
 
 
 async def session_post(session, url, allowed_statuses: list = None, headers: dict = None, json: dict = None):
     async with session.post(url, headers=headers, json=json) as resp:
-        if not resp:
-            return None
-
         allowed_statuses = allowed_statuses or [200]
         if resp.status not in allowed_statuses:
-            print(resp.reason)
             return None
-
         return resp
 
 
