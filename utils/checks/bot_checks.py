@@ -17,6 +17,13 @@ def can_send(ctx: commands.Context, channel: discord.TextChannel = None):
     return ctx.guild.me.permissions_in(channel).send_messages
 
 
+def can_read_history(ctx: commands.Context, channel: discord.TextChannel = None):
+    channel = channel or ctx.channel
+    if isinstance(channel, discord.DMChannel):
+        return True
+    return ctx.guild.me.permissions_in(channel).read_message_history
+
+
 def can_embed(ctx: commands.Context, channel: discord.TextChannel = None):
     channel = ctx.channel if not channel else channel
     return ctx.guild.me.permissions_in(channel).embed_links

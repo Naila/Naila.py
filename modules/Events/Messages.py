@@ -47,7 +47,8 @@ class Messages(commands.Cog):
                 description="\n".join(invites),
                 title=f"Invite {self.bot.user.name} to:"
             )
-            await ctx.reply(embed=em)
+            if invites:
+                await ctx.reply(embed=em)
         else:
             await Check().main(ctx.bot, ctx.guild)
         # Mention the bot to list prefixes

@@ -7,7 +7,7 @@ import sentry_sdk as sentry
 from discord.ext import commands
 
 from bot import Bot
-from utils.checks.bot_checks import can_react, can_send
+from utils.checks.bot_checks import can_react, can_send, can_read_history
 from utils.ctx import Context
 from utils.functions import errors
 from utils.functions.text import pagify, readable_list
@@ -61,12 +61,12 @@ class Errors(commands.Cog):
     async def on_command_error(self, ctx: Context, error):
         if isinstance(error, commands.CommandNotFound):
             return
-        if not can_send(ctx):
-            if can_react(ctx):
+        if not can_send(ctx) or not can_read_history(ctx):
+            if can_react(ctx) and can_read_history(ctx):
                 return await ctx.message.add_reaction("❌")
             try:
                 # return await ctx.author.send(_("errors", "cannot_respond", guild=str(ctx.guild)))
-                return await ctx.author.send(f"I cannot send messages in {ctx.guild}!")
+                return await ctx.author.send(f"I cannot send messages and/or read message history in {ctx.guild}!")
             except discord.Forbidden:
                 return ctx.log.error(f"Failed to respond to command in {ctx.guild.name}")
         if isinstance(error, commands.CommandOnCooldown):
