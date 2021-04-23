@@ -762,7 +762,8 @@ class Music(commands.Cog):
                 handle = self.call_later(60, self.leave_vc, before.channel, player, msg)
                 self.handles[guild.id] = {"future": handle, "message": msg}
             elif (
-                    after.channel.id == int(player.channel_id)
+                    after.channel is not None
+                    and after.channel.id == int(player.channel_id)
                     and len(after.channel.members) >= 1
                     and waiting
             ):
