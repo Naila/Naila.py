@@ -22,7 +22,7 @@ class Welcomer(commands.Cog):
             return await ctx.send_help(ctx.command)
 
     @welcomer.command(name="toggle", description="Toggle welcomer entirely")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_toggle(self, ctx: Context):
         update = await Welcome(ctx).toggle_welcomer()
         if update:
@@ -30,7 +30,7 @@ class Welcomer(commands.Cog):
         await ctx.reply("I have disabled welcomer!")
 
     @welcomer.command(name="test", description="Test what welcomer will look like")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_test(self, ctx: Context, fmt: int = 2):
         if fmt not in [1, 2]:
             return await ctx.send_error("fmt must either be 1 or 2!")
@@ -39,7 +39,7 @@ class Welcomer(commands.Cog):
         await self.welcomer_handler(member=ctx.author, ctx=ctx, fmt=fmt)
 
     @welcomer.command(name="embed", description="Toggle the embed")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_embed(self, ctx: Context):
         data = await Welcome(ctx).toggle_welcomer_embed()
         if data:
@@ -47,7 +47,7 @@ class Welcomer(commands.Cog):
         await ctx.reply("Embeds have been disabled for welcomer!")
 
     @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_text(self, ctx: Context, *, text: str):
         data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
         if text == "--current":
@@ -61,7 +61,7 @@ class Welcomer(commands.Cog):
         await ctx.reply("Welcomer text has been set!")
 
     @welcomer.command(name="type", description="Change the image type | 1 or 2")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_type(self, ctx: Context, *, image_type: int):
         if image_type not in [1, 2]:
             return await ctx.send_error("Type must be 1 or 2!")
@@ -69,7 +69,7 @@ class Welcomer(commands.Cog):
         await ctx.reply("Type set!")
 
     @welcomer.command(name="channel", description="Set the output channel")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def welcomer_channel(self, ctx: Context, channel: discord.TextChannel):
         await Welcome(ctx).set_welcomer_channel(channel)
         await ctx.reply(f"Channel set to {channel.mention}!")

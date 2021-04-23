@@ -230,7 +230,7 @@ class Testing(commands.Cog):
 
     @commands.command()
     @checks.is_owner()
-    @checks.custom_bot_has_permissions(embed_links=True, attach_files=True)
+    @checks.bot_has_permissions(embed_links=True, attach_files=True)
     async def color(self, ctx: Context, *, color: Union[discord.Member, str] = None):
         valid = self.validate_color(color)
         if not valid:

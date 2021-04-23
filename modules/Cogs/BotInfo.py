@@ -18,7 +18,7 @@ class BotInfo(commands.Cog):
         self.bot: Bot = bot
 
     @commands.command(description="List of APIs we use")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def apis(self, ctx: Context):
         em = discord.Embed(color=await ctx.guildcolor())
         em.set_author(name="APIs we use:")
@@ -32,7 +32,7 @@ class BotInfo(commands.Cog):
         await ctx.reply(embed=em)
 
     @commands.command(description="Invite the bot or join the bots support server!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def invite(self, ctx: Context):
         invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
         em = discord.Embed(color=await ctx.guildcolor())
@@ -43,7 +43,7 @@ class BotInfo(commands.Cog):
         await ctx.reply(embed=em)
 
     @commands.command(description="Various stats about the bot")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def stats(self, ctx: Context):
         bot = self.bot
         text, voice, category, news = 0, 0, 0, 0

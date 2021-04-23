@@ -102,7 +102,7 @@ class Registration(commands.Cog):
             return await ctx.send_help(ctx.command)
 
     @setreg.command(name="channel", description="Set the output channel")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def setreg_channel(self, ctx: Context, channel: discord.TextChannel):
         update = await Register(ctx).update_channel(channel)
         if not update:
@@ -110,7 +110,7 @@ class Registration(commands.Cog):
         await ctx.reply(f"Set the channel {channel.mention} as the output for registration.")
 
     @setreg.command(name="toggle", description="Toggle registration")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def setreg_toggle(self, ctx: Context):
         update = await Register(ctx).toggle()
         if update:
@@ -118,7 +118,7 @@ class Registration(commands.Cog):
         await ctx.reply("Registration disabled.")
 
     @setreg.command(name="roles", description="Create the roles required for registration")
-    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    @checks.bot_has_permissions(embed_links=True, manage_roles=True)
     async def setreg_roles(self, ctx: Context):
         guild = ctx.guild
 
@@ -159,7 +159,7 @@ class Registration(commands.Cog):
 
     @setreg.command(name="banage",
                     description="Set the age in which the bot will ban the user if they are less than (Default: 13)")
-    @checks.custom_bot_has_permissions(embed_links=True, ban_members=True)
+    @checks.bot_has_permissions(embed_links=True, ban_members=True)
     async def setreg_banage(self, ctx: Context, age: int):
         if age < 13:
             age = 13
@@ -169,7 +169,7 @@ class Registration(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Unregister, allowing you to register again!")
-    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    @checks.bot_has_permissions(embed_links=True, manage_roles=True)
     async def unregister(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
         if not can_manage_user(ctx, author):
@@ -188,7 +188,7 @@ class Registration(commands.Cog):
     @commands.command(description="Register in this guild!")
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.max_concurrency(1, commands.BucketType.user)
-    @checks.custom_bot_has_permissions(embed_links=True, manage_roles=True)
+    @checks.bot_has_permissions(embed_links=True, manage_roles=True)
     async def register(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
 

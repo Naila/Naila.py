@@ -73,7 +73,7 @@ def mod():
     return mod_or_permissions()
 
 
-def user_has_permissions(**perms):
+def default_user_has_permissions(**perms):
     def predicate(ctx):
         if owner_check(ctx):
             return True
@@ -89,8 +89,8 @@ def user_has_permissions(**perms):
     return commands.check(predicate)
 
 
-def custom_user_has_permissions(**permissions):
-    deco = user_has_permissions(**permissions)
+def user_has_permissions(**permissions):
+    deco = default_user_has_permissions(**permissions)
 
     def inner(func):
         wrapped = deco(func)
@@ -100,7 +100,7 @@ def custom_user_has_permissions(**permissions):
     return inner
 
 
-def bot_has_permissions(**perms):
+def default_bot_has_permissions(**perms):
     def predicate(ctx):
         guild = ctx.guild
         me = guild.me if guild is not None else ctx.bot.user
@@ -116,8 +116,8 @@ def bot_has_permissions(**perms):
     return commands.check(predicate)
 
 
-def custom_bot_has_permissions(**permissions):
-    deco = bot_has_permissions(**permissions)
+def bot_has_permissions(**permissions):
+    deco = default_bot_has_permissions(**permissions)
 
     def inner(func):
         wrapped = deco(func)

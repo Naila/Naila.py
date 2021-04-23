@@ -59,7 +59,7 @@ class LiveCommands(commands.Cog):
             core.process[dex] = abs((now - start).total_seconds())
 
     @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def command_list(self, ctx: Context):
         try:
             core = self.get_commandlist()
@@ -90,7 +90,7 @@ class LiveCommands(commands.Cog):
             return await ctx.send_error("Unable to post stats, Not enough data!")
 
     # @commands.command()
-    # @checks.custom_bot_has_permissions(embed_links=True)
+    # @checks.bot_has_permissions(embed_links=True)
     # async def commandinfo(self, ctx, *, command: str):
     #     command = self.bot.get_command(command)
     #

@@ -17,7 +17,7 @@ class Dev(commands.Cog):
     # TODO: Rewrite
     @checks.is_owner()
     @commands.command(description="List all modules on the bot")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def modules(self, ctx: Context):
         cog_list, cogs_loaded, cogs_unloaded = [], "```diff\n+\t", ""
         event_list, events_loaded, events_unloaded = [], "```diff\n+\t", ""

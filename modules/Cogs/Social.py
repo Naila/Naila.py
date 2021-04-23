@@ -68,7 +68,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Ship your friends!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def ship(self, ctx: Context, lover1: discord.Member, lover2: discord.Member = None):
         lover2 = lover2 or ctx.author
         rigged = False
@@ -87,7 +87,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Bite people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def bite(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -100,7 +100,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Did someone make you blush?")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def blush(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -118,7 +118,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Cry or say someone made you cry")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def cry(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -136,7 +136,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Cuddle people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def cuddle(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -149,7 +149,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Dance!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def dance(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -167,7 +167,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Greet people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def greet(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -180,7 +180,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="High five people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def highfive(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -193,7 +193,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Hug people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def hug(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -206,7 +206,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Insult people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def insult(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -219,7 +219,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Kiss people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def kiss(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -232,7 +232,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Lick people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def lick(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -245,7 +245,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Pat people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def pat(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -258,7 +258,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Poke people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def poke(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -271,7 +271,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Pout or say someone made you pout")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def pout(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -289,7 +289,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Punch people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def punch(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -302,7 +302,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Shoot people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def shoot(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -315,7 +315,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Shrug it off ¯\_(ツ)_/¯")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def shrug(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -333,7 +333,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Slap people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def slap(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -346,7 +346,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Tell people you're sleepy")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def sleepy(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -364,7 +364,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Did someone make you smile?")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def smile(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -382,7 +382,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Stare into space/at someone")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def stare(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -400,7 +400,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Give people the thumbs up!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def thumbsup(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)
@@ -413,7 +413,7 @@ class Social(commands.Cog):
 
     @commands.guild_only()
     @commands.command(description="Tickle people!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def tickle(self, ctx: Context, *users: Union[discord.Member, str]):
         try:
             users, word = self.process_users(ctx, users)

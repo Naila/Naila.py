@@ -57,7 +57,7 @@ class Settings(commands.Cog):
 
     @gset_listing.command(name="add")
     @commands.cooldown(1, 30, BucketType.guild)
-    @checks.custom_bot_has_permissions(add_reactions=True, create_instant_invite=True)
+    @checks.bot_has_permissions(add_reactions=True, create_instant_invite=True)
     async def gset_listing_add(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
@@ -182,7 +182,7 @@ class Settings(commands.Cog):
         await msg.edit(content=f"You can now find your guild listed at {mesg.jump_url} over at {config.support_invite}")
 
     @gset_listing.command(name="remove")
-    @checks.custom_bot_has_permissions(add_reactions=True)
+    @checks.bot_has_permissions(add_reactions=True)
     async def gset_listing_remove(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
@@ -240,7 +240,7 @@ class Settings(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @gset_prefix.command(name="add", description="Add a prefix")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def gset_prefix_add(self, ctx: Context, prefix: str):
         try:
             await Prefixes(ctx).add(prefix)
@@ -258,7 +258,7 @@ class Settings(commands.Cog):
         )
 
     @gset_prefix.command(name="remove", description="Remove a prefix")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def gset_prefix_remove(self, ctx: Context, prefix):
         try:
             await Prefixes(ctx).remove(prefix)

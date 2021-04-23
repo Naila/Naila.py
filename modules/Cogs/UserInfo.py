@@ -47,7 +47,7 @@ class UserInfo(commands.Cog):
     @commands.guild_only()
     @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
                     invoke_without_command=True, description="Check a members information!")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def user(self, ctx: Context, *, member: discord.Member = None):
         if ctx.invoked_subcommand:
             return
@@ -93,7 +93,7 @@ class UserInfo(commands.Cog):
 
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def user_permissions(self, ctx: Context, user: discord.Member = None, *,
                                channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
         user, channel = user or ctx.author, channel or ctx.channel
@@ -116,7 +116,7 @@ class UserInfo(commands.Cog):
         await ctx.reply(embed=em)
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
-    @checks.custom_bot_has_permissions(embed_links=True)
+    @checks.bot_has_permissions(embed_links=True)
     async def user_avatar(self, ctx: Context, user: discord.Member = None):
         if not user:
             user = ctx.author
