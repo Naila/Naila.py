@@ -56,7 +56,7 @@ class Messages(commands.Cog):
             await ctx.reply(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
 
     @commands.Cog.listener()
-    async def on_command(self, ctx):
+    async def on_command(self, ctx: Context):
         message, command = ctx.message, ctx.command
 
         cmd = command.qualified_name.replace(" ", "_")

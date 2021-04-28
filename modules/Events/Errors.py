@@ -58,7 +58,7 @@ class Errors(commands.Cog):
         return f"You can try again in {timestr}!", delete_after
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: Context, error):
+    async def on_command_error(self, ctx: Context, error: commands.CommandError):
         if isinstance(error, commands.CommandNotFound):
             return
         if not can_send(ctx) or not can_read_history(ctx):
@@ -85,6 +85,8 @@ class Errors(commands.Cog):
         if isinstance(error, commands.NoPrivateMessage):
             # return await ctx.send_error(_("errors", "no_pms", command=str(ctx.command)))
             return await ctx.send_error(f"{ctx.command} cannot be used in private messages!")
+        if isinstance(error, commands.CommandInvokeError):
+            return await ctx.send_error(error.original)
         if isinstance(error, commands.CheckFailure):
             if isinstance(error, errors.BotMissingPermissions):
                 if "embed_links" in error.missing_perms:

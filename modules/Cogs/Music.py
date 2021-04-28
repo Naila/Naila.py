@@ -520,7 +520,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["loop"], description="Toggle the queues repeat status")
     @checks.bot_has_permissions(embed_links=True)
-    async def repeat(self, ctx):
+    async def repeat(self, ctx: Context):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         em = self.embed()
 
