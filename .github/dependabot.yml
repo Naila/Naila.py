@@ -1,0 +1,68 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  ignore:
+  - dependency-name: spotipy
+    versions:
+    - 2.18.0
+  - dependency-name: discord-py-slash-command
+    versions:
+    - 1.0.8.5
+    - 1.0.9.3
+    - 1.0.9.4
+    - 1.0.9.5
+    - 1.1.0
+    - 1.1.1
+    - 1.1.2
+  - dependency-name: discord-py
+    versions:
+    - 1.6.0
+    - 1.7.0
+    - 1.7.1
+  - dependency-name: python-dotenv
+    versions:
+    - 0.17.0
+  - dependency-name: pillow
+    versions:
+    - 8.1.0
+    - 8.1.1
+    - 8.1.2
+    - 8.2.0
+  - dependency-name: jinja2
+    versions:
+    - 2.11.3
+  - dependency-name: urllib3
+    versions:
+    - 1.26.3
+  - dependency-name: sentry-sdk
+    versions:
+    - 0.20.0
+    - 0.20.1
+    - 0.20.2
+    - 0.20.3
+    - 1.0.0
+  - dependency-name: asyncpg
+    versions:
+    - 0.22.0
+  - dependency-name: lru-dict
+    versions:
+    - 1.1.7
+  - dependency-name: pytz
+    versions:
+    - "2021.1"
+  - dependency-name: pyyaml
+    versions:
+    - 5.4.1
+  - dependency-name: beautifultable
+    versions:
+    - 1.0.1
+  - dependency-name: lavalink
+    versions:
+    - 3.1.4
