@@ -85,6 +85,8 @@ class Errors(commands.Cog):
         if isinstance(error, commands.NoPrivateMessage):
             # return await ctx.send_error(_("errors", "no_pms", command=str(ctx.command)))
             return await ctx.send_error(f"{ctx.command} cannot be used in private messages!")
+        if isinstance(error, commands.MaxConcurrencyReached):
+            return await ctx.send_error(error)
         if isinstance(error, commands.CommandInvokeError):
             return await ctx.send_error(error.original)
         if isinstance(error, commands.CheckFailure):
