@@ -1,6 +1,6 @@
 <!--suppress HtmlDeprecatedAttribute -->
 <div align="center">
-  <img alt="Naila" src="https://cdn.naila.bot/naila/headshots/NailaCrop.png" width=65%>
+  <img alt="Naila" src="https://cdn.kanin.dev/naila/headshots/NailaCrop.png" width=65%>
   <h1>Naila.py</h1>
   <a href="https://circleci.com/gh/Naila/Naila.py"><img alt="Circle CI" src="https://circleci.com/gh/Naila/Naila.py.svg?style=svg"></a>
   <a href="https://www.codefactor.io/repository/github/naila/naila.py"><img alt="Code Factor" src="https://www.codefactor.io/repository/github/naila/naila.py/badge"></a>
@@ -19,5 +19,5 @@
   <br>
   <p>TODO</p>
   <h2>Powered By</h2>
-  <a href="https://www.jetbrains.com/?from=Naila"><img alt="JetBrains" src="http://cdn.naila.bot/jetbrains.svg"></a>
+  <a href="https://www.jetbrains.com/?from=Naila"><img alt="JetBrains" src="https://cdn.kanin.dev/jetbrains.svg"></a>
 </div>
