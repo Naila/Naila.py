@@ -1,14 +1,14 @@
 import asyncio
 from datetime import datetime
 
-import discord
-from discord.ext import commands
+from discord import Embed, Guild, TextChannel, utils, Forbidden, HTTPException, NotFound
+from discord.ext.commands import Cog, command, group, guild_only, check, cooldown, max_concurrency, NoPrivateMessage, \
+    CheckFailure, BucketType
 
 from bot import Bot
 from utils.checks import checks
 from utils.checks.bot_checks import can_manage_user
 from utils.ctx import Context
-from utils.database.GuildSettings import Registration as Register
 
 roles = [
     "He/Him", "She/Her", "They/Them", "Mention", "No Mention", "18+", "<18",
@@ -45,12 +45,53 @@ default = [
 ]
 
 
+class DB:
+
+    @staticmethod
+    async def check(bot, guild: Guild):
+        data = await bot.pool.fetch("SELECT * FROM registration WHERE guild_id=$1", guild.id)
+        if not data:
+            await bot.pool.execute("INSERT INTO registration (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
+            bot.log.info(f"Added {guild.name} to the (registration) database")
+
+    @staticmethod
+    async def data(ctx: Context):
+        await DB.check(ctx.bot, ctx.guild)
+        data = await ctx.pool.fetchrow(
+            "SELECT enabled, channel, age::json, questions::json, role FROM registration WHERE guild_id=$1",
+            ctx.guild.id
+        )
+        return data
+
+    @staticmethod
+    async def toggle(ctx: Context):
+        data = await DB.data(ctx)
+        await ctx.pool.execute("UPDATE registration SET enabled = NOT enabled WHERE guild_id=$1", ctx.guild.id)
+        return not data["enabled"]
+
+    @staticmethod
+    async def update_channel(ctx: Context, channel: TextChannel):
+        data = await DB.data(ctx)
+        if data["channel"] and data["channel"] == channel.id:
+            return False
+        await ctx.pool.execute("UPDATE registration SET channel=$1 WHERE guild_id=$2", channel.id, ctx.guild.id)
+        return True
+
+    @staticmethod
+    async def update_banage(ctx: Context, age: int):
+        await ctx.pool.execute(
+            "UPDATE registration SET age=jsonb_set(age, '{ban_age}', $1::jsonb) WHERE guild_id=$2",
+            str(age),
+            ctx.guild.id
+        )
+
+
 def registration_check():
     async def predicate(ctx: Context):
         guild, author = ctx.guild, ctx.author
         if not guild:
-            raise commands.NoPrivateMessage
-        data = await Register(ctx).data()
+            raise NoPrivateMessage
+        data = await DB.data(ctx)
         if not data["enabled"]:
             ctx.command.reset_cooldown(ctx)
             await ctx.send_error("Registration is not enabled here!")
@@ -68,8 +109,8 @@ def registration_check():
             return False
         roles_found = 0
         for role in roles:
-            check = discord.utils.get(guild.roles, name=role)
-            if check in guild.roles:
+            role = utils.get(guild.roles, name=role)
+            if role in guild.roles:
                 roles_found += 1
         if roles_found < len(roles):
             ctx.command.reset_cooldown(ctx)
@@ -78,7 +119,7 @@ def registration_check():
                                  f"{await ctx.bot.get_prefix(ctx.message)}setreg roles")
             return False
 
-        registered_role = discord.utils.get(guild.roles, name="Registered")
+        registered_role = utils.get(guild.roles, name="Registered")
         if registered_role in author.roles:
             ctx.command.reset_cooldown(ctx)
             await ctx.send_error(f"It looks like you've already registered on this server!\n"
@@ -87,15 +128,15 @@ def registration_check():
             return False
         return True
 
-    return commands.check(predicate)
+    return check(predicate)
 
 
-class Registration(commands.Cog):
+class Registration(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.group(case_insensitive=True, description="Registration management")
-    @commands.guild_only()
+    @group(case_insensitive=True, description="Registration management")
+    @guild_only()
     @checks.admin()
     async def setreg(self, ctx: Context):
         if not ctx.invoked_subcommand:
@@ -103,8 +144,8 @@ class Registration(commands.Cog):
 
     @setreg.command(name="channel", description="Set the output channel")
     @checks.bot_has_permissions(embed_links=True)
-    async def setreg_channel(self, ctx: Context, channel: discord.TextChannel):
-        update = await Register(ctx).update_channel(channel)
+    async def setreg_channel(self, ctx: Context, channel: TextChannel):
+        update = await DB.update_channel(ctx, channel)
         if not update:
             return await ctx.send_error("That channel is already set!")
         await ctx.reply(f"Set the channel {channel.mention} as the output for registration.")
@@ -112,7 +153,7 @@ class Registration(commands.Cog):
     @setreg.command(name="toggle", description="Toggle registration")
     @checks.bot_has_permissions(embed_links=True)
     async def setreg_toggle(self, ctx: Context):
-        update = await Register(ctx).toggle()
+        update = await DB.toggle(ctx)
         if update:
             return await ctx.reply("Registration enabled.")
         await ctx.reply("Registration disabled.")
@@ -122,7 +163,7 @@ class Registration(commands.Cog):
     async def setreg_roles(self, ctx: Context):
         guild = ctx.guild
 
-        def check(m):
+        def mcheck(m):
             return m.channel == ctx.channel and m.author == ctx.author
 
         try:
@@ -137,7 +178,7 @@ class Registration(commands.Cog):
                             " Management if you "
                             "Need/Want to.\nDo you wish to continue? [This command will time out in 60s]```")
             try:
-                setrole = await ctx.bot.wait_for("message", timeout=60.0, check=check)
+                setrole = await ctx.bot.wait_for("message", timeout=60.0, check=mcheck)
             except asyncio.TimeoutError:
                 return await ctx.reply("Timed out")
             if setrole.content.lower() == "no":
@@ -146,14 +187,14 @@ class Registration(commands.Cog):
                 created = 0
                 await ctx.reply("Okay, this will just take a moment")
                 for role in roles:
-                    check = discord.utils.get(guild.roles, name=role)
-                    if check not in guild.roles:
+                    role = utils.get(guild.roles, name=role)
+                    if role not in guild.roles:
                         await guild.create_role(name=role)
                         created += 1
                 await ctx.reply(f"All done! Created {created} roles.")
             else:
                 await ctx.reply("You have entered an invalid response. Valid responses include `yes` and `no`.")
-        except (discord.HTTPException, discord.Forbidden):
+        except (HTTPException, Forbidden):
             await ctx.reply("Creation of roles has failed, The most common problem is that I do not have Manage Roles "
                             "Permissions on the server. Please check this and try again.")
 
@@ -164,11 +205,11 @@ class Registration(commands.Cog):
         if age < 13:
             age = 13
             await ctx.reply("You tried to set the age lower than the minimum (13) so I have set it to 13!")
-        await Register(ctx).update_banage(age)
+        await DB.update_banage(ctx, age)
         await ctx.reply(f"I will now ban users who are less than {age}!")
 
-    @commands.guild_only()
-    @commands.command(description="Unregister, allowing you to register again!")
+    @command(description="Unregister, allowing you to register again!")
+    @guild_only()
     @checks.bot_has_permissions(embed_links=True, manage_roles=True)
     async def unregister(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
@@ -177,31 +218,31 @@ class Registration(commands.Cog):
                                    " please have someone with permissions move my role up!")
         remove = []
         for role in roles:
-            check = discord.utils.get(guild.roles, name=role)
-            if check in author.roles:
+            role = utils.get(guild.roles, name=role)
+            if role in author.roles:
                 remove.append(check)
         await author.remove_roles(*remove, reason="[ Registration ] User unregistered")
         await ctx.reply("Done, you may now register again!")
 
     # TODO: Rewrite
     @registration_check()
-    @commands.command(description="Register in this guild!")
-    @commands.cooldown(1, 300, commands.BucketType.user)
-    @commands.max_concurrency(1, commands.BucketType.user)
+    @command(description="Register in this guild!")
+    @cooldown(1, 300, BucketType.user)
+    @max_concurrency(1, BucketType.user)
     @checks.bot_has_permissions(embed_links=True, manage_roles=True)
     async def register(self, ctx: Context):
         guild, author = ctx.guild, ctx.author
 
         # Data
-        data = await Register(ctx).data()
+        data = await DB.data(ctx)
         ch = guild.get_channel(data["channel"])
 
         # Setting default embeds and creating role list
-        out = discord.Embed(color=await ctx.guildcolor())
+        out = Embed(color=await ctx.guildcolor())
         out.set_author(name=f"Introduction for {author}:",
                        icon_url=author.avatar_url if author.avatar else author.default_avatar_url)
         out.set_footer(text=f"ID: {author.id} | {datetime.utcnow().strftime(self.bot.config.time_format)}")
-        em = discord.Embed(color=await ctx.guildcolor())
+        em = Embed(color=await ctx.guildcolor())
         roles_to_add = []
         x = 0
         questions = default if not data["questions"] else data["questions"]
@@ -263,22 +304,22 @@ class Registration(commands.Cog):
                 out.description = answer
 
             # Registration complete, add roles and do all of that stuff
-            roles_to_add.append(discord.utils.get(guild.roles, name="Registered"))
+            roles_to_add.append(utils.get(guild.roles, name="Registered"))
             await author.add_roles(*roles_to_add, reason="[ Registration ] User has registered")
 
             await author.send("Thank you for registering!")
             await ch.send(embed=out)
 
         # Handle exceptions
-        except discord.Forbidden:
+        except Forbidden:
             return await ctx.send_error(f"{author.mention} I cannot DM you!")
         except asyncio.TimeoutError:
             ctx.command.reset_cooldown(ctx)
             try:
                 return await author.send("Timed out!")
-            except discord.Forbidden:
+            except Forbidden:
                 return
-        except discord.NotFound:
+        except NotFound:
             return await ctx.send_error(f"I could not find {author}! Perhaps they left?")
 
     @staticmethod
@@ -286,19 +327,19 @@ class Registration(commands.Cog):
         guild = ctx.guild
         if isinstance(role, int):
             return guild.get_role(role)
-        return discord.utils.get(guild.roles, name=role)
+        return utils.get(guild.roles, name=role)
 
     @staticmethod
     async def ask_question(ctx: Context, question):
         guild, author = ctx.guild, ctx.author
         answer = ""
 
-        def check(m):
+        def mcheck(m):
             return m.channel == author.dm_channel and m.author == author
 
         while True:
             answered = False
-            response = await ctx.bot.wait_for("message", timeout=300 if question == "intro" else 60, check=check)
+            response = await ctx.bot.wait_for("message", timeout=300 if question == "intro" else 60, check=mcheck)
             resp = response.content.lower()
             if question == "intro":
                 if resp == "no":
@@ -320,7 +361,7 @@ class Registration(commands.Cog):
             await author.send("Invalid response!")
 
     async def cog_command_error(self, ctx: Context, error):
-        if isinstance(error, commands.CheckFailure):
+        if isinstance(error, CheckFailure):
             return
 
 

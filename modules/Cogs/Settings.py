@@ -1,25 +1,24 @@
 import asyncio
 import re
 
-import discord
-from discord.ext import commands
-from discord.ext.commands import BucketType
+from discord import Embed, Streaming, Message, Reaction, User, TextChannel, Invite, Guild, CategoryChannel
+from discord.ext.commands import Cog, group, guild_only, cooldown, BucketType
 
 from bot import Bot
 from config import config
 from utils.checks import checks
 from utils.ctx import Context
-from utils.database import PrivateVCs
-from utils.database.GuildSettings import Prefixes
+from modules.Cogs.PrivateVC import DB as PrivateVCDB
 from utils.functions import errors
+from utils.functions.prefix import Prefixes
 from utils.functions.time import get_relative_delta
 
 
-class Settings(commands.Cog):
+class Settings(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.group(aliases=["bset"], description="Manage the settings for the bot", hidden=True)
+    @group(aliases=["bset"], description="Manage the settings for the bot", hidden=True)
     @checks.is_owner()
     async def botsettings(self, ctx: Context):
         if not ctx.invoked_subcommand:
@@ -30,11 +29,11 @@ class Settings(commands.Cog):
     async def botsettings_status(self, ctx: Context):
         if ctx.invoked_subcommand:
             return
-        em = discord.Embed()
+        em = Embed()
         msg = ""
         for presence in config.presences:
             msg += f"{ctx.emojis('status.' + str(presence['status']))}"
-            if presence["activity"]["type"] == discord.Streaming:
+            if presence["activity"]["type"] == Streaming:
                 msg += f"{ctx.emojis('status.streaming')}" \
                        f" **Streaming** [{presence['activity']['text']}]({presence['activity']['url']})\n"
             else:
@@ -43,8 +42,8 @@ class Settings(commands.Cog):
         em.description = msg
         await ctx.reply(embed=em)
 
-    @commands.group(aliases=["gset"], description="Manage the settings for this guild")
-    @commands.guild_only()
+    @group(aliases=["gset"], description="Manage the settings for this guild")
+    @guild_only()
     @checks.admin()
     async def guildsettings(self, ctx: Context):
         if not ctx.invoked_subcommand:
@@ -56,7 +55,7 @@ class Settings(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @gset_listing.command(name="add")
-    @commands.cooldown(1, 30, BucketType.guild)
+    @cooldown(1, 30, BucketType.guild)
     @checks.bot_has_permissions(add_reactions=True, create_instant_invite=True)
     async def gset_listing_add(self, ctx: Context):
         con = await self.bot.pool.acquire()
@@ -65,10 +64,10 @@ class Settings(commands.Cog):
         if guild:
             return await ctx.reply("This guild is already listed!")
 
-        def check(m: discord.Message):
+        def check(m: Message):
             return m.channel == ctx.channel and m.author == ctx.author
 
-        def rcheck(r: discord.Reaction, u: discord.User):
+        def rcheck(r: Reaction, u: User):
             return u.id == ctx.author.id and str(r.emoji) in ["✅", "❌"]
 
         msg = await ctx.reply("This will add your server to a public list, do you wish to continue?")
@@ -95,13 +94,13 @@ class Settings(commands.Cog):
             if not re.match(r"<#[0-9]+>", resp):
                 await ctx.reply("Mention the channel please!")
             else:
-                ch: discord.TextChannel = ctx.guild.get_channel(int(resp.strip("<#>")))
+                ch: TextChannel = ctx.guild.get_channel(int(resp.strip("<#>")))
                 if not ch:
                     await ctx.reply("Invalid channel!")
                 elif not ctx.guild.me.permissions_in(ch).create_instant_invite:
                     await ctx.reply("I don't have permissions to create an invite in this channel!")
                 else:
-                    invite: discord.Invite = await ch.create_invite(reason="[ Guild List ] This invite will be used!")
+                    invite: Invite = await ch.create_invite(reason="[ Guild List ] This invite will be used!")
                     data["invite"] = invite.url
                     await ctx.reply(f"The invite {invite.url} was created and will be used for listing purposes!")
                     break
@@ -154,9 +153,9 @@ class Settings(commands.Cog):
             break
 
         msg = await ctx.reply("Listing..")
-        home: discord.Guild = self.bot.get_guild(294505571317710849)
-        out_ch: discord.TextChannel = home.get_channel(770386941677404211 if data["nsfw"] else 770386909972660274)
-        em = discord.Embed(color=await ctx.guildcolor(), description=data["desc"] if data["desc"] else data["brief"])
+        home: Guild = self.bot.get_guild(294505571317710849)
+        out_ch: TextChannel = home.get_channel(770386941677404211 if data["nsfw"] else 770386909972660274)
+        em = Embed(color=await ctx.guildcolor(), description=data["desc"] if data["desc"] else data["brief"])
         em.set_author(name=ctx.guild.name)
         em.set_thumbnail(url=ctx.guild.icon_url_as(static_format="png", size=1024))
         em.set_image(url=ctx.guild.banner_url)
@@ -190,7 +189,7 @@ class Settings(commands.Cog):
         if not guild:
             return await ctx.reply("This guild is not listed!")
 
-        def rcheck(r: discord.Reaction, u: discord.User):
+        def rcheck(r: Reaction, u: User):
             return u.id == ctx.author.id and str(r.emoji) in ["✅", "❌"]
 
         msg = await ctx.reply("This will delete your server from our system, do you want to continue?")
@@ -216,19 +215,19 @@ class Settings(commands.Cog):
             await ctx.send_help(ctx.command)
 
     @gset_privatevc.command(name="category", aliases=["cat"], description="Set the Private VC category")
-    async def gset_privatevc_category(self, ctx: Context, *, category: discord.CategoryChannel):
+    async def gset_privatevc_category(self, ctx: Context, *, category: CategoryChannel):
         if category.guild != ctx.guild:
             return await ctx.send_error("Category must be in this guild!")
         vc = await category.create_voice_channel("Join for a private VC")
-        await PrivateVCs.set_settings(self.bot, ctx.guild, category, vc)
+        await PrivateVCDB.set_settings(self.bot, ctx.guild, category, vc)
         await ctx.reply("Done!")
 
     @gset_privatevc.command(name="toggle", description="Toggle Private VC functionality")
     async def gset_privatevc_toggle(self, ctx: Context):
-        settings = await PrivateVCs.fetch_settings(self.bot, ctx.guild)
+        settings = await PrivateVCDB.settings(self.bot, ctx.guild)
         if not settings["category_id"]:
             return await ctx.send_error("You must set a category before you toggle Private VCs!")
-        status = await PrivateVCs.toggle(self.bot, ctx.guild)
+        status = await PrivateVCDB.toggle(self.bot, ctx.guild)
         if status:
             return await ctx.reply("I have enabled Private VCs!")
         await ctx.reply("I have disabled Private VCs!")
@@ -243,7 +242,7 @@ class Settings(commands.Cog):
     @checks.bot_has_permissions(embed_links=True)
     async def gset_prefix_add(self, ctx: Context, prefix: str):
         try:
-            await Prefixes(ctx).add(prefix)
+            await Prefixes.add(ctx, prefix)
         except errors.PrefixTooLong:
             return await ctx.send_error("That prefix is too long! Prefix must be no more than 10 characters in length.")
         except errors.TooManyPrefixes:
@@ -251,9 +250,9 @@ class Settings(commands.Cog):
         except errors.DuplicatePrefix:
             return await ctx.send_error("This prefix already exists here or is a default prefix!")
         await ctx.reply(
-            embed=discord.Embed(
+            embed=Embed(
                 color=await ctx.guildcolor(),
-                description=f"Prefix `{prefix}` added! Current prefixes:\n{await Prefixes(ctx).list()}"
+                description=f"Prefix `{prefix}` added! Current prefixes:\n{await Prefixes.list(ctx)}"
             ).set_author(name=f"Prefix added in {ctx.guild.name}")
         )
 
@@ -261,13 +260,13 @@ class Settings(commands.Cog):
     @checks.bot_has_permissions(embed_links=True)
     async def gset_prefix_remove(self, ctx: Context, prefix):
         try:
-            await Prefixes(ctx).remove(prefix)
+            await Prefixes.remove(ctx, prefix)
         except errors.PrefixNotFound:
             return await ctx.send_error("That prefix could not be found, please try again!")
         await ctx.reply(
-            embed=discord.Embed(
+            embed=Embed(
                 color=await ctx.guildcolor(),
-                description=f"Prefix `{prefix}` removed! Current prefixes:\n{await Prefixes(ctx).list()}"
+                description=f"Prefix `{prefix}` removed! Current prefixes:\n{await Prefixes.list(ctx)}"
             ).set_author(name=f"Prefix removed in {ctx.guild.name}")
         )
 

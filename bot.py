@@ -7,15 +7,15 @@ from datetime import datetime
 
 import aiohttp
 import asyncpg
-import discord
+from discord import Embed as DefaultEmbed, __version__ as LibVersion, Game, ActivityType, Status
 import psutil
 import sentry_sdk as sentry
-from discord.ext import commands
+from discord.ext.commands import AutoShardedBot
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 
 from config import config
 from utils.ctx import Context
-from utils.database.GuildSettings import Prefixes
+from utils.functions.prefix import Prefixes
 
 
 def get_banner():
@@ -42,11 +42,11 @@ async def init_connection(conn):
     )
 
 
-class Bot(commands.AutoShardedBot):
+class Bot(AutoShardedBot):
     async def get_context(self, message, *, cls=None):
         return await super().get_context(message, cls=cls or Context)
 
-    class Embed(discord.Embed):
+    class Embed(DefaultEmbed):
         def __init__(self, **kwargs):
             color = kwargs.pop("color", config.colors["main"])
             super().__init__(**kwargs, color=color)
@@ -57,11 +57,11 @@ class Bot(commands.AutoShardedBot):
             command_prefix=Prefixes.get,
             description=config.description,
             case_insensitive=True,
-            activity=discord.Game(
+            activity=Game(
                 name="Booting...",
-                type=discord.ActivityType.playing
+                type=ActivityType.playing
             ),
-            status=discord.Status.dnd
+            status=Status.dnd
         )
 
         # Argument Handling
@@ -99,7 +99,7 @@ class Bot(commands.AutoShardedBot):
         self.version = {
             "bot": config.bot_version,
             "python": sys.version.split(" ")[0],
-            "discord.py": discord.__version__
+            "discord.py": LibVersion
         }
         self.counter: Counter = Counter()
         self.commands_used: Counter = Counter()

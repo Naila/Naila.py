@@ -1,9 +1,9 @@
-from discord.ext import commands
+from discord.ext.commands import CheckFailure, UserInputError, BadArgument
 
 from utils.functions.text import readable_list
 
 
-class BotMissingPermissions(commands.CheckFailure):
+class BotMissingPermissions(CheckFailure):
     def __init__(self, missing_perms, *args):
         # from utils.ctx import CustomContext
         # _ = CustomContext.translator
@@ -28,21 +28,21 @@ class TranslationError(Exception):
         super().__init__(error)
 
 
-class TooManyPrefixes(commands.UserInputError):
+class TooManyPrefixes(UserInputError):
     pass
 
 
-class PrefixTooLong(commands.BadArgument):
+class PrefixTooLong(BadArgument):
     pass
 
 
-class PrefixNotFound(commands.BadArgument):
+class PrefixNotFound(BadArgument):
     pass
 
 
-class DuplicatePrefix(commands.BadArgument):
+class DuplicatePrefix(BadArgument):
     pass
 
 
-class UsedOnSelf(commands.BadArgument):
+class UsedOnSelf(BadArgument):
     pass

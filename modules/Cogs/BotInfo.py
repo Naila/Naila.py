@@ -1,9 +1,9 @@
 import time
 from datetime import datetime
 
-import discord
+from discord import Embed, TextChannel, VoiceChannel, CategoryChannel
 import psutil
-from discord.ext import commands
+from discord.ext.commands import Cog, command
 
 from bot import Bot
 from config import config
@@ -13,14 +13,14 @@ from utils.functions.text import filesize_fix
 from utils.functions.time import get_bot_uptime
 
 
-class BotInfo(commands.Cog):
+class BotInfo(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.command(description="List of APIs we use")
+    @command(description="List of APIs we use")
     @checks.bot_has_permissions(embed_links=True)
     async def apis(self, ctx: Context):
-        em = discord.Embed(color=await ctx.guildcolor())
+        em = Embed(color=await ctx.guildcolor())
         em.set_author(name="APIs we use:")
         em.description = "https://some-random-api.ml/\n" \
                          "https://random-d.uk/\n" \
@@ -31,30 +31,30 @@ class BotInfo(commands.Cog):
                          "https://sheri.bot/"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Invite the bot or join the bots support server!")
+    @command(description="Invite the bot or join the bots support server!")
     @checks.bot_has_permissions(embed_links=True)
     async def invite(self, ctx: Context):
         invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
-        em = discord.Embed(color=await ctx.guildcolor())
+        em = Embed(color=await ctx.guildcolor())
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
                          f" [Recommended perms]({invite + f'&permissions={config.permissions.value}'}) |" \
                          f" [No perms]({invite})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Various stats about the bot")
+    @command(description="Various stats about the bot")
     @checks.bot_has_permissions(embed_links=True)
     async def stats(self, ctx: Context):
         bot = self.bot
         text, voice, category, news = 0, 0, 0, 0
         for channel in self.bot.get_all_channels():
-            if isinstance(channel, discord.TextChannel):
+            if isinstance(channel, TextChannel):
                 if channel.is_news():
                     news += 1
                 text += 1
-            elif isinstance(channel, discord.VoiceChannel):
+            elif isinstance(channel, VoiceChannel):
                 voice += 1
-            elif isinstance(channel, discord.CategoryChannel):
+            elif isinstance(channel, CategoryChannel):
                 category += 1
         channels = text + voice + category + news
         cpu_usage = f"{psutil.Process().cpu_percent():.1f}"
@@ -62,7 +62,7 @@ class BotInfo(commands.Cog):
         t1 = time.perf_counter()
         async with ctx.channel.typing():
             t2 = time.perf_counter()
-        em = discord.Embed(
+        em = Embed(
             color=await ctx.guildcolor()
         ).add_field(
             name="Ping:",

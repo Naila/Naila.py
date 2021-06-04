@@ -1,7 +1,7 @@
 import random
 import re
 
-import discord
+from discord import WebhookType, MessageType
 
 
 def find_mentions(messages, mention):
@@ -76,7 +76,7 @@ async def get_users(ctx, data):
         if message.webhook_id:
             webhook = await ctx.bot.fetch_webhook(message.webhook_id)
             if str(message.webhook_id) not in users:
-                badge = "server" if webhook.type is discord.WebhookType.channel_follower else "bot"
+                badge = "server" if webhook.type is WebhookType.channel_follower else "bot"
                 users[str(message.webhook_id)] = {
                     "avatar": str(webhook.avatar_url_as(format="png", size=1024)),
                     "username": str(webhook.name),
@@ -122,7 +122,7 @@ def get_messages(data):
             message_dict["embeds"] = []
             for embed in message.embeds:
                 message_dict["embeds"].append(embed.to_dict())
-        if message.type is discord.MessageType.premium_guild_subscription:
+        if message.type is MessageType.premium_guild_subscription:
             message_dict["content"] = f"{message.author.mention} just boosted the server!"
         messages.append(message_dict)
     return messages
@@ -131,7 +131,7 @@ def get_messages(data):
 async def format_data(ctx, data: list):
     channels, roles, users = await get_mentions(ctx, data)
     users.update(await get_users(ctx, data))
-    out = {
+    return {
         "entities": {
             "users": users,
             "channels": channels,
@@ -139,4 +139,3 @@ async def format_data(ctx, data: list):
         },
         "messages": get_messages(data)
     }
-    return out

@@ -23,6 +23,8 @@ python-dotenv = "*"
 pyyaml = "*"
 sentry-sdk = "*"
 spotipy = "*"
+influxdb-client = "*"
+discord-components = "*"
 
 [requires]
 python_version = "3.9"

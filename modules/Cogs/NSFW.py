@@ -1,7 +1,7 @@
 import random
 
-import discord
-from discord.ext import commands
+from discord import Embed
+from discord.ext.commands import Cog, command
 
 from bot import Bot
 from utils.checks import checks
@@ -9,13 +9,13 @@ from utils.ctx import Context
 from utils.functions.api import boobbot
 
 
-class NSFW(commands.Cog):
+class NSFW(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
     @staticmethod
     async def boobbot_embed(ctx: Context):
-        em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://boob.bot/\n")
+        em = Embed(color=await ctx.guildcolor(), description="**Website:** https://boob.bot/\n")
         em.set_author(name="Images provided by BoobBot")
         em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
         return em
@@ -34,7 +34,7 @@ class NSFW(commands.Cog):
     #     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
     #     return em
 
-    @commands.command(aliases=["bb"], hidden=True)
+    @command(aliases=["bb"], hidden=True)
     @checks.is_nsfw()
     async def boobbot(self, ctx: Context, old_command: str = None):
         prefix = ctx.prefix
@@ -44,7 +44,7 @@ class NSFW(commands.Cog):
             )
         return await ctx.reply(f"You no longer have to prefix NSFW commands with `bb` {prefix}help NSFW")
 
-    @commands.command(aliases=["tits"], description="Boobs")
+    @command(aliases=["tits"], description="Boobs")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def boobs(self, ctx: Context):
@@ -54,7 +54,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["ass"], description="Butts")
+    @command(aliases=["ass"], description="Butts")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def butts(self, ctx: Context):
@@ -64,7 +64,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(name="4k", description="High quality porn")
+    @command(name="4k", description="High quality porn")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def _4k(self, ctx: Context):
@@ -74,7 +74,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Anal")
+    @command(description="Anal")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def anal(self, ctx: Context):
@@ -84,7 +84,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="BDSM")
+    @command(description="BDSM")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def bdsm(self, ctx: Context):
@@ -94,7 +94,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(name="black", description="Black women")
+    @command(name="black", description="Black women")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def black(self, ctx: Context):
@@ -104,7 +104,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["bj"], description="Blowjobs")
+    @command(aliases=["bj"], description="Blowjobs")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def blowjob(self, ctx: Context):
@@ -114,7 +114,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Bottomless girls")
+    @command(description="Bottomless girls")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def bottomless(self, ctx: Context):
@@ -124,7 +124,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Girls wearing collars")
+    @command(description="Girls wearing collars")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def collared(self, ctx: Context):
@@ -134,7 +134,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Covered in cum")
+    @command(description="Covered in cum")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def cumsluts(self, ctx: Context):
@@ -144,7 +144,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["dp"], description="Double penetration")
+    @command(aliases=["dp"], description="Double penetration")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def doublepenetration(self, ctx: Context):
@@ -154,7 +154,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Easter themed")
+    @command(description="Easter themed")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def easter(self, ctx: Context):
@@ -164,7 +164,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Hentai: Futa")
+    @command(description="Hentai: Futa")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def futa(self, ctx: Context):
@@ -174,7 +174,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Gay porn")
+    @command(description="Gay porn")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def gay(self, ctx: Context):
@@ -184,7 +184,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Porn gifs")
+    @command(description="Porn gifs")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def gifs(self, ctx: Context):
@@ -194,7 +194,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Group porn")
+    @command(description="Group porn")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def group(self, ctx: Context):
@@ -204,7 +204,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Halloween themed")
+    @command(description="Halloween themed")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def halloween(self, ctx: Context):
@@ -214,7 +214,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Hentai")
+    @command(description="Hentai")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def hentai(self, ctx: Context):
@@ -224,7 +224,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Girl on girl")
+    @command(description="Girl on girl")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def lesbians(self, ctx: Context):
@@ -234,7 +234,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Phat ass white girls")
+    @command(description="Phat ass white girls")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def pawg(self, ctx: Context):
@@ -244,7 +244,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Women pegging men")
+    @command(description="Women pegging men")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def pegged(self, ctx: Context):
@@ -254,7 +254,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Dicks")
+    @command(description="Dicks")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def dick(self, ctx: Context):
@@ -264,7 +264,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Hentai: Pokemon")
+    @command(description="Hentai: Pokemon")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def pokeporn(self, ctx: Context):
@@ -274,7 +274,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Pussy")
+    @command(description="Pussy")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def pussy(self, ctx: Context):
@@ -284,7 +284,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Real women")
+    @command(description="Real women")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def real(self, ctx: Context):
@@ -294,7 +294,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Red heads")
+    @command(description="Red heads")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def redhead(self, ctx: Context):
@@ -304,7 +304,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Tatted women")
+    @command(description="Tatted women")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def tatted(self, ctx: Context):
@@ -315,7 +315,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Thighs")
+    @command(description="Thighs")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def thighs(self, ctx: Context):
@@ -325,7 +325,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Tiny girls")
+    @command(description="Tiny girls")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def tiny(self, ctx: Context):
@@ -335,7 +335,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Porn with toys")
+    @command(description="Porn with toys")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def toys(self, ctx: Context):
@@ -345,7 +345,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Traps")
+    @command(description="Traps")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def traps(self, ctx: Context):
@@ -355,7 +355,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Valentines themed")
+    @command(description="Valentines themed")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def vday(self, ctx: Context):
@@ -365,7 +365,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Christmas themed")
+    @command(description="Christmas themed")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def xmas(self, ctx: Context):
@@ -375,7 +375,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Hentai: Boys' love")
+    @command(description="Hentai: Boys' love")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def yaoi(self, ctx: Context):
@@ -385,7 +385,7 @@ class NSFW(commands.Cog):
         em.description += f"**Image URL:** [Click Here]({url})"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Furry images")
+    @command(description="Furry images")
     @checks.is_nsfw()
     @checks.bot_has_permissions(embed_links=True)
     async def yiff(self, ctx: Context):

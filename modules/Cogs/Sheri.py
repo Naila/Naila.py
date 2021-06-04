@@ -1,7 +1,7 @@
 import os
 
-import discord
-from discord.ext import commands
+from discord import Embed
+from discord.ext.commands import Cog, group
 
 from bot import Bot
 from utils.checks import checks
@@ -11,7 +11,7 @@ base_url = "https://sheri.bot/api/"
 
 
 async def sheri_embed(ctx: Context):
-    em = discord.Embed(color=await ctx.guildcolor(), description="**Website:** https://sheri.bot/\n")
+    em = Embed(color=await ctx.guildcolor(), description="**Website:** https://sheri.bot/\n")
     em.set_author(name="Images provided by Sheri Blossom", url="https://sheri.bot/")
     em.set_footer(text="If there's an issue with ANY image, please take it up with the provider.")
     return em
@@ -33,11 +33,11 @@ async def image_send(ctx: Context, endpoint: str):
     return await ctx.reply(embed=embed)
 
 
-class Sheri(commands.Cog):
+class Sheri(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.group(name="sheri")
+    @group(name="sheri")
     async def sheri(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)

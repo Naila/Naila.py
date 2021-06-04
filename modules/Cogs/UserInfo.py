@@ -1,7 +1,7 @@
 from typing import Union
 
-import discord
-from discord.ext import commands
+from discord import Embed, Member, ActivityType, TextChannel, VoiceChannel
+from discord.ext.commands import Cog, group, guild_only
 
 from bot import Bot
 from utils.checks import checks
@@ -15,7 +15,7 @@ voice_perms = ["connect", "deafen_members", "move_members", "mute_members", "pri
                "use_voice_activation"]
 
 
-class UserInfo(commands.Cog):
+class UserInfo(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
@@ -25,34 +25,34 @@ class UserInfo(commands.Cog):
         status = f"{ctx.emojis(path + str(member.status))} {str(member.status).capitalize()}\n\n"
         if not member.activity:
             pass
-        elif member.activity.type == discord.ActivityType.playing:
+        elif member.activity.type == ActivityType.playing:
             activity = member.activity.to_dict()
             status += f"Playing **{member.activity.name}**"
             if "details" in activity:
                 status += f"\n{activity['details']}"
             if "state" in activity:
                 status += f"\n{activity['state']}"
-        elif member.activity.type == discord.ActivityType.watching:
+        elif member.activity.type == ActivityType.watching:
             status += f"Watching {member.activity.name}"
-        elif member.activity.type == discord.ActivityType.listening:
+        elif member.activity.type == ActivityType.listening:
             status += f"Listening to {member.activity.title}\n" \
                       f"By {', '.join([x for x in member.activity.artists])}\n" \
                       f"On {member.activity.name}"
-        elif member.activity.type == discord.ActivityType.streaming:
+        elif member.activity.type == ActivityType.streaming:
             status += f"Streaming **[{member.activity.name}]({member.activity.url})**"
         else:
             status += str(member.activity)
         return status
 
-    @commands.guild_only()
-    @commands.group(aliases=["whois", "member", "memberinfo", "userinfo"],
-                    invoke_without_command=True, description="Check a members information!")
+    @group(aliases=["whois", "member", "memberinfo", "userinfo"], invoke_without_command=True,
+           description="Check a members information!")
+    @guild_only()
     @checks.bot_has_permissions(embed_links=True)
-    async def user(self, ctx: Context, *, member: discord.Member = None):
+    async def user(self, ctx: Context, *, member: Member = None):
         if ctx.invoked_subcommand:
             return
         guild, message, member = ctx.guild, ctx.message, member or ctx.author
-        em = discord.Embed(color=member.color)
+        em = Embed(color=member.color)
         em.set_thumbnail(url=member.avatar_url)
         em.set_author(
             name=f"{'BOT: ' if member.bot else ''}"
@@ -94,34 +94,34 @@ class UserInfo(commands.Cog):
     @user.command(name="permissions", aliases=["perms"],
                   description="Check a users permissions for a given Text/Voice channel")
     @checks.bot_has_permissions(embed_links=True)
-    async def user_permissions(self, ctx: Context, user: discord.Member = None, *,
-                               channel: Union[discord.TextChannel, discord.VoiceChannel] = None):
+    async def user_permissions(self, ctx: Context, user: Member = None, *,
+                               channel: Union[TextChannel, VoiceChannel] = None):
         user, channel = user or ctx.author, channel or ctx.channel
         perms = channel.permissions_for(user)
         perms_list = []
-        if isinstance(channel, discord.TextChannel):
+        if isinstance(channel, TextChannel):
             for perm in perms:
                 if perm[0] not in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
                     perms_list.append(f"+\t{perm_name}" if perm[1] else f"-\t{perm_name}")
-        elif isinstance(channel, discord.VoiceChannel):
+        elif isinstance(channel, VoiceChannel):
             for perm in perms:
                 if perm[0] in voice_perms:
                     perm_name = perm[0].replace('_', ' ').title()
                     perms_list.append(f"+\t{perm_name}" if perm[1] else f"-\t{perm_name}")
         end = "\n".join(sorted(perms_list))
         desc = f"```diff\n{end}\n```"
-        em = discord.Embed(color=user.color, description=desc)
+        em = Embed(color=user.color, description=desc)
         em.set_author(name=f"{user.name}'s permissions in {channel}:")
         await ctx.reply(embed=em)
 
     @user.command(name="avatar", aliases=["avi"], description="Get a users avatar")
     @checks.bot_has_permissions(embed_links=True)
-    async def user_avatar(self, ctx: Context, user: discord.Member = None):
+    async def user_avatar(self, ctx: Context, user: Member = None):
         if not user:
             user = ctx.author
         url = user.avatar_url_as(static_format="png", size=1024)
-        em = discord.Embed(color=user.color)
+        em = Embed(color=user.color)
         em.description = f"[Open image]({url})"
         em.set_image(url=url)
         em.set_author(name=f"{user.name}'s avatar")

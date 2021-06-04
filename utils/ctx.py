@@ -1,13 +1,13 @@
-import discord
+from discord import Embed
 import yaml
 from dictor import dictor
-from discord.ext import commands
+from discord.ext.commands import Context as DefaultContext
 
 from modules.Cogs.Help import command_signature
 from utils.functions.errors import TranslationError
 
 
-class Context(commands.Context):
+class Context(DefaultContext):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -55,14 +55,14 @@ class Context(commands.Context):
             emojis = yaml.safe_load(emojis)
         return self.bot.get_emoji(dictor(emojis, emoji))
 
-    async def embed(self, footer_text: str = None, embed_dict: dict = None) -> discord.Embed:
+    async def embed(self, footer_text: str = None, embed_dict: dict = None) -> Embed:
         footer = str(self.author)
         if embed_dict:
-            em = discord.Embed().from_dict(embed_dict)
-            if em.footer.text != discord.Embed.Empty:
+            em = Embed().from_dict(embed_dict)
+            if em.footer.text != Embed.Empty:
                 footer_text = em.footer.text
         else:
-            em = discord.Embed()
+            em = Embed()
         em.color = await self.guildcolor()
         if footer_text:
             footer += f" • {footer_text}"
@@ -72,18 +72,18 @@ class Context(commands.Context):
     async def missing_argument(self):
         prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
         command = self.invoked_subcommand or self.command
-        em = discord.Embed(color=self.bot.error_color)
+        em = Embed(color=self.bot.error_color)
         em.title = "Missing required argument ❌"
         em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
         await self.reply(embed=em)
 
     async def send_error(self, content):
-        em = discord.Embed(color=self.bot.error_color, title="Error ❌")
+        em = Embed(color=self.bot.error_color, title="Error ❌")
         em.description = str(content)
         await self.reply(embed=em)
 
     async def bad_argument(self, content):
-        em = discord.Embed(color=self.bot.error_color, title="Invalid argument ❌")
+        em = Embed(color=self.bot.error_color, title="Invalid argument ❌")
         em.description = str(content)
         await self.reply(embed=em)
 

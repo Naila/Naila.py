@@ -1,8 +1,8 @@
-import argparse
+from argparse import ArgumentParser
 import shlex
 
 
-class DefaultArguments(argparse.ArgumentParser):
+class DefaultArguments(ArgumentParser):
     def error(self, message):
         raise RuntimeError(message)
 
@@ -19,9 +19,7 @@ class Arguments:
     def parse_args(self, text):
         """ Shortcut to argparse.parse_args with shlex implemented """
         try:
-            args = self.parser.parse_args(
-                shlex.split(text if text else "", posix=self.posix)
-            )
+            args = self.parser.parse_args(shlex.split(text or "", posix=self.posix))
         except Exception as e:
             return f"ArgumentError: {e}", False
 

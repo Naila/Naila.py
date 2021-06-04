@@ -1,17 +1,67 @@
-from discord.ext import commands
-
+from discord.ext.commands import Cog, command, group
+from discord import Forbidden, HTTPException
 from bot import Bot
 from utils.ctx import Context
-from utils.database.Reminders import Reminders as Reminder
 from utils.functions.text import escape, pagify
 from utils.functions.time import get_relative_delta, parse_time
 
 
-class Reminders(commands.Cog):
+class DB:
+
+    @staticmethod
+    async def add(ctx: Context, location: int, expires: str, reminder: str):
+        await ctx.pool.execute(
+            "INSERT INTO reminders (user_id, channel_id, expires, reminder) VALUES ($1, $2, $3, $4)",
+            ctx.author.id,
+            location,
+            parse_time(expires),
+            reminder
+        )
+
+    @staticmethod
+    async def check(bot):
+        reminders = await bot.pool.fetch(
+            "SELECT * FROM reminders WHERE NOT expired AND expires <= now() AT TIME ZONE 'utc'"
+        )
+        for reminder in reminders:
+            bot.log.info(f"Reminder #{reminder['id']} expired")
+            await bot.pool.execute("UPDATE reminders SET expired=True WHERE id=$1", reminder["id"])
+            author = bot.get_user(reminder["user_id"])
+            channel = bot.get_channel(reminder["channel_id"])
+            to_send = f"**Reminder** {author.mention}: {reminder['reminder']}"
+            if channel:
+                try:
+                    return await channel.send(to_send)
+                except (Forbidden, HTTPException):
+                    to_send += "\n*Failed to send to channel*"
+            try:
+                await author.send(to_send)
+            except (Forbidden, HTTPException):
+                return
+
+    @staticmethod
+    async def list(ctx: Context):
+        reminders = await ctx.pool.fetch(
+            "SELECT * FROM reminders WHERE NOT expired AND user_id=$1",
+            ctx.author.id
+        )
+        return reminders
+
+    @staticmethod
+    async def delete(ctx: Context, reminder_id: int):
+        deleted = await ctx.pool.execute(
+            "UPDATE reminders SET expired=null WHERE id=$1 AND user_id=$2",
+            reminder_id,
+            ctx.author.id
+        )
+        return deleted
+
+
+class Reminders(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.group(case_insensitive=True)
+    @group(case_insensitive=True)
     async def remind(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
@@ -20,7 +70,7 @@ class Reminders(commands.Cog):
     async def remind_me(self, ctx: Context, time: str, *, reminder: str):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
-        await Reminder(ctx).add(ctx.author.id, time, reminder)
+        await DB.add(ctx, ctx.author.id, time, reminder)
         await ctx.reply(
             f"{ctx.author.mention}, I will remind you about this"
             f" {get_relative_delta(parse_time(time), append_small=True, bold_string=True)}"
@@ -30,15 +80,15 @@ class Reminders(commands.Cog):
     async def remind_here(self, ctx: Context, time: str, *, reminder: str):
         if len(reminder) > 1500:
             return await ctx.send_error("That's quite a long reminder... let's slow down a bit!")
-        await Reminder(ctx).add(ctx.channel.id, time, escape(reminder, False, False, False))
+        await DB.add(ctx, ctx.channel.id, time, escape(reminder, False, False, False))
         await ctx.reply(
             f"{ctx.author.mention}, I will remind you about this"
             f" {get_relative_delta(parse_time(time), append_small=True, bold_string=True)}"
         )
 
-    @commands.command()
+    @command()
     async def reminders(self, ctx: Context):
-        reminders = await Reminder(ctx).list()
+        reminders = await DB.list(ctx)
         to_send = "**Your reminders:**\n"
         if reminders:
             for reminder in reminders:
@@ -56,9 +106,9 @@ class Reminders(commands.Cog):
         for page in pages:
             await ctx.reply(page)
 
-    @commands.command(aliases=["delreminder"])
+    @command(aliases=["delreminder"])
     async def deletereminder(self, ctx: Context, reminder_id: int):
-        deleted = await Reminder(ctx).delete(reminder_id)
+        deleted = await DB.delete(ctx, reminder_id)
         if deleted == "UPDATE 1":
             return await ctx.reply("I have deleted that reminder!")
         await ctx.send_error("Hmm I couldn't seem to find that reminder for you, make sure the id is correct!")

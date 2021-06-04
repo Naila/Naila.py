@@ -3,14 +3,14 @@ import os
 import aiohttp_jinja2
 import jinja2
 from aiohttp import web
-from discord.ext import commands
+from discord.ext.commands import Cog
 
 from bot import Bot
 
 BLACKLISTED_EVENTS = ["presence_update"]
 
 
-class BuiltinAPI(commands.Cog):
+class BuiltinAPI(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.runner = None
@@ -96,7 +96,7 @@ class BuiltinAPI(commands.Cog):
         await server.start()
         self.bot.log.info(f"API Server running on {server.name}")
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_socket_response(self, msg):
         if msg.get("op") != 0:
             # Not a dispatch (might be useful to track heartbeats, reconnects, invalid sessions etc. tho)

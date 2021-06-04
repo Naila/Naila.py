@@ -3,14 +3,15 @@ import os
 import re
 from datetime import datetime
 
-import discord
-from discord.ext import commands, tasks
+from discord import Embed, Webhook, AsyncWebhookAdapter, Streaming, Activity
+from discord.ext.commands import Cog
+from discord.ext.tasks import loop
 
 from bot import Bot
 from config import config
 
 
-class Ready(commands.Cog):
+class Ready(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.presence = 0
@@ -18,19 +19,19 @@ class Ready(commands.Cog):
     def cog_unload(self):
         self.loop_presence.stop()
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_connect(self):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=0)._trace[0])
         self.bot.gateway_server_name = ws[0]
         self.bot.session_server_name = ws[1]["calls"][0]
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_resumed(self):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=0)._trace[0])
         self.bot.gateway_server_name = ws[0]
         self.bot.session_server_name = ws[1]["calls"][0]
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=0)._trace[0])
         self.bot.gateway_server_name = ws[0]
@@ -58,24 +59,24 @@ class Ready(commands.Cog):
             self.loop_presence.start()
         if len(self.bot.cogs) == 1:
             self.starter_modules()
-        webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
-        em = discord.Embed(description=info, color=self.bot.color)
+        webhook = Webhook.from_url(os.getenv("READY"), adapter=AsyncWebhookAdapter(self.bot.session))
+        em = Embed(description=info, color=self.bot.color)
         em.set_author(name=f'{self.bot.user.name} Ready')
         em.timestamp = datetime.utcnow()
         await webhook.send(embed=em, username="Ready", avatar_url=self.bot.user.avatar_url)
         self.bot.log.info("Logged in and ready!")
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_shard_ready(self, shard_id: int):
         ws = json.loads(self.bot._connection._get_websocket(shard_id=shard_id)._trace[0])
 
-        em = discord.Embed(color=self.bot.color)
+        em = Embed(color=self.bot.color)
         em.description = f"**Gateway server:** {ws[0]}\n**Session server:** {ws[1]['calls'][0]}"
         em.set_author(name=f"Shard {shard_id} ready")
-        webhook = discord.Webhook.from_url(os.getenv("READY"), adapter=discord.AsyncWebhookAdapter(self.bot.session))
+        webhook = Webhook.from_url(os.getenv("READY"), adapter=AsyncWebhookAdapter(self.bot.session))
         await webhook.send(embed=em, username="Shard ready/restarted", avatar_url=self.bot.user.avatar_url)
 
-    @tasks.loop(minutes=1)
+    @loop(minutes=1)
     async def loop_presence(self):
         presence = config.presences[self.presence]
         text = re.sub("{GUILDS}", str(len(self.bot.guilds)), presence["activity"]["text"])
@@ -87,10 +88,10 @@ class Ready(commands.Cog):
         if self.presence == len(config.presences):
             self.presence = 0
 
-        if presence["activity"]["type"] == discord.Streaming:
-            activity = discord.Streaming(name=text, url=presence["activity"]["url"])
+        if presence["activity"]["type"] == Streaming:
+            activity = Streaming(name=text, url=presence["activity"]["url"])
         else:
-            activity = discord.Activity(name=text, type=presence["activity"]["prefix"])
+            activity = Activity(name=text, type=presence["activity"]["prefix"])
 
         if "{SHARD}" in text:
             for x in range(self.bot.shard_count):
@@ -102,9 +103,13 @@ class Ready(commands.Cog):
 
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
-        blacklist = ["modules/Events/Ready"]
+        blacklist = ["modules/Events/Ready", "modules/Events/Loops"]
         if self.bot.debug:
-            blacklist.append("modules/Events/Loops")
+            blacklist.extend([
+                "modules/Cogs/Music",
+                "modules/Events/Loops",
+                "modules/Events/InfluxDB"
+            ])
         for path in paths:
             loaded, failed = 0, 0
             name = path.split("/")[-1]

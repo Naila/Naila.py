@@ -3,13 +3,13 @@ import os
 import re
 from decimal import Decimal, ROUND_HALF_UP
 
-import discord
+from discord import Embed, VoiceChannel, Permissions, Guild, Spotify, Member, VoiceState, HTTPException, TextChannel
 import ksoftapi
 import lavalink
 import yaml
 from bs4 import BeautifulSoup
 from dictor import dictor
-from discord.ext import commands
+from discord.ext.commands import Cog, command, CommandInvokeError
 from discord.utils import escape_markdown
 from lavalink import AudioTrack
 
@@ -27,7 +27,7 @@ search_emojis = {
 
 
 # TODO: DJ roles, spotify playing, playlists, and just cleaning this all up a bit
-class Music(commands.Cog):
+class Music(Cog):
     def __init__(self, bot: Bot):
         self.bot: Bot = bot
         self.handles: dict = {}
@@ -152,21 +152,21 @@ class Music(commands.Cog):
             return True
 
         if not ctx.author.voice or not ctx.author.voice.channel:
-            raise commands.CommandInvokeError("Join a Voice Channel first.")
+            raise CommandInvokeError("Join a Voice Channel first.")
 
-        channel: discord.VoiceChannel = ctx.author.voice.channel
-        permissions: discord.Permissions = channel.permissions_for(ctx.me)
+        channel: VoiceChannel = ctx.author.voice.channel
+        permissions: Permissions = channel.permissions_for(ctx.me)
 
         if not player.is_connected:
             if not should_connect:
-                raise commands.CommandInvokeError("Not connected.")
+                raise CommandInvokeError("Not connected.")
 
             if not permissions.connect:
-                raise commands.CommandInvokeError("I need permission to connect!")
+                raise CommandInvokeError("I need permission to connect!")
             if not permissions.speak:
-                raise commands.CommandInvokeError("I need permission to speak!")
+                raise CommandInvokeError("I need permission to speak!")
             if len(channel.members) >= channel.user_limit and not permissions.move_members:
-                raise commands.CommandInvokeError("There's not enough room for me!")
+                raise CommandInvokeError("There's not enough room for me!")
 
             player.store("channel", ctx.channel.id)
             player.store("autoplay", AutoPlay())
@@ -174,14 +174,14 @@ class Music(commands.Cog):
             await self.connect_to(ctx.guild, channel)
         else:
             if int(player.channel_id) != channel.id:
-                raise commands.CommandInvokeError("You need to be in my Voice Channel!")
+                raise CommandInvokeError("You need to be in my Voice Channel!")
 
     @staticmethod
-    async def connect_to(guild: discord.Guild, channel: discord.VoiceChannel = None):
+    async def connect_to(guild: Guild, channel: VoiceChannel = None):
         await guild.change_voice_state(channel=channel, self_deaf=True)
 
     # TODO: Rewrite, potentially move off of the bot
-    @commands.command()
+    @command()
     @checks.bot_has_permissions(embed_links=True)
     @checks.bot_has_permissions(embed_links=True)
     async def lyrics(self, ctx: Context, *, search: str):
@@ -193,9 +193,9 @@ class Music(commands.Cog):
         if not valid_check:
             return await ctx.reply(args)
 
-        em = discord.Embed(color=self.bot.color)
+        em = Embed(color=self.bot.color)
         if args.spotify:
-            spotify = [x for x in ctx.author.activities if isinstance(x, discord.Spotify)]
+            spotify = [x for x in ctx.author.activities if isinstance(x, Spotify)]
             if not spotify:
                 return await ctx.send_error("You either don't have Spotify linked or you're not listening to anything.")
             artists = spotify[0].artist
@@ -271,7 +271,7 @@ class Music(commands.Cog):
                         em.set_image(url=header)
             await ctx.reply(embed=em)
 
-    @commands.command(description="Toggle the queues autoplay status | ONLY WORKS WITH YOUTUBE TRACKS")
+    @command(description="Toggle the queues autoplay status | ONLY WORKS WITH YOUTUBE TRACKS")
     @checks.bot_has_permissions(embed_links=True)
     async def autoplay(self, ctx: Context):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -287,7 +287,7 @@ class Music(commands.Cog):
         await ctx.reply(embed=em)
 
     # TODO: Limit queue length, longer for patrons
-    @commands.command(aliases=['p'])
+    @command(aliases=['p'])
     @checks.bot_has_permissions(embed_links=True)
     async def play(self, ctx: Context, *, query: str = None):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -350,7 +350,7 @@ class Music(commands.Cog):
             await player.play()
 
     # TODO: Handle permissions on reactions to not need manage_messages
-    @commands.command(description="Search for a track on YouTube")
+    @command(description="Search for a track on YouTube")
     @checks.bot_has_permissions(embed_links=True, add_reactions=True, manage_messages=True)
     async def search(self, ctx: Context, *, query):
         query = query.strip("<>")
@@ -412,7 +412,7 @@ class Music(commands.Cog):
                 if not player.is_playing:
                     await player.play()
 
-    @commands.command(aliases=["resume"], description="Pauses or resumes the queue")
+    @command(aliases=["resume"], description="Pauses or resumes the queue")
     @checks.bot_has_permissions(embed_links=True)
     async def pause(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -427,7 +427,7 @@ class Music(commands.Cog):
             em.description = "⏯ | Paused"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["vol"], description="View or set the volume")
+    @command(aliases=["vol"], description="View or set the volume")
     @checks.bot_has_permissions(embed_links=True)
     async def volume(self, ctx: Context, volume: int = None):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -444,7 +444,7 @@ class Music(commands.Cog):
         em.add_field(name="Volume set:", value=self.draw_vol(player))
         await ctx.reply(embed=em)
 
-    @commands.command(description="Seek through a track in seconds or by time string")
+    @command(description="Seek through a track in seconds or by time string")
     @checks.bot_has_permissions(embed_links=True)
     async def seek(self, ctx: Context, time):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -468,7 +468,7 @@ class Music(commands.Cog):
             em.description = f"Moved track to **{self.format_time(milliseconds)}**"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Get information on a song in the queue")
+    @command(description="Get information on a song in the queue")
     @checks.bot_has_permissions(embed_links=True)
     async def songinfo(self, ctx: Context, index: int):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -504,7 +504,7 @@ class Music(commands.Cog):
         em.set_thumbnail(url=self.get_thumbnail(song.uri))
         await ctx.reply(embed=em)
 
-    @commands.command(description="Toggle the queues shuffle status")
+    @command(description="Toggle the queues shuffle status")
     @checks.bot_has_permissions(embed_links=True)
     async def shuffle(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -518,7 +518,7 @@ class Music(commands.Cog):
         em.description = f"🔀 | Shuffle {'enabled' if player.shuffle else 'disabled'}"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["loop"], description="Toggle the queues repeat status")
+    @command(aliases=["loop"], description="Toggle the queues repeat status")
     @checks.bot_has_permissions(embed_links=True)
     async def repeat(self, ctx: Context):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -532,7 +532,7 @@ class Music(commands.Cog):
         em.description = f"🔁 | Repeat {'enabled' if player.repeat else 'disabled'}"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Remove a track from the queue")
+    @command(description="Remove a track from the queue")
     @checks.bot_has_permissions(embed_links=True)
     async def remove(self, ctx: Context, index: int):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -550,7 +550,7 @@ class Music(commands.Cog):
         em.description = f"Removed **{removed.title}** from the queue!"
         await ctx.reply(embed=em)
 
-    @commands.command(description="Stop the queue")
+    @command(description="Stop the queue")
     @checks.bot_has_permissions(embed_links=True)
     async def stop(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -565,7 +565,7 @@ class Music(commands.Cog):
         em.description = "⏹ | Stopped"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["dc"])
+    @command(aliases=["dc"])
     @checks.bot_has_permissions(embed_links=True)
     async def disconnect(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -573,7 +573,7 @@ class Music(commands.Cog):
         await player.stop()
         await self.connect_to(ctx.guild)
 
-    @commands.command(aliases=['np', 'song'], description="Check what's playing right now!")
+    @command(aliases=['np', 'song'], description="Check what's playing right now!")
     @checks.bot_has_permissions(embed_links=True)
     async def now(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -591,7 +591,7 @@ class Music(commands.Cog):
             em.set_thumbnail(url=self.get_thumbnail(player.current.uri))
         await ctx.reply(embed=em)
 
-    @commands.command(description="Skip the currently playing song")
+    @command(description="Skip the currently playing song")
     @checks.bot_has_permissions(embed_links=True)
     async def skip(self, ctx: Context):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -605,7 +605,7 @@ class Music(commands.Cog):
         em.description = "⏭ | Skipped"
         await ctx.reply(embed=em)
 
-    @commands.command(aliases=["q"], description="View the queue")
+    @command(aliases=["q"], description="View the queue")
     @checks.bot_has_permissions(embed_links=True)
     async def queue(self, ctx: Context):
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
@@ -644,7 +644,7 @@ class Music(commands.Cog):
         await queue.queueinate()
 
     def embed(self):
-        return discord.Embed(
+        return Embed(
             color=self.bot.color
         ).set_author(
             name=f"{self.bot.user.name} Music",
@@ -740,10 +740,10 @@ class Music(commands.Cog):
     def call_later(self, time, func, *args, **kwargs):
         return self.bot.loop.call_later(time, lambda: self.bot.loop.create_task(func(*args, **kwargs)))
 
-    @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState,
-                                    after: discord.VoiceState):
-        guild: discord.Guild = member.guild
+    @Cog.listener()
+    async def on_voice_state_update(self, member: Member, before: VoiceState,
+                                    after: VoiceState):
+        guild: Guild = member.guild
         player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(guild.id)
         waiting: bool = guild.id in self.handles
         em = self.embed()
@@ -754,7 +754,7 @@ class Music(commands.Cog):
                     and len(before.channel.members) == 1
                     and not waiting
             ):
-                channel: discord.TextChannel = self.bot.get_channel(player.fetch("channel"))
+                channel: TextChannel = self.bot.get_channel(player.fetch("channel"))
                 await player.set_pause(True)
                 em.description = "Looks like everyone has left, I  have paused and will disconnect in 1 minute!"
                 msg = await channel.send(embed=em)
@@ -775,7 +775,7 @@ class Music(commands.Cog):
                 del self.handles[guild.id]
 
     async def leave_vc(self, channel, player, message):
-        guild: discord.Guild = channel.guild
+        guild: Guild = channel.guild
         em = self.embed()
         player.queue.clear()
         await player.stop()
@@ -830,7 +830,7 @@ class Queue:
             pages += 1
         self.maximum_pages = pages
         self.permissions = ctx.channel.permissions_for(ctx.guild.me)
-        self.embed = discord.Embed(colour=color, title=f"Queue for {ctx.guild.name}")
+        self.embed = Embed(colour=color, title=f"Queue for {ctx.guild.name}")
         self.paginating = len(self.player.queue) > 10
         self.reaction_emojis = [
             ("⏮️", self.first_page),
@@ -993,12 +993,12 @@ class Queue:
                 try:
                     await self.message.clear_reactions()
                     break
-                except (discord.HTTPException, discord.Forbidden):
+                except HTTPException:
                     break
 
             try:
                 await self.message.remove_reaction(reaction, user)
-            except (discord.HTTPException, discord.Forbidden):
+            except HTTPException:
                 pass
 
             await self.match()

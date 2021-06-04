@@ -10,7 +10,7 @@ from io import BytesIO
 
 import discord
 import psutil
-from discord.ext import commands
+from discord.ext.commands import Cog, command, group
 
 from bot import Bot
 from utils.checks import checks
@@ -31,7 +31,7 @@ ENV = {
 }
 
 
-class Evaluate(commands.Cog):
+class Evaluate(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.process = psutil.Process()
@@ -87,8 +87,8 @@ async def func():
             await ctx.reply(content=f"The result was a bit too long.. so here is a text file instead 🎁",
                             file=discord.File(data, filename=f'Result.txt'))
 
+    @command(hidden=True, description="Evaluate code in a REPL like environment")
     @checks.is_owner()
-    @commands.command(hidden=True, description="Evaluate code in a REPL like environment")
     async def eval(self, ctx: Context, *, code: str):
         code = code.strip("`")
         if code.startswith("py\n"):
@@ -148,35 +148,29 @@ async def func():
 
         return res
 
+    @group(hidden=True)
     @checks.is_owner()
-    @commands.group(hidden=True)
     async def sql(self, ctx: Context):
         if not ctx.invoked_subcommand:
             await ctx.send_help(ctx.command)
 
-    @checks.is_owner()
     @sql.command(name="execute")
     async def sql_execute(self, ctx: Context, *, query: str):
         query = query.strip("`")
-        con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):
             query = "\n".join(query.split("\n")[1:])
 
-        command = await con.execute(query)
-        await ctx.reply(f"```py\n{command}```")
-        await self.bot.pool.release(con)
+        res = await self.bot.pool.execute(query)
+        await ctx.reply(f"```py\n{res}```")
 
-    @checks.is_owner()
     @sql.command(name="fetch")
     async def sql_fetch(self, ctx: Context, *, query: str):
         query = query.strip("`")
-        con = await self.bot.pool.acquire()
         if query.startswith("sql\n"):
             query = "\n".join(query.split("\n")[1:])
 
-        command = await con.fetch(query)
-        await ctx.reply(f"```py\n{command}```")
-        await self.bot.pool.release(con)
+        res = await self.bot.pool.fetch(query)
+        await ctx.reply(f"```py\n{res}```")
 
 
 def setup(bot):

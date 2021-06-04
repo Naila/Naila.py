@@ -1,6 +1,5 @@
-import discord
-from discord.ext import commands
-from discord.ext.commands import BucketType
+from discord import Embed, Guild, TextChannel
+from discord.ext.commands import Cog, BucketType, command, cooldown
 
 from bot import Bot
 from config import config
@@ -8,12 +7,12 @@ from utils.ctx import Context
 from utils.functions.time import get_relative_delta
 
 
-class GuildList(commands.Cog):
+class GuildList(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.command()
-    @commands.cooldown(1, 10800, BucketType.guild)
+    @command()
+    @cooldown(1, 10800, BucketType.guild)
     async def bump(self, ctx: Context):
         con = await self.bot.pool.acquire()
         guild = await con.fetchrow("SELECT * FROM guildlist_guilds WHERE guild_id=$1", ctx.guild.id)
@@ -24,9 +23,9 @@ class GuildList(commands.Cog):
         nsfw = await con.fetchrow("SELECT * FROM guildlist_guildtags WHERE guild_pk=$1 AND tag_pk=1", guild["id"])
         await self.bot.pool.release(con)
 
-        home: discord.Guild = self.bot.get_guild(294505571317710849)
-        out_ch: discord.TextChannel = home.get_channel(770387196388573195 if nsfw else 770387091774767114)
-        em = discord.Embed(
+        home: Guild = self.bot.get_guild(294505571317710849)
+        out_ch: TextChannel = home.get_channel(770387196388573195 if nsfw else 770387091774767114)
+        em = Embed(
             color=await ctx.guildcolor(),
             description=guild["description"] if guild["description"] else guild["brief"]
         )
@@ -42,7 +41,7 @@ class GuildList(commands.Cog):
         )
         em.add_field(name="Invite:", value=guild["invite"], inline=False)
         await out_ch.send(embed=em)
-        emb = discord.Embed(
+        emb = Embed(
             color=self.bot.color,
             description=f"You have successfully bumped {ctx.guild}!\n"
                         f"To view the bump join: {config.support_invite}\n"

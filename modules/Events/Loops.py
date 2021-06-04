@@ -1,11 +1,11 @@
-from discord.ext import commands, tasks
-
+from discord.ext.commands import Cog
+from discord.ext.tasks import loop
 from bot import Bot
 from utils.APIs.BotLists import BotListSpace, DiscordBots, TopGG
-from utils.database.Reminders import Reminders
+from modules.Cogs.Reminders import DB as ReminderDB
 
 
-class Loops(commands.Cog):
+class Loops(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.ten_second_loop.start()
@@ -15,11 +15,11 @@ class Loops(commands.Cog):
         self.ten_second_loop.stop()
         self.botlists.stop()
 
-    @tasks.loop(seconds=10)
+    @loop(seconds=10)
     async def ten_second_loop(self):
-        await Reminders.check(self.bot)
+        await ReminderDB.check(self.bot)
 
-    @tasks.loop(minutes=30)
+    @loop(minutes=30)
     async def botlists(self):
         self.bot.log.info(
             f"Posting to all bot lists... | Shards: {self.bot.shard_count} | Guilds: {len(self.bot.guilds)}"

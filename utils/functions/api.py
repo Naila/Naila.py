@@ -67,7 +67,7 @@ async def upload_to_cdn(session, files: dict = None):
             headers={"Authorization": os.getenv("NAILA_CDN")},
             files=files
     ) as resp:
-        if not resp.status == 200:
+        if resp.status != 200:
             return raise_for_status(resp)
         return True
 

@@ -4,9 +4,9 @@ import re
 from io import BytesIO
 from typing import Union
 
-import discord
+from discord import Embed, File, Member
 from PIL import Image, ImageDraw, ImageFont
-from discord.ext import commands
+from discord.ext.commands import Cog, command
 
 from bot import Bot
 from utils.checks import checks
@@ -170,7 +170,7 @@ COLOR_NAMES_TO_HEX = {
 }
 
 
-class Testing(commands.Cog):
+class Testing(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.session = bot.session
@@ -190,8 +190,8 @@ class Testing(commands.Cog):
     #             return await ctx.reply(resp)
     #         await ctx.reply("Uploaded!")
 
+    @command(description="TEST: Archive messages")
     @checks.is_owner()
-    @commands.command(description="TEST: Archive messages")
     async def archive(self, ctx: Context, messages: int):
         if messages > 1000:
             return await ctx.send_error("lol no")
@@ -204,7 +204,7 @@ class Testing(commands.Cog):
         df = BytesIO()
         df.write(json.dumps(data, indent=2).encode("utf8"))
         df.seek(0)
-        await ctx.reply(file=discord.File(df, filename="data.json"))
+        await ctx.reply(file=File(df, filename="data.json"))
         data = json.loads(json.dumps(data).encode("utf8"))
         resp = await self.session.post(
             "https://archive.naila.bot",
@@ -216,22 +216,26 @@ class Testing(commands.Cog):
         file = BytesIO()
         file.write(resp.encode("utf8"))
         file.seek(0)
-        await ctx.reply(file=discord.File(file, filename=f"{ctx.channel.name}.html"))
+        await ctx.reply(file=File(file, filename=f"{ctx.channel.name}.html"))
 
+    @command(aliases=["bnbb"])
+    async def bigneckbuiltbitches(self, ctx: Context):
+        await ctx.reply("https://twitter.com/Nevzie_/status/1400242713283473411")
+
+    @command(description="An embed")
     @checks.is_owner()
-    @commands.command(description="An embed")
     async def embed(self, ctx: Context):
         chan = "<#483061332766097419>"
-        em = discord.Embed(description=chan, title=chan)
+        em = Embed(description=chan, title=chan)
         em.set_author(name=chan)
         em.add_field(name=chan, value=chan)
         em.set_footer(text=chan)
         await ctx.reply(embed=em)
 
-    @commands.command()
+    @command()
     @checks.is_owner()
     @checks.bot_has_permissions(embed_links=True, attach_files=True)
-    async def color(self, ctx: Context, *, color: Union[discord.Member, str] = None):
+    async def color(self, ctx: Context, *, color: Union[Member, str] = None):
         valid = self.validate_color(color)
         if not valid:
             return await ctx.send_error("Invalid color!")
@@ -239,7 +243,7 @@ class Testing(commands.Cog):
         color = valid
         color_image = self.generate_color_image(color["rgb"])
         gradient_image = self.generate_gradient_image(color["rgb"])
-        em = discord.Embed(color=color["decimal"])
+        em = Embed(color=color["decimal"])
 
         color_name, closest_name = self.get_color_name(color["rgb"])
         author_name = color_name or f"Closest named color: {closest_name}"
@@ -254,8 +258,8 @@ class Testing(commands.Cog):
         await ctx.reply(
             embed=em,
             files=[
-                discord.File(fp=color_image, filename=f"{color['hex']}.png"),
-                discord.File(fp=gradient_image, filename=f"{color['hex']}-gradient.png")
+                File(fp=color_image, filename=f"{color['hex']}.png"),
+                File(fp=gradient_image, filename=f"{color['hex']}-gradient.png")
             ]
         )
 
@@ -266,7 +270,7 @@ class Testing(commands.Cog):
             hexa = f"{random.randint(0, 0xFFFFFF):06x}"
             rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
             decimal = int(hexa, 16)
-        elif isinstance(color, discord.Member):
+        elif isinstance(color, Member):
             hexa = str(color.color).strip("#")
             rgb = tuple(int(hexa[i:i + 2], 16) for i in (0, 2, 4))
             decimal = int(hexa, 16)

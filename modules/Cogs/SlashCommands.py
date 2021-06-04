@@ -1,11 +1,11 @@
-import discord
-from discord.ext import commands
+from discord import Embed
+from discord.ext.commands import Cog
 from discord_slash import SlashCommand, SlashContext, cog_ext
 
 from config import config
 
 
-class SlashCommands(commands.Cog):
+class SlashCommands(Cog):
     def __init__(self, bot):
         self.bot = bot
         if not hasattr(bot, "slash"):
@@ -18,7 +18,7 @@ class SlashCommands(commands.Cog):
     @cog_ext.cog_slash(name="invite")
     async def slash_invite(self, ctx: SlashContext):
         invite = f"https://discord.com/oauth2/authorize?client_id={self.bot.user.id}&scope=applications.commands+bot"
-        em = discord.Embed(color=self.bot.color)
+        em = Embed(color=self.bot.color)
         em.description = f"**Support server:** {config.support_invite}\n" \
                          f"**Bot invite:**" \
                          f" [Recommended perms]({invite + f'&permissions={config.permissions.value}'}) |" \

@@ -1,20 +1,27 @@
 import re
 
-import discord
-from discord.ext import commands
+from discord import Embed, DMChannel, Invite, NotFound, Guild
+from discord.ext.commands import Cog
 from discord.utils import oauth_url
 
 from bot import Bot
 from config import regex, config
 from utils.ctx import Context
-from utils.database.GuildSettings import Prefixes, Check
+from utils.functions.prefix import Prefixes
 
 
-class Messages(commands.Cog):
+async def check_data(ctx: Context):
+    data = await ctx.pool.fetch("SELECT * FROM guilds WHERE guild_id=$1", ctx.guild.id)
+    if not data:
+        await ctx.pool.execute("INSERT INTO guilds (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", ctx.guild.id)
+        ctx.log.info(f"Added {ctx.guild.name} to the (guilds) database")
+
+
+class Messages(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self, message):
         ctx: Context = await self.bot.get_context(message)
         # Adding some statistics
@@ -22,16 +29,16 @@ class Messages(commands.Cog):
         # Checking if the author of the message is a bot
         if message.author.bot:
             return
-        if isinstance(message.channel, discord.DMChannel):
+        if isinstance(message.channel, DMChannel):
             invite_ids: list = list(dict.fromkeys(re.findall(regex.invite_url, message.content)))[:10]
             invites: list = []
             for invite_id in invite_ids:
                 try:
-                    invite: discord.Invite = await self.bot.fetch_invite(invite_id)
-                except discord.NotFound:
+                    invite: Invite = await self.bot.fetch_invite(invite_id)
+                except NotFound:
                     invites.append(f"Could not find a server for the `{invite_id}` invite!")
                 else:
-                    guild: discord.Guild = invite.guild
+                    guild: Guild = invite.guild
                     if not guild:
                         invites.append(f"Could not find a server for the `{invite_id}` invite!")
                     else:
@@ -42,7 +49,7 @@ class Messages(commands.Cog):
                             scopes=["bot", "applications.commands"]
                         )
                         invites.append(f"[{guild.name}]({url})")
-            em = discord.Embed(
+            em = Embed(
                 color=self.bot.color,
                 description="\n".join(invites),
                 title=f"Invite {self.bot.user.name} to:"
@@ -50,12 +57,12 @@ class Messages(commands.Cog):
             if invites:
                 await ctx.reply(embed=em)
         else:
-            await Check().main(ctx.bot, ctx.guild)
+            await check_data(ctx)
         # Mention the bot to list prefixes
         if re.fullmatch(f"<@!?{self.bot.user.id}>", message.content):
-            await ctx.reply(f"My prefixes here are:\n{await Prefixes(ctx).list()}")
+            await ctx.reply(f"My prefixes here are:\n{await Prefixes.list(ctx)}")
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_command(self, ctx: Context):
         message, command = ctx.message, ctx.command
 
@@ -63,7 +70,7 @@ class Messages(commands.Cog):
         self.bot.commands_used[cmd] += 1
         self.bot.counter["commands_ran"] += 1
 
-        destination = "Private Message" if isinstance(ctx.channel, discord.DMChannel) else \
+        destination = "Private Message" if isinstance(ctx.channel, DMChannel) else \
             f"#{message.channel.name} ({message.guild.name})"
 
         self.bot.log.info(f"{message.author} in {destination}: {message.content}")

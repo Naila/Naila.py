@@ -1,10 +1,11 @@
 from datetime import datetime
 
-import discord
+from discord import Embed
 from beautifultable import BeautifulTable, STYLE_BOX_ROUNDED
-from discord.ext import commands
+from discord.ext.commands import Cog, command
 
 from bot import Bot
+from modules.Cogs.Help import command_signature
 from utils.checks import checks
 from utils.ctx import Context
 
@@ -18,7 +19,7 @@ class TheCore:
         self.last = None
 
 
-class LiveCommands(commands.Cog):
+class LiveCommands(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
         self.command = {}
@@ -29,7 +30,7 @@ class LiveCommands(commands.Cog):
         self.command[1] = TheCore()
         return self.command[1]
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_command(self, ctx: Context):
         core = self.get_commandlist()
 
@@ -47,7 +48,7 @@ class LiveCommands(commands.Cog):
                 core.process[dex] = 0
             core.last = cmd
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_command_completion(self, ctx: Context):
         core = self.get_commandlist()
         cmd = ctx.command.qualified_name.replace(" ", "_")
@@ -58,16 +59,16 @@ class LiveCommands(commands.Cog):
             start = core.start[dex]
             core.process[dex] = abs((now - start).total_seconds())
 
-    @commands.command(name="commandlist", aliases=["cmdlist", "cmdstats"])
+    @command(name="commandlist", aliases=["cmdlist", "cmdstats"])
     @checks.bot_has_permissions(embed_links=True)
     async def command_list(self, ctx: Context):
         try:
             core = self.get_commandlist()
-            command = core.command
+            cmd = core.command
             count = core.count
             proc = core.process
 
-            count, command, proc = (list(t) for t in zip(*sorted(zip(count, command, proc), reverse=True)))
+            count, cmd, proc = (list(t) for t in zip(*sorted(zip(count, cmd, proc), reverse=True)))
 
             p = BeautifulTable()
             p.set_style(STYLE_BOX_ROUNDED)
@@ -77,44 +78,44 @@ class LiveCommands(commands.Cog):
             for x in range(25):
                 try:
                     z += 1
-                    p.append_row([x + 1, command[x], f'{count[x]:,}', f"{round(proc[x], 2)}"])
+                    p.append_row([x + 1, cmd[x], f'{count[x]:,}', f"{round(proc[x], 2)}"])
                 except (IndexError, RuntimeError):
                     z -= 1
                     break
 
-            post = discord.Embed(color=await ctx.guildcolor())
+            post = Embed(color=await ctx.guildcolor())
             post.title = f"Naila's top {z} commands:"
             post.description = f"```ml\n{p}```"
             await ctx.reply(embed=post)
         except ValueError:
             return await ctx.send_error("Unable to post stats, Not enough data!")
 
-    # @commands.command()
-    # @checks.bot_has_permissions(embed_links=True)
-    # async def commandinfo(self, ctx, *, command: str):
-    #     command = self.bot.get_command(command)
-    #
-    #     if command is None:
-    #         return await ctx.send_help(ctx.command)
-    #
-    #     aliases = command.aliases
-    #     name = command.name
-    #     cog = command.cog_name
-    #     the_args = command.clean_params
-    #     the_checks = command.checks
-    #     # the_defaults = the_command.__defaults__
-    #     post = f"{name} info:\n" f"Aliases: {aliases}\n" f"Cog: {cog}\n\n"
-    #     post += f"Args&Variables: {dict(the_args)}\n\n"
-    #     post += f"Checks Req: {the_checks}"
-    #
-    #     command_stat = self.get_commandlist()
-    #     if command in command_stat.command:
-    #         dex = command_stat.command.index(command)
-    #         times = command_stat.count[dex]
-    #
-    #         post += f"\n**Used: `{times}` times.**"
-    #
-    #     await ctx.reply(post)
+    @command(aliases=["cmdinfo"])
+    @checks.bot_has_permissions(embed_links=True)
+    async def commandinfo(self, ctx: Context, *, cmd: str):
+        cmd = self.bot.get_command(cmd)
+
+        if not cmd:
+            return await ctx.send_help(ctx.command)
+
+        name = cmd.name
+
+        em = Embed(color=await ctx.guildcolor())
+        em.set_author(name="Command info")
+        em.description = f"**Command:** {name}\n" \
+                         f"**Cog:** {cmd.cog_name}"
+        if cmd.aliases:
+            em.description += f"\n**Aliases:** {', '.join(cmd.aliases)}"
+
+        em.add_field(name="Arguments:", value=command_signature(cmd))
+        em.add_field(name="Checks:", value=cmd.checks, inline=False)
+
+        command_stat = self.get_commandlist()
+        if name in command_stat.command:
+            usage = command_stat.count[command_stat.command.index(name)]
+            em.set_footer(text=f"Used {usage} times since reboot")
+
+        await ctx.reply(embed=em)
 
 
 def setup(bot):

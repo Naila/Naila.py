@@ -1,11 +1,11 @@
 import re
 
-import discord
-from discord.ext import commands
+from discord import Embed
+from discord.ext.commands import Cog, Command, MinimalHelpCommand
 from discord.ext.commands.converter import Greedy
 
 
-def command_signature(command: commands.Command):
+def command_signature(command: Command):
     if command.usage:
         return command.usage
 
@@ -47,12 +47,12 @@ def clean_param(param):
     return clean
 
 
-class MyHelpCommand(commands.MinimalHelpCommand):
+class MyHelpCommand(MinimalHelpCommand):
     async def send_pages(self):
         ctx = self.context
         destination = self.get_destination()
         for page in self.paginator.pages:
-            em = discord.Embed(description=page, color=ctx.bot.color)
+            em = Embed(description=page, color=ctx.bot.color)
             em.set_author(name="Here is the help you requested!")
             await destination.send(embed=em, reference=ctx.message)
 
@@ -137,7 +137,7 @@ class MyHelpCommand(commands.MinimalHelpCommand):
     #     return msg
 
 
-class Help(commands.Cog):
+class Help(Cog):
     def __init__(self, bot):
         self.bot = bot
         self._original_help_command = bot.help_command

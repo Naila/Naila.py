@@ -1,4 +1,4 @@
-import discord
+from discord import DMChannel
 from discord.ext import commands
 
 from utils.functions import errors
@@ -23,7 +23,7 @@ def owner_check(ctx):
 
 def is_nsfw():
     def predicate(ctx):
-        if isinstance(ctx.channel, discord.DMChannel):
+        if isinstance(ctx.channel, DMChannel):
             return True
         if ctx.channel.is_nsfw():
             return True
@@ -147,5 +147,5 @@ def role_or_permissions(ctx, **perms):
     if check_permissions(ctx, perms):
         return True
     # DMs don't have roles or permissions so
-    if isinstance(ctx.channel, discord.DMChannel):
+    if isinstance(ctx.channel, DMChannel):
         return False

@@ -1,21 +1,92 @@
 from datetime import datetime
 
-import discord
-from discord.ext import commands
+from discord import Embed, Guild, TextChannel, Member, File, Forbidden
+from discord.ext.commands import Cog, group, guild_only
 
 from bot import Bot
 from utils.checks import checks
 from utils.ctx import Context
-from utils.database.GuildSettings import Guild, Welcomer as Welcome
 from utils.functions.images import createWelcomeImage
 
 
-class Welcomer(commands.Cog):
+class DB:
+
+    @staticmethod
+    async def check(bot: Bot, guild: Guild):
+        data = await bot.pool.fetch("SELECT * FROM welcomer WHERE guild_id=$1", guild.id)
+        if not data:
+            await bot.pool.execute("INSERT INTO welcomer (guild_id) VALUES ($1) ON CONFLICT DO NOTHING", guild.id)
+            bot.log.info(f"Added {guild.name} to the (welcomer) database")
+
+    @staticmethod
+    async def data(ctx: Context):
+        await DB.check(ctx.bot, ctx.guild)
+        data = await ctx.pool.fetchrow(
+            "SELECT welcomer_background, banned_role, user_role, bot_role, welcomer_channel, welcomer_enabled,"
+            " welcomer_embed, welcomer_content, welcomer_type FROM welcomer WHERE guild_id=$1",
+            ctx.guild.id
+        )
+        return data
+
+    @staticmethod
+    async def toggle(ctx: Context):
+        data = await DB.data(ctx)
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_enabled = NOT welcomer_enabled WHERE guild_id=$1",
+            ctx.guild.id
+        )
+        return not data["welcomer_enabled"]
+
+    @staticmethod
+    async def toggle_embed(ctx: Context):
+        data = await DB.data(ctx)
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_embed = NOT welcomer_embed WHERE guild_id=$1",
+            ctx.guild.id
+        )
+        return not data["welcomer_embed"]
+
+    @staticmethod
+    async def set_text(ctx: Context, text: str = None):
+        await DB.data(ctx)
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_content=$1 WHERE guild_id=$2",
+            text,
+            ctx.guild.id
+        )
+
+    @staticmethod
+    async def set_type(ctx: Context, image_type: int):
+        await DB.check(ctx.bot, ctx.guild)
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_type=$1 WHERE guild_id=$2",
+            image_type,
+            ctx.guild.id
+        )
+
+    @staticmethod
+    async def set_channel(ctx: Context, channel: TextChannel):
+        await DB.check(ctx.bot, ctx.guild)
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_channel=$1 WHERE guild_id=$2",
+            channel.id,
+            ctx.guild.id
+        )
+
+    @staticmethod
+    async def disable(ctx: Context, guild: Guild):
+        await ctx.pool.execute(
+            "UPDATE welcomer SET welcomer_channel=null, welcomer_enabled=false WHERE guild_id=$1",
+            guild.id
+        )
+
+
+class Welcomer(Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
 
-    @commands.group(case_insensitive=True, description="Welcomer management")
-    @commands.guild_only()
+    @group(case_insensitive=True, description="Welcomer management")
+    @guild_only()
     @checks.admin()
     async def welcomer(self, ctx: Context):
         if not ctx.invoked_subcommand:
@@ -24,7 +95,7 @@ class Welcomer(commands.Cog):
     @welcomer.command(name="toggle", description="Toggle welcomer entirely")
     @checks.bot_has_permissions(embed_links=True)
     async def welcomer_toggle(self, ctx: Context):
-        update = await Welcome(ctx).toggle_welcomer()
+        update = await DB.toggle(ctx)
         if update:
             return await ctx.reply("I have enabled welcomer!")
         await ctx.reply("I have disabled welcomer!")
@@ -34,14 +105,14 @@ class Welcomer(commands.Cog):
     async def welcomer_test(self, ctx: Context, fmt: int = 2):
         if fmt not in [1, 2]:
             return await ctx.send_error("fmt must either be 1 or 2!")
-        data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
+        data = await DB.data(ctx)
         fmt = fmt or data["welcomer_type"]
         await self.welcomer_handler(member=ctx.author, ctx=ctx, fmt=fmt)
 
     @welcomer.command(name="embed", description="Toggle the embed")
     @checks.bot_has_permissions(embed_links=True)
     async def welcomer_embed(self, ctx: Context):
-        data = await Welcome(ctx).toggle_welcomer_embed()
+        data = await DB.toggle_embed(ctx)
         if data:
             return await ctx.reply("Embeds have been enabled for welcomer!")
         await ctx.reply("Embeds have been disabled for welcomer!")
@@ -49,15 +120,15 @@ class Welcomer(commands.Cog):
     @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
     @checks.bot_has_permissions(embed_links=True)
     async def welcomer_text(self, ctx: Context, *, text: str):
-        data = await Welcome().welcomer_data(ctx.bot, ctx.guild)
+        data = await DB.data(ctx)
         if text == "--current":
             return await ctx.reply(f"Current text:\n```{data['welcomer_content']}```")
         if text == "--clear":
-            await Welcome(ctx).set_welcomer_text()
+            await DB.set_text(ctx)
             return await ctx.reply("Welcomer text has been cleared!")
         if len(text) >= 1800:
             return await ctx.send_error("Text must be less than 1800 characters!")
-        await Welcome(ctx).set_welcomer_text(text)
+        await DB.set_text(ctx, text)
         await ctx.reply("Welcomer text has been set!")
 
     @welcomer.command(name="type", description="Change the image type | 1 or 2")
@@ -65,13 +136,13 @@ class Welcomer(commands.Cog):
     async def welcomer_type(self, ctx: Context, *, image_type: int):
         if image_type not in [1, 2]:
             return await ctx.send_error("Type must be 1 or 2!")
-        await Welcome(ctx).set_welcomer_type(image_type)
+        await DB.set_type(ctx, image_type)
         await ctx.reply("Type set!")
 
     @welcomer.command(name="channel", description="Set the output channel")
     @checks.bot_has_permissions(embed_links=True)
-    async def welcomer_channel(self, ctx: Context, channel: discord.TextChannel):
-        await Welcome(ctx).set_welcomer_channel(channel)
+    async def welcomer_channel(self, ctx: Context, channel: TextChannel):
+        await DB.set_channel(ctx, channel)
         await ctx.reply(f"Channel set to {channel.mention}!")
 
     # TODO: Fix auto roles and extend on welcomers functionality
@@ -162,12 +233,12 @@ class Welcomer(commands.Cog):
     #     else:
     #         await ctx.reply("You don't have any bot roles set!")
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_member_join(self, member):
         await self.welcomer_handler(member)
 
     @staticmethod
-    def build_message(message: str, user: discord.Member, guild: discord.Guild):
+    def build_message(message: str, user: Member, guild: Guild):
         if not message:
             return
         message = message.replace("{USER_MENTION}", user.mention)
@@ -178,9 +249,9 @@ class Welcomer(commands.Cog):
         message = message.replace("{GUILD_COUNT_BOTS}", str(len([i for i in guild.members if i.bot])))
         return message
 
-    async def welcomer_handler(self, member: discord.Member, ctx: Context = None, fmt: int = None):
+    async def welcomer_handler(self, member: Member, ctx: Context = None, fmt: int = None):
         guild = member.guild
-        data = await Welcome().welcomer_data(self.bot, guild)
+        data = await DB.data(ctx)
         if not data["welcomer_enabled"] or not data["welcomer_channel"]:
             if not ctx:
                 return
@@ -189,7 +260,7 @@ class Welcomer(commands.Cog):
         member_created = (datetime.utcnow() - member.created_at).days
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = ctx.channel if ctx else self.bot.get_channel(data["welcomer_channel"])
-        color = await Guild().color(self.bot.pool, guild)
+        color = await ctx.guildcolor()
         fmt = fmt or data["welcomer_type"]
         content = self.build_message(data["welcomer_content"], member, guild)
         embed = data["welcomer_embed"]
@@ -197,7 +268,7 @@ class Welcomer(commands.Cog):
                 if member_created else f"{member_sign} Account created __**Today!**__",
                 f"🤖 __**Bot**__ account!" if member.bot else f"✅ __**User**__ account!"]
         desc = '\n'.join(desc)
-        em = discord.Embed(color=color, description=desc)
+        em = Embed(color=color, description=desc)
         if embed:
             em.set_thumbnail(url=guild.icon_url_as(static_format="png", size=1024))
             em.set_image(url="attachment://welcome.png")
@@ -228,11 +299,11 @@ class Welcomer(commands.Cog):
         )
         try:
             return await channel.send(
-                file=discord.File(fp=image, filename="welcome.png"),
+                file=File(fp=image, filename="welcome.png"),
                 embed=em if embed else None,
                 content=content)
-        except (discord.Forbidden, AttributeError):
-            await Welcome().disable(self.bot, guild)
+        except (Forbidden, AttributeError):
+            await DB.disable(ctx, guild)
 
 
 def setup(bot):
