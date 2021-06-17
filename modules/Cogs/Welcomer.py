@@ -19,18 +19,18 @@ class DB:
             bot.log.info(f"Added {guild.name} to the (welcomer) database")
 
     @staticmethod
-    async def data(ctx: Context):
-        await DB.check(ctx.bot, ctx.guild)
-        data = await ctx.pool.fetchrow(
+    async def data(bot: Bot, guild: Guild):
+        await DB.check(bot, guild)
+        data = await bot.pool.fetchrow(
             "SELECT welcomer_background, banned_role, user_role, bot_role, welcomer_channel, welcomer_enabled,"
             " welcomer_embed, welcomer_content, welcomer_type FROM welcomer WHERE guild_id=$1",
-            ctx.guild.id
+            guild.id
         )
         return data
 
     @staticmethod
     async def toggle(ctx: Context):
-        data = await DB.data(ctx)
+        data = await DB.data(ctx.bot, ctx.guild)
         await ctx.pool.execute(
             "UPDATE welcomer SET welcomer_enabled = NOT welcomer_enabled WHERE guild_id=$1",
             ctx.guild.id
@@ -39,7 +39,7 @@ class DB:
 
     @staticmethod
     async def toggle_embed(ctx: Context):
-        data = await DB.data(ctx)
+        data = await DB.data(ctx.bot, ctx.guild)
         await ctx.pool.execute(
             "UPDATE welcomer SET welcomer_embed = NOT welcomer_embed WHERE guild_id=$1",
             ctx.guild.id
@@ -48,7 +48,7 @@ class DB:
 
     @staticmethod
     async def set_text(ctx: Context, text: str = None):
-        await DB.data(ctx)
+        await DB.check(ctx.bot, ctx.guild)
         await ctx.pool.execute(
             "UPDATE welcomer SET welcomer_content=$1 WHERE guild_id=$2",
             text,
@@ -74,8 +74,8 @@ class DB:
         )
 
     @staticmethod
-    async def disable(ctx: Context, guild: Guild):
-        await ctx.pool.execute(
+    async def disable(bot: Bot, guild: Guild):
+        await bot.pool.execute(
             "UPDATE welcomer SET welcomer_channel=null, welcomer_enabled=false WHERE guild_id=$1",
             guild.id
         )
@@ -105,7 +105,7 @@ class Welcomer(Cog):
     async def welcomer_test(self, ctx: Context, fmt: int = 2):
         if fmt not in [1, 2]:
             return await ctx.send_error("fmt must either be 1 or 2!")
-        data = await DB.data(ctx)
+        data = await DB.data(ctx.bot, ctx.guild)
         fmt = fmt or data["welcomer_type"]
         await self.welcomer_handler(member=ctx.author, ctx=ctx, fmt=fmt)
 
@@ -120,7 +120,7 @@ class Welcomer(Cog):
     @welcomer.command(name="text", description="Set the content of the message | --current | --clear")
     @checks.bot_has_permissions(embed_links=True)
     async def welcomer_text(self, ctx: Context, *, text: str):
-        data = await DB.data(ctx)
+        data = await DB.data(ctx.bot, ctx.guild)
         if text == "--current":
             return await ctx.reply(f"Current text:\n```{data['welcomer_content']}```")
         if text == "--clear":
@@ -251,7 +251,7 @@ class Welcomer(Cog):
 
     async def welcomer_handler(self, member: Member, ctx: Context = None, fmt: int = None):
         guild = member.guild
-        data = await DB.data(ctx)
+        data = await DB.data(self.bot, guild)
         if not data["welcomer_enabled"] or not data["welcomer_channel"]:
             if not ctx:
                 return
@@ -260,7 +260,7 @@ class Welcomer(Cog):
         member_created = (datetime.utcnow() - member.created_at).days
         member_sign = "❌" if member_created == 0 else "⚠" if member_created <= 3 else "✅"
         channel = ctx.channel if ctx else self.bot.get_channel(data["welcomer_channel"])
-        color = await ctx.guildcolor()
+        color = self.bot.color
         fmt = fmt or data["welcomer_type"]
         content = self.build_message(data["welcomer_content"], member, guild)
         embed = data["welcomer_embed"]
@@ -295,7 +295,7 @@ class Welcomer(Cog):
             user_name=str(member),
             guild_name=guild.name,
             member_count=guild.member_count,
-            color=hex(color).split("x")[-1]
+            color=f"{color:06x}"
         )
         try:
             return await channel.send(
@@ -303,7 +303,7 @@ class Welcomer(Cog):
                 embed=em if embed else None,
                 content=content)
         except (Forbidden, AttributeError):
-            await DB.disable(ctx, guild)
+            await DB.disable(self.bot, guild)
 
 
 def setup(bot):
