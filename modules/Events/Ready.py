@@ -103,11 +103,10 @@ class Ready(Cog):
 
     def starter_modules(self):
         paths = ["modules/Events", "modules/Cogs"]
-        blacklist = ["modules/Events/Ready", "modules/Events/Loops"]
+        blacklist = ["modules/Events/Ready", "modules/Events/Loops", "modules/Events/BuiltinAPI"]
         if self.bot.debug:
             blacklist.extend([
                 "modules/Cogs/Music",
-                "modules/Events/Loops",
                 "modules/Events/InfluxDB"
             ])
         for path in paths:
