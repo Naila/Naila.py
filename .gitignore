@@ -227,3 +227,4 @@ config/config.py
 config/emojis.yml
 config/logging.yml
 utils/assets/locales/
+modules/Events/InfluxDB.py
