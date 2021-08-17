@@ -75,7 +75,7 @@ class Social(Cog):
         rigged = False
         name1 = lover1.name[:-round(len(lover1.name) / 2)] + lover2.name[-round(len(lover2.name) / 2):]
         name2 = lover2.name[:-round(len(lover2.name) / 2)] + lover1.name[-round(len(lover1.name) / 2):]
-        if 309799952182280192 in [lover1.id, lover2.id] and 173237945149423619 in [lover1.id, lover2.id]:
+        if 854105269126168586 in [lover1.id, lover2.id] and 173237945149423619 in [lover1.id, lover2.id]:
             rigged = True
         desc = f"**{ctx.author.mention} ships {lover1.mention} and {lover2.mention}!**\n\n " \
                f"Ship names: __**{name1}**__ or __**{name2}**__\n\n " \
