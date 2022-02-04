@@ -107,7 +107,8 @@ class Reminders(Cog):
             for page in pages:
                 await ctx.author.send(page)
         except:
-            await ctx.reply("I cannot DM you!")
+            return await ctx.reply("I cannot DM you!")
+        await ctx.reply("I sent your reminders to you!")
 
     @command(aliases=["delreminder"])
     async def deletereminder(self, ctx: Context, reminder_id: int):
