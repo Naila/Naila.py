@@ -103,8 +103,11 @@ class Reminders(Cog):
         to_send += f"\n\nSet a reminder with `{ctx.prefix}remind <here|me> <time> <reminder>`\n" \
                    f"Remove a reminder with `{ctx.prefix}delreminder <id>`"
         pages = pagify(to_send)
-        for page in pages:
-            await ctx.reply(page)
+        try:
+            for page in pages:
+                await ctx.author.send(page)
+        except:
+            await ctx.reply("I cannot DM you!")
 
     @command(aliases=["delreminder"])
     async def deletereminder(self, ctx: Context, reminder_id: int):
