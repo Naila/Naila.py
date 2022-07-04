@@ -4,6 +4,7 @@ from bot import Bot
 from utils.ctx import Context
 from utils.functions.text import escape, pagify
 from utils.functions.time import get_relative_delta, parse_time
+import discord
 
 
 class DB:
