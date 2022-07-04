@@ -31,7 +31,7 @@ class DB:
             to_send = f"**Reminder** <@!{reminder['user_id']}>: {reminder['reminder']}"
             if channel:
                 try:
-                    return await channel.send(to_send, allowed_mentions=discord.AllowedMentions(everyone=False, roles=False)))
+                    return await channel.send(to_send, allowed_mentions=discord.AllowedMentions(everyone=False, roles=False))
                 except (Forbidden, HTTPException):
                     to_send += "\n*Failed to send to channel*"
             try:
