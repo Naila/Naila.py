@@ -28,14 +28,15 @@ class DB:
             await bot.pool.execute("UPDATE reminders SET expired=True WHERE id=$1", reminder["id"])
             author = bot.get_user(reminder["user_id"])
             channel = bot.get_channel(reminder["channel_id"])
-            to_send = f"**Reminder** {author.mention}: {reminder['reminder']}"
+            to_send = f"**Reminder** <@!{reminder["user_id"]}>: {reminder['reminder']}"
             if channel:
                 try:
                     return await channel.send(to_send)
                 except (Forbidden, HTTPException):
                     to_send += "\n*Failed to send to channel*"
             try:
-                await author.send(to_send)
+                if author:
+                    await author.send(to_send)
             except (Forbidden, HTTPException):
                 return
 
