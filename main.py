@@ -2,13 +2,11 @@ import asyncio
 import logging
 import os
 import shutil
-import threading
 from logging.handlers import RotatingFileHandler
 
 import coloredlogs
 import yaml
 from dotenv import load_dotenv
-from bot import Bot
 import platform
 
 log = logging.getLogger("bot")
@@ -94,6 +92,7 @@ if __name__ == "__main__":
         log.error("Please fill out config/.env before starting the bot")
         exit(1)
 
+    from bot import Bot
     bot = Bot()
     try:
         bot.run(os.getenv("TOKEN"), log_handler=None)
