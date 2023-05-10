@@ -1,30 +1,20 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+name = "pypi"
+
+[packages]
+"discord.py" = "*"
+coloredlogs = "*"
+pyyaml = "*"
+python-dotenv = "*"
+asyncpg = "*"
+aiohttp = "*"
+psutil = "*"
+requests = "*"
+dictor = "*"
 
 [dev-packages]
 
-[packages]
-aiohttp-jinja2 = "*"
-asyncpg = "*"
-beautifulsoup4 = "*"
-beautifultable = "*"
-coloredlogs = "*"
-dictor = "*"
-discord-py = "*"
-discord-py-slash-command = "*"
-ksoftapi = "*"
-lavalink = "*"
-pillow = "*"
-psutil = "*"
-python-dateutil = "*"
-python-dotenv = "*"
-pyyaml = "*"
-sentry-sdk = "*"
-spotipy = "*"
-influxdb-client = "*"
-discord-components = "*"
-
 [requires]
-python_version = "3.9"
+python_version = "3.10"

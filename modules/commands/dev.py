@@ -6,15 +6,11 @@ import re
 import textwrap
 import time
 import traceback
-from io import BytesIO
 
 import discord
-import psutil
-from discord.ext.commands import Cog, command, group
+from discord.ext import commands
 
 from bot import Bot
-from utils.checks import checks
-from utils.ctx import Context
 
 ENV = {
     "contextlib": contextlib,
@@ -25,23 +21,21 @@ ENV = {
     "textwrap": textwrap,
     "time": time,
     "traceback": traceback,
-    "BytesIO": BytesIO,
-    "discord": discord,
-    "psutil": psutil
+    "BytesIO": io.BytesIO,
+    "discord": discord
 }
 
 
-class Evaluate(Cog):
+class Dev(commands.Cog):
     def __init__(self, bot):
         self.bot: Bot = bot
-        self.process = psutil.Process()
         self.env = ENV
         self.stdout = io.StringIO()
 
-    async def _eval(self, ctx: Context, code):
+    async def do_eval(self, ctx, code):
         if code == "exit()":
             self.env = ENV
-            return await ctx.reply(f"```Reset history!```")
+            return await ctx.send("```Reset history!```")
 
         env = {
             "message": ctx.message,
@@ -69,7 +63,6 @@ async def func():
         self.env.update(locals())
             """
 
-        start = time.time()
         try:
             exec(_code, self.env)
             func = self.env['func']
@@ -78,18 +71,17 @@ async def func():
         except:
             res = traceback.format_exc()
 
-        end = time.time()
         out, embed = self._format(code, res)
         try:
-            await ctx.reply(f"```py\n{out}\n\n# Time to execute: {round((end - start) * 1000, 3)}ms```", embed=embed)
+            await ctx.send(f"```py\n{out}```", embed=embed)
         except discord.HTTPException:
-            data = BytesIO(out.encode('utf-8'))
-            await ctx.reply(content=f"The result was a bit too long.. so here is a text file instead 🎁",
-                            file=discord.File(data, filename=f'Result.txt'))
+            data = io.BytesIO(out.encode('utf-8'))
+            await ctx.send("The result was a bit too long.. so here is a text file instead 🎁",
+                           file=discord.File(data, filename='Result.txt'),
+                           )
 
-    @command(hidden=True, description="Evaluate code in a REPL like environment")
-    @checks.is_owner()
-    async def eval(self, ctx: Context, *, code: str):
+    @commands.hybrid_command()
+    async def eval(self, ctx, *, code: str):
         code = code.strip("`")
         if code.startswith("py\n"):
             code = "\n".join(code.split("\n")[1:])
@@ -100,7 +92,7 @@ async def func():
                 code, re.M) and len(code.split("\n")) == 1:
             code = "_ = " + code
 
-        await self._eval(ctx, code)
+        await self.do_eval(ctx, code)
 
     def _format(self, inp, out):
         self.env["_"] = out
@@ -111,7 +103,7 @@ async def func():
         if inp.startswith("_ = "):
             inp = inp[4:]
 
-        lines = [line for line in inp.split("\n") if line.strip()]
+        lines = [l for l in inp.split("\n") if l.strip()]
         if len(lines) != 1:
             lines += [""]
 
@@ -148,30 +140,6 @@ async def func():
 
         return res
 
-    @group(hidden=True)
-    @checks.is_owner()
-    async def sql(self, ctx: Context):
-        if not ctx.invoked_subcommand:
-            await ctx.send_help(ctx.command)
 
-    @sql.command(name="execute")
-    async def sql_execute(self, ctx: Context, *, query: str):
-        query = query.strip("`")
-        if query.startswith("sql\n"):
-            query = "\n".join(query.split("\n")[1:])
-
-        res = await self.bot.pool.execute(query)
-        await ctx.reply(f"```py\n{res}```")
-
-    @sql.command(name="fetch")
-    async def sql_fetch(self, ctx: Context, *, query: str):
-        query = query.strip("`")
-        if query.startswith("sql\n"):
-            query = "\n".join(query.split("\n")[1:])
-
-        res = await self.bot.pool.fetch(query)
-        await ctx.reply(f"```py\n{res}```")
-
-
-def setup(bot):
-    bot.add_cog(Evaluate(bot))
+async def setup(bot):
+    await bot.add_cog(Dev(bot))

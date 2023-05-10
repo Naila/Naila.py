@@ -1,10 +1,7 @@
-from discord import Embed
+import discord
 import yaml
 from dictor import dictor
 from discord.ext.commands import Context as DefaultContext
-
-from modules.Cogs.Help import command_signature
-from utils.functions.errors import TranslationError
 
 
 class Context(DefaultContext):
@@ -23,69 +20,46 @@ class Context(DefaultContext):
     def pool(self):
         return self.bot.pool
 
-    @staticmethod
-    def translator(path: str, key: str, **kwargs) -> str:
-        lang = "en_US"  # Get users language
-        # TODO: Cache strings?
-        full_path = f"utils/assets/locales/{lang}/bot/{path}.yml"
-        try:
-            with open(full_path, "r") as file:
-                strings = yaml.safe_load(file)
-        except FileNotFoundError:
-            raise TranslationError("Invalid path provided")
-
-        string = dictor(strings, key)
-        if not string:
-            raise TranslationError("Invalid key provided")
-
-        try:
-            string = string.format(**kwargs)
-        except KeyError:
-            raise TranslationError("Invalid kwargs provided")
-
-        return string
-
-    async def guildcolor(self):
-        if not self.guild:
-            return self.bot.color
-        return await self.pool.fetchval("SELECT color FROM guilds WHERE guild_id=$1", self.guild.id)
+    # async def guildcolor(self):
+    #     if not self.guild:
+    #         return self.bot.color
+    #     return await self.pool.fetchval("SELECT color FROM guilds WHERE guild_id=$1", self.guild.id)
 
     def emojis(self, emoji: str):
         with open("config/emojis.yml", "r") as emojis:
             emojis = yaml.safe_load(emojis)
         return self.bot.get_emoji(dictor(emojis, emoji))
 
-    async def embed(self, footer_text: str = None, embed_dict: dict = None) -> Embed:
+    async def embed(self, footer_text: str = None, embed_dict: dict = None) -> discord.Embed:
         footer = str(self.author)
         if embed_dict:
-            em = Embed().from_dict(embed_dict)
-            if em.footer.text != Embed.Empty:
+            em = discord.Embed().from_dict(embed_dict)
+            if em.footer.text is not None:
                 footer_text = em.footer.text
         else:
-            em = Embed()
-        em.color = await self.guildcolor()
+            em = discord.Embed()
         if footer_text:
             footer += f" • {footer_text}"
         em.set_footer(icon_url=self.author.avatar_url_as(static_format="png"), text=footer)
         return em
 
-    async def missing_argument(self):
-        prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
-        command = self.invoked_subcommand or self.command
-        em = Embed(color=self.bot.error_color)
-        em.title = "Missing required argument ❌"
-        em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
-        await self.reply(embed=em)
+    # async def missing_argument(self):
+    #     prefix = self.prefix.replace(self.bot.user.mention, '@' + self.bot.user.display_name)
+    #     command = self.invoked_subcommand or self.command
+    #     em = Embed(color=self.bot.error_color)
+    #     em.title = "Missing required argument ❌"
+    #     em.description = f"{prefix}{command.qualified_name} {command_signature(command)}\n{command.description}"
+    #     await self.reply(embed=em)
 
-    async def send_error(self, content):
-        em = Embed(color=self.bot.error_color, title="Error ❌")
+    async def send_error(self, content, ephemeral: bool = False):
+        em = discord.Embed(color=discord.Color.red(), title="Error ❌")
         em.description = str(content)
-        await self.reply(embed=em)
-
-    async def bad_argument(self, content):
-        em = Embed(color=self.bot.error_color, title="Invalid argument ❌")
-        em.description = str(content)
-        await self.reply(embed=em)
+        return await self.send(embed=em, reference=self.message if self.interaction else None, ephemeral=ephemeral)
+    #
+    # async def bad_argument(self, content):
+    #     em = Embed(color=self.bot.error_color, title="Invalid argument ❌")
+    #     em.description = str(content)
+    #     await self.reply(embed=em)
 
     # def handle_file(self, file_path: str, path: str = None, **kwargs) -> dict:
     #     with open(file_path, "r") as file:
@@ -94,7 +68,7 @@ class Context(DefaultContext):
     #         else:
     #             data = yaml.safe_load(file)
     #         data = dictor(data, path)
-    #
+
     #     def sub_val(string: str) -> str:
     #         string = string.format(emojis=self.emoji_dict, **kwargs)
     #         if not string.startswith("#!/"):
@@ -102,7 +76,7 @@ class Context(DefaultContext):
     #
     #         data_path = string[3:].split("/")
     #         return reduce(dict.__getitem__, data_path, data)
-    #
+
     #     def recursive_search(obj: Union[dict, list], emojis: bool) -> None:
     #         def handle_element(el):
     #             if isinstance(el, str):
