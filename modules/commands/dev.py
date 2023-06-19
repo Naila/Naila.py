@@ -11,6 +11,7 @@ import discord
 from discord.ext import commands
 
 from bot import Bot
+from utils.checks import checks
 
 ENV = {
     "contextlib": contextlib,
@@ -81,6 +82,7 @@ async def func():
                            )
 
     @commands.hybrid_command()
+    @checks.is_owner()
     async def eval(self, ctx, *, code: str):
         code = code.strip("`")
         if code.startswith("py\n"):

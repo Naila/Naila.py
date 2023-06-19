@@ -15,22 +15,22 @@ class Commands(commands.Cog):
     # async def cog_load(self):
     #     threading.Thread(target=self.run_command_handler, daemon=True).start()
 
-    def run_command_handler(self):
-        asyncio.run_coroutine_threadsafe(self.command_handler(), self.bot.loop)
+    # def run_command_handler(self):
+    #     asyncio.run_coroutine_threadsafe(self.command_handler(), self.bot.loop)
 
-    async def command_handler(self):
-        while True:
-            command = input()
-            match command:
-                case "kill":
-                    await self.bot.close()
-                    break
-                case "hello":
-                    print(f"Hello, world! {self.bot.user}")
-                case "help":
-                    print("Available commands: hello, help, kill")
-                case _:
-                    print("Unknown command")
+    # async def command_handler(self):
+    #     while True:
+    #         command = input()
+    #         match command:
+    #             case "kill":
+    #                 await self.bot.close()
+    #                 break
+    #             case "hello":
+    #                 print(f"Hello, world! {self.bot.user}")
+    #             case "help":
+    #                 print("Available commands: hello, help, kill")
+    #             case _:
+    #                 print("Unknown command")
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction):
