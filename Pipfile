@@ -13,6 +13,7 @@ aiohttp = "*"
 psutil = "*"
 requests = "*"
 dictor = "*"
+pillow = "*"
 
 [dev-packages]
 
