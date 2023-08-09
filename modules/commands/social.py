@@ -84,7 +84,7 @@ class Social(commands.Cog):
         em = discord.Embed(color=discord.Color.random(), description=desc)
         em.set_author(name="Lovely shipping!")
         em.set_image(url='attachment://ship.png')
-        file = await ship(self.bot.session, lover1.avatar_url_as(format="png"), lover2.avatar_url_as(format="png"))
+        file = await ship(self.bot.session, lover1.avatar.with_static_format("png").url, lover2.avatar.with_static_format("png").url)
         await ctx.reply(file=discord.File(fp=file, filename="ship.png"), embed=em)
 
     @social.command(description="Bite people!")
