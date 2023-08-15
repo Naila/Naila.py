@@ -76,8 +76,10 @@ class Social(commands.Cog):
     @social.command(name="ship", description="Ship your friends!")
     async def ship(self, ctx: Context, lover1: discord.Member, lover2: Optional[discord.Member]):
         lover2 = lover2 or ctx.author
-        name1 = lover1.global_name[:-round(len(lover1.global_name) / 2)] + lover2.global_name[-round(len(lover2.global_name) / 2):]
-        name2 = lover2.global_name[:-round(len(lover2.global_name) / 2)] + lover1.global_name[-round(len(lover1.global_name) / 2):]
+        name1 = lover1.name if lover1.bot else lover1.global_name
+        name2 = lover2.name if lover2.bot else lover2.global_name
+        name1 = name1[:-round(len(name1) / 2)] + name2[-round(len(name2) / 2):]
+        name2 = name2[:-round(len(name2) / 2)] + name1[-round(len(name1) / 2):]
         desc = f"**{ctx.author.mention} ships {lover1.mention} and {lover2.mention}!**\n\n " \
                f"Ship names: __**{name1}**__ or __**{name2}**__\n\n " \
                f"{self.draw_meter()}"

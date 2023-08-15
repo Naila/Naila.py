@@ -14,6 +14,7 @@ psutil = "*"
 requests = "*"
 dictor = "*"
 pillow = "*"
+aioconsole = "*"
 
 [dev-packages]
 
