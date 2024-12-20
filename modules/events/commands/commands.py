@@ -28,7 +28,8 @@ class Commands(commands.Cog):
                 case "hello":
                     print(f"Hello, world! {self.bot.user}")
                 case "testsentry":
-                    raise ValueError("Testing Sentry")
+                    division = 1 / 0
+                    print(f"I should have raised an error: {division}")
                 case "help":
                     print("Available commands: hello, help, kill, testsentry")
                 case _:
