@@ -5,11 +5,15 @@ import shutil
 from logging.handlers import RotatingFileHandler
 
 import coloredlogs
+import sentry_sdk
 import yaml
 from dotenv import load_dotenv
 import platform
 
 log = logging.getLogger("bot")
+
+
+sentry_sdk.init(dsn=os.getenv("SENTRY_DSN"), traces_sample_rate=1.0)
 
 
 def validate_config():
