@@ -1,19 +1,18 @@
 import asyncio
-from aioconsole import ainput
 import threading
 
 import discord
+from aioconsole import ainput
 from discord.ext import commands
 
 from bot import Bot
 
 
 class Commands(commands.Cog):
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Bot):
+        self.bot = bot
 
     async def cog_load(self):
-        # await self.command_handler()
         threading.Thread(target=self.run_command_handler, daemon=True).start()
 
     def run_command_handler(self):
@@ -28,8 +27,10 @@ class Commands(commands.Cog):
                     break
                 case "hello":
                     print(f"Hello, world! {self.bot.user}")
+                case "testsentry":
+                    raise ValueError("Testing Sentry")
                 case "help":
-                    print("Available commands: hello, help, kill")
+                    print("Available commands: hello, help, kill, testsentry")
                 case _:
                     print("Unknown command")
 
@@ -44,7 +45,3 @@ class Commands(commands.Cog):
                 parent = parent.parent
             command = parent_command + interaction.command.name
             self.bot.log.info(f"{interaction.user} in {location}: {command}")
-
-
-async def setup(bot):
-    await bot.add_cog(Commands(bot))

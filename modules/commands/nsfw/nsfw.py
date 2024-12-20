@@ -2,14 +2,14 @@ import discord
 from discord.ext import commands
 
 from bot import Bot
+from utils.APIs.BoobBot import BoobBotApi
 from utils.ctx import Context
 from utils.functions.api import boobbot
-from utils.APIs.BoobBot import BoobBotApi
 
 
 class NSFW(commands.Cog):
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Bot):
+        self.bot = bot
 
     @commands.hybrid_group(name="nsfw")
     @commands.is_nsfw()
@@ -335,7 +335,8 @@ class NSFW(commands.Cog):
     async def interact(self, ctx):
         return
 
-    async def validate_user(self, ctx: Context, member: discord.Member):
+    @staticmethod
+    async def validate_user(ctx: Context, member: discord.Member):
         if member.id == ctx.guild.me.id:
             await ctx.send_error("You don't meet my standards.")
             return False
@@ -463,7 +464,3 @@ class NSFW(commands.Cog):
         em = discord.Embed(color=0xaffaff, title=f"{ctx.author.name} teases {member.name}")
         em.set_image(url=await boobbot(ctx.session, "tease"))
         await ctx.reply(content=f"{ctx.author.mention} teases {member.mention}", embed=em)
-
-
-async def setup(bot):
-    await bot.add_cog(NSFW(bot))

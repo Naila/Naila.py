@@ -15,6 +15,7 @@ banner.txt
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
+.idea
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
@@ -156,7 +157,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -222,3 +222,4 @@ venv.bak/
 # Spyder project settings
 .spyderproject
 .spyproject
+/.idea/

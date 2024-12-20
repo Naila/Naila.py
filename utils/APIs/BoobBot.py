@@ -2,7 +2,7 @@ import os
 
 from utils.functions.api import raise_for_status
 
-headers = {"key": os.getenv("BOOBBOT"), "User-Agent": "Naila Discord Bot - By Kanin#0001"}
+headers = {"key": os.getenv("BOOBBOT")}
 
 
 class BoobBotApi:

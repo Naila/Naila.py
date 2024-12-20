@@ -1,11 +1,11 @@
 import os
 import random
+from decimal import Decimal, ROUND_HALF_UP
 from io import BytesIO
 from typing import Optional
 
 import discord
 from PIL import Image
-from _decimal import Decimal, ROUND_HALF_UP
 from discord.ext import commands
 
 from bot import Bot
@@ -16,12 +16,12 @@ from utils.functions.api import weeb
 async def ship(session, avatar_1, avatar_2):
     path = "utils/assets/ship/"
     background = Image.new("RGBA", (600, 200), (0, 0, 0, 0))
-    avatar_1 = Image.open(BytesIO(await (await session.get(str(avatar_1))).read())).resize((200, 200),
-                                                                                           Image.LANCZOS).convert(
-        "RGBA")
-    avatar_2 = Image.open(BytesIO(await (await session.get(str(avatar_2))).read())).resize((200, 200),
-                                                                                           Image.LANCZOS).convert(
-        "RGBA")
+    avatar_1 = Image.open(
+        BytesIO(await (await session.get(str(avatar_1))).read())
+    ).resize((200, 200), Image.Resampling.LANCZOS).convert("RGBA")
+    avatar_2 = Image.open(
+        BytesIO(await (await session.get(str(avatar_2))).read())
+    ).resize((200, 200), Image.Resampling.LANCZOS).convert("RGBA")
     heart = Image.open(path + random.choice(list(os.listdir(path)))).convert("RGBA")
     background.paste(avatar_1, (0, 0), avatar_1)
     background.paste(heart, (201, 0), heart)
@@ -31,9 +31,10 @@ async def ship(session, avatar_1, avatar_2):
     temp_image.seek(0)
     return temp_image
 
+
 class Social(commands.Cog):
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Bot):
+        self.bot = bot
 
     @commands.hybrid_group(name="social")
     async def social(self, ctx):
@@ -58,7 +59,7 @@ class Social(commands.Cog):
             love_message = "Maybe try talking more?"
         elif random_integer == 69:
             love_emoji = "😏"
-            love_message = "That's the sex number *wink wonk*"
+            love_message = "Nice."
         elif random_integer <= 75:
             love_message = "Best friends, stay as best friends."
         elif random_integer <= 90:
@@ -76,6 +77,8 @@ class Social(commands.Cog):
     @social.command(name="ship", description="Ship your friends!")
     async def ship(self, ctx: Context, lover1: discord.Member, lover2: Optional[discord.Member]):
         lover2 = lover2 or ctx.author
+        avatar1 = lover1.avatar if lover1.avatar else lover1.default_avatar
+        avatar2 = lover2.avatar if lover2.avatar else lover2.default_avatar
         orig_name1 = lover1.name if lover1.bot else lover1.global_name
         orig_name2 = lover2.name if lover2.bot else lover2.global_name
         name1 = orig_name1[:-round(len(orig_name1) / 2)] + orig_name2[-round(len(orig_name2) / 2):]
@@ -86,7 +89,7 @@ class Social(commands.Cog):
         em = discord.Embed(color=discord.Color.random(), description=desc)
         em.set_author(name="Lovely shipping!")
         em.set_image(url='attachment://ship.png')
-        file = await ship(self.bot.session, lover1.avatar.with_static_format("png").url, lover2.avatar.with_static_format("png").url)
+        file = await ship(self.bot.session, avatar1.with_format("png").url, avatar2.with_format("png").url)
         await ctx.reply(file=discord.File(fp=file, filename="ship.png"), embed=em)
 
     @social.command(description="Bite people!")
@@ -97,7 +100,3 @@ class Social(commands.Cog):
         em = discord.Embed(color=0xaffaff, description=desc)
         em.set_image(url=await weeb(ctx.session, "bite"))
         await ctx.reply(embed=em)
-
-
-async def setup(bot):
-    await bot.add_cog(Social(bot))

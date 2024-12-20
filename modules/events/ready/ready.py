@@ -1,15 +1,15 @@
 import os
 import re
 
-import discord.utils
+import discord
 from discord.ext import commands
 
 from bot import Bot
 
 
 class Ready(commands.Cog):
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Bot):
+        self.bot = bot
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -53,7 +53,3 @@ class Ready(commands.Cog):
         await self.bot.tree.sync()
         await self.bot.tree.sync(guild=discord.Object(id=int(self.bot.config.home_guild)))
         self.bot.log.info("Successfully synchronized slash tree")
-
-
-async def setup(bot):
-    await bot.add_cog(Ready(bot))

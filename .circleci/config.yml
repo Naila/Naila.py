@@ -25,4 +25,4 @@ jobs:
       - run:
           name: Compile files
           command: |
-            pipenv run python -m compileall main.py modules utils -fq
+            pipenv run python -m compileall main.py modules common -fq

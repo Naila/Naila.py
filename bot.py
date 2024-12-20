@@ -1,14 +1,10 @@
-import asyncio
 import logging
-import os
 import sys
 
 import aiohttp
-import asyncpg
 import discord
 from discord.ext import commands
 from discord.ext.commands import AutoShardedBot as DiscordBot
-# from utils.Database import async_session
 
 from config import config
 from utils.ctx import Context
@@ -24,21 +20,7 @@ class Bot(DiscordBot):
         return await super().get_context(message, cls=cls)
 
     async def setup_hook(self):
-        # self.background_task.start()
         self.session = aiohttp.ClientSession()
-        credentials = {
-            "user": os.getenv("POSTGRES_USER"),
-            "password": os.getenv("POSTGRES_PASS"),
-            "database": os.getenv("POSTGRES_DATABASE"),
-            "host": os.getenv("POSTGRES_HOST", "127.0.0.1"),
-            "port": os.getenv("POSTGRES_PORT", "5432")
-            # "init": init_connection
-        }
-        self.pool: asyncpg.Pool = await asyncpg.create_pool(**credentials)
-        self.log.info(
-            f"Postgres connected to database ({self.pool._working_params.database})"
-            f" under the ({self.pool._working_params.user}) user"
-        )
         for ext in self.initial_extensions:
             await self.load_extension(ext)
 
@@ -51,11 +33,11 @@ class Bot(DiscordBot):
         super().__init__(
             intents=config.intents,
             command_prefix=commands.when_mentioned
+
         )
 
         # Argument Handling
         self.session = None
-        self.pool = None
         self.debug: bool = any("debug" in arg.lower() for arg in sys.argv)
 
         # Commands/extensions

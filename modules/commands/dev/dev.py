@@ -13,6 +13,7 @@ from discord.ext import commands
 from bot import Bot
 from utils.checks import checks
 
+
 ENV = {
     "contextlib": contextlib,
     "inspect": inspect,
@@ -28,8 +29,8 @@ ENV = {
 
 
 class Dev(commands.Cog):
-    def __init__(self, bot):
-        self.bot: Bot = bot
+    def __init__(self, bot: Bot):
+        self.bot = bot
         self.env = ENV
         self.stdout = io.StringIO()
 
@@ -141,7 +142,3 @@ async def func():
             res = (res, None)
 
         return res
-
-
-async def setup(bot):
-    await bot.add_cog(Dev(bot))
