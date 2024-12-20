@@ -29,8 +29,8 @@ class Ready(commands.Cog):
             await self.start_modules()
 
     async def start_modules(self):
-        paths = ["modules/events", "modules/commands"]
-        blacklist = ["modules/events/ready"]
+        paths = ["modules/events", "modules/cogs"]
+        blacklist = ["modules/events/ready",]
         if self.bot.debug:
             blacklist.extend([])
         for path in paths:
@@ -38,9 +38,10 @@ class Ready(commands.Cog):
             name = path.split("/")[-1]
             for file in os.listdir(path):
                 try:
-                    if file.endswith(".py"):
-                        to_load = f"{path}/{file[:-3]}"
+                    if not file.startswith("_"):
+                        to_load = f"{path}/{file}"
                         if to_load not in blacklist:
+                            self.bot.log.info(to_load)
                             await self.bot.load_extension(to_load.replace("/", "."))
                             loaded += 1
                 except Exception as e:
@@ -50,6 +51,3 @@ class Ready(commands.Cog):
             if failed > 0:
                 message += f" | Failed to load {failed} {name}"
             self.bot.log.info(message)
-        await self.bot.tree.sync()
-        await self.bot.tree.sync(guild=discord.Object(id=int(self.bot.config.home_guild)))
-        self.bot.log.info("Successfully synchronized slash tree")
