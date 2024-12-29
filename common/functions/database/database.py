@@ -27,6 +27,7 @@ async def add_user(user: Union[discord.User, discord.Member]):
 
 async def add_user_bulk(users: Union[List[discord.User], Sequence[discord.Member]]):
     url = BASE_URL + "users/bulk/add"
+    batch_size = 5000
     data = [
         {
             "id": str(user.id),
@@ -34,10 +35,13 @@ async def add_user_bulk(users: Union[List[discord.User], Sequence[discord.Member
             "display_name": str(user.global_name) if user.global_name else None,
             "avatar": str(user.avatar.key) if user.avatar else None,
         }
-        for user in users
+        for user in users if not user.bot
     ]
-    _, content = await call_api(url, "POST", data)
-    return content
+    responses = []
+    for i in range(0, len(data), batch_size):
+        _, content = await call_api(url, "POST", data[i:i + batch_size])
+        responses.append(content)
+    return responses
 
 
 async def get_user(user: discord.User):
