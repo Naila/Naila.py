@@ -1,6 +1,7 @@
 import contextlib
 import inspect
 import io
+import json
 import os
 import re
 import textwrap
@@ -10,6 +11,7 @@ from typing import Optional
 
 import discord
 from discord.ext import commands
+from discord import app_commands
 
 from bot import Bot
 from utils.checks import checks
@@ -35,7 +37,7 @@ class Dev(commands.Cog):
         self.env = ENV
         self.stdout = io.StringIO()
 
-    async def do_eval(self, ctx, code, test):
+    async def do_eval(self, ctx, code):
         if code == "exit()":
             self.env = ENV
             return await ctx.send("```Reset history!```")
@@ -76,8 +78,7 @@ async def func():
 
         out, embed = self._format(code, res)
         try:
-            test_str = f"{test}" if test else ""
-            await ctx.send(f"```py\n{out}```{test_str}", embed=embed)
+            await ctx.send(f"```py\n{out}```", embed=embed)
         except discord.HTTPException:
             data = io.BytesIO(out.encode('utf-8'))
             await ctx.send("The result was a bit too long.. so here is a text file instead 🎁",
@@ -86,7 +87,7 @@ async def func():
 
     @commands.hybrid_command()
     @checks.is_owner()
-    async def eval(self, ctx, *, code: str, test: Optional[discord.Member] = None):
+    async def eval(self, ctx, *, code: str):
         code = code.strip("`")
         if code.startswith("py\n"):
             code = "\n".join(code.split("\n")[1:])
@@ -97,7 +98,7 @@ async def func():
                 code, re.M) and len(code.split("\n")) == 1:
             code = "_ = " + code
 
-        await self.do_eval(ctx, code, test)
+        await self.do_eval(ctx, code)
 
     def _format(self, inp, out):
         self.env["_"] = out
@@ -144,3 +145,42 @@ async def func():
             res = (res, None)
 
         return res
+
+    @app_commands.command()
+    @checks.is_owner()
+    async def test_options(
+            self, interaction: discord.Interaction,
+            string: Optional[str] = None,
+            integer: Optional[int] = None,
+            boolean: Optional[bool] = None,
+            member: Optional[discord.Member] = None,
+            channel: Optional[discord.TextChannel] = None,
+            role: Optional[discord.Role] = None,
+            number: Optional[float] = None,
+            attachment: Optional[discord.Attachment] = None
+    ):
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        data = interaction.data
+        json_string = json.dumps(data, indent=4)
+        json_file = io.BytesIO(json_string.encode("utf-8"))
+        json_file.seek(0)
+        em = discord.Embed(color=discord.Color.blurple(), title="Data:")
+        if string:
+            em.add_field(name="String:", value=string)
+        if integer:
+            em.add_field(name="Integer:", value=str(integer))
+        if boolean:
+            em.add_field(name="Boolean:", value=str(boolean))
+        if member:
+            em.add_field(name="Member:", value=f"{member.mention} ({member})")
+        if channel:
+            em.add_field(name="Channel:", value=f"{channel.mention} ({channel})")
+        if role:
+            em.add_field(name="Role:", value=f"{role.mention} ({role})")
+        if number:
+            em.add_field(name="Number:", value=str(number))
+        if attachment:
+            em.add_field(name="Attachment:", value=attachment.filename)
+
+        await interaction.followup.send(embed=em, file=discord.File(json_file, "data.json"))
+
