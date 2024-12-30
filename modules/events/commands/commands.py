@@ -45,4 +45,9 @@ class Commands(commands.Cog):
                 parent_command = f"{parent.name} {parent_command}"
                 parent = parent.parent
             command = parent_command + interaction.command.name
+            data = interaction.data
+            if "options" in data:
+                for option in data["options"]:
+                    # noinspection PyTypeChecker
+                    command += f" `{option['name']}: {option['value']}`"
             self.bot.log.info(f"{interaction.user} in {location}: {command}")
