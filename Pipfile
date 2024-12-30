@@ -15,6 +15,7 @@ dictor = "*"
 pillow = "*"
 aioconsole = "*"
 sentry-sdk = "*"
+audioop-lts = "*"
 
 [dev-packages]
 
