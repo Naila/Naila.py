@@ -6,6 +6,7 @@ import re
 import textwrap
 import time
 import traceback
+from typing import Optional
 
 import discord
 from discord.ext import commands
@@ -34,7 +35,7 @@ class Dev(commands.Cog):
         self.env = ENV
         self.stdout = io.StringIO()
 
-    async def do_eval(self, ctx, code):
+    async def do_eval(self, ctx, code, test):
         if code == "exit()":
             self.env = ENV
             return await ctx.send("```Reset history!```")
@@ -75,7 +76,8 @@ async def func():
 
         out, embed = self._format(code, res)
         try:
-            await ctx.send(f"```py\n{out}```", embed=embed)
+            test_str = f"{test}" if test else ""
+            await ctx.send(f"```py\n{out}```{test_str}", embed=embed)
         except discord.HTTPException:
             data = io.BytesIO(out.encode('utf-8'))
             await ctx.send("The result was a bit too long.. so here is a text file instead 🎁",
@@ -84,7 +86,7 @@ async def func():
 
     @commands.hybrid_command()
     @checks.is_owner()
-    async def eval(self, ctx, *, code: str):
+    async def eval(self, ctx, *, code: str, test: Optional[discord.Member] = None):
         code = code.strip("`")
         if code.startswith("py\n"):
             code = "\n".join(code.split("\n")[1:])
@@ -95,7 +97,7 @@ async def func():
                 code, re.M) and len(code.split("\n")) == 1:
             code = "_ = " + code
 
-        await self.do_eval(ctx, code)
+        await self.do_eval(ctx, code, test)
 
     def _format(self, inp, out):
         self.env["_"] = out
