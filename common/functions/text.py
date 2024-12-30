@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import discord
 
 
@@ -27,6 +29,7 @@ def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
 # noinspection PyTypeChecker
 def options_to_string(interaction: discord.Interaction, code: bool = False):
     data = interaction.data
+    pprint(data, indent=4)
     out = ""
     for option in data["options"]:
         match option["type"]:
