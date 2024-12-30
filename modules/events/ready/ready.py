@@ -24,7 +24,7 @@ class Ready(commands.Cog):
                f"**Bot version:** {self.bot.version['bot']}\n" \
                f"**Lib version:** {self.bot.version['discord.py']}\n" \
                f"**Python version:** {self.bot.version['python']}"
-        self.bot.log.info(re.sub("\*", "", info))
+        self.bot.log.info(re.sub(r"\*", "", info))
         if len(self.bot.cogs) == 1:
             await self.start_modules()
 
