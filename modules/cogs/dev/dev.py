@@ -14,6 +14,7 @@ from discord.ext import commands
 from discord import app_commands
 
 from bot import Bot
+from common.functions.text import options_to_string
 from utils.checks import checks
 
 
@@ -182,5 +183,13 @@ async def func():
         if attachment:
             em.add_field(name="Attachment:", value=attachment.filename)
 
-        await interaction.followup.send(embed=em, file=discord.File(json_file, "data.json"))
+        parent_command = ""
+        parent = interaction.command.parent
+        while parent:
+            parent_command = f"{parent.name} {parent_command}"
+            parent = parent.parent
+        command = "/" + parent_command + interaction.command.name
+        options = options_to_string(interaction, code=True)
+        command += options
+        await interaction.followup.send(command, embed=em, file=discord.File(json_file, "data.json"))
 
