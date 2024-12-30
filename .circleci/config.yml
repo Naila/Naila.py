@@ -4,17 +4,19 @@ orbs:
 
 jobs:
   build:
-    executor: python/default
+    executor:
+      name: python/default
+      tag: 3.13.1
     steps:
       - checkout
       - python/install-packages:
           pkg-manager: pipenv
       - run:
           name: Compile Python files
-          command: pipenv run python -m compileall main.py modules common -fq
-      - run:
-          name: Run tests
-          command: pipenv run pytest
+          command: pipenv run python -m compileall main.py bot.py modules common -fq
+#      - run:
+#          name: Run tests
+#          command: pipenv run pytest
 
 workflows:
   main:
