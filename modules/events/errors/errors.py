@@ -55,7 +55,7 @@ class Errors(commands.Cog):
             parent_command = f"{parent.name} {parent_command}" if parent_command else f"{parent.name}"
             parent = parent.parent
         command = "/" + (f"{parent_command} " if parent_command else "") + interaction.command.name
-        options = options_to_string(interaction)
+        options = options_to_string(interaction.data)
         command += options
 
         em = discord.Embed(

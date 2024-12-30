@@ -189,7 +189,7 @@ async def func():
             parent_command = f"{parent.name} {parent_command}"
             parent = parent.parent
         command = "/" + parent_command + interaction.command.name
-        options = options_to_string(interaction, code=True)
+        options = options_to_string(interaction.data, code=True)
         command += options
         await interaction.followup.send(command, embed=em, file=discord.File(json_file, "data.json"))
 

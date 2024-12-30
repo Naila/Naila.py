@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import discord
 
 
@@ -26,7 +24,6 @@ def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
 #  9 = MENTIONABLE - Includes users and roles
 # 10 = NUMBER - Any double between -2^53 and 2^53
 # 11 = ATTACHMENT
-# noinspection PyTypeChecker
 def string_from_type(data: dict, code: bool, option: dict):
     match option["type"]:
         case 1:
@@ -62,9 +59,7 @@ def string_from_type(data: dict, code: bool, option: dict):
             return f" {option['name']}: attachment"
 
 
-def options_to_string(interaction: discord.Interaction, code: bool = False):
-    data = interaction.data
-    pprint(data, indent=4)
+def options_to_string(data: dict, code: bool = False):
     out = ""
     for option in data["options"]:
         out += string_from_type(data, code, option)

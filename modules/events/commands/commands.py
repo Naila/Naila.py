@@ -46,6 +46,6 @@ class Commands(commands.Cog):
                 parent_command = f"{parent.name} {parent_command}"
                 parent = parent.parent
             command = parent_command + interaction.command.name
-            options = options_to_string(interaction)
+            options = options_to_string(interaction.data)
             command += options
             self.bot.log.info(f"{interaction.user} in {location}: {command}")
