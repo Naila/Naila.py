@@ -63,3 +63,4 @@ def options_to_string(interaction: discord.Interaction, code: bool = False):
                     out += f" `{option['name']}: attachment`"
                 else:
                     out += f" {option['name']}: attachment"
+    return out
