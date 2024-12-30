@@ -6,6 +6,7 @@ from aioconsole import ainput
 from discord.ext import commands
 
 from bot import Bot
+from common.functions.text import options_to_string
 
 
 class Commands(commands.Cog):
@@ -45,9 +46,6 @@ class Commands(commands.Cog):
                 parent_command = f"{parent.name} {parent_command}"
                 parent = parent.parent
             command = parent_command + interaction.command.name
-            data = interaction.data
-            if "options" in data:
-                for option in data["options"]:
-                    # noinspection PyTypeChecker
-                    command += f" `{option['name']}: {option['value']}`"
+            options = options_to_string(interaction)
+            command += options
             self.bot.log.info(f"{interaction.user} in {location}: {command}")
