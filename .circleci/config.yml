@@ -1,28 +1,22 @@
-version: 2.1
+version: '2.1'
+orbs:
+  python: circleci/python@3.0.0
+
 jobs:
   build:
-    working_directory: ~/repo
-    docker:
-      - image: cimg/python:3.13.1
-
+    executor: python/default
     steps:
       - checkout
-
-#      - restore_cache:
-#          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-
+      - python/install-packages:
+          pkg-manager: pipenv
       - run:
-          name: Set up pipenv and install requirements
-          command: |
-            sudo pip install pipenv
-            pipenv install
-
-#      - save_cache:
-#          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-#          paths:
-#            - ./venv
-
+          name: Compile Python files
+          command: pipenv run python -m compileall main.py modules common -fq
       - run:
-          name: Compile files
-          command: |
-            pipenv run python -m compileall main.py modules common -fq
+          name: Run tests
+          command: pipenv run pytest
+
+workflows:
+  main:
+    jobs:
+      - build
