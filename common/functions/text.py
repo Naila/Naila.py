@@ -27,43 +27,45 @@ def pagify(text: str, delims: list = None, shorten_by=8, page_length=1900):
 # 10 = NUMBER - Any double between -2^53 and 2^53
 # 11 = ATTACHMENT
 # noinspection PyTypeChecker
+def string_from_type(data: dict, code: bool, option: dict):
+    match option["type"]:
+        case 1:
+            for option in option["options"]:
+                return string_from_type(data, code, option)
+        case 2 | 9:
+            return ""
+        case 3 | 4 | 5 | 10:
+            if code:
+                return f" `{option['name']}: {option['value']}`"
+            return f" {option['name']}: {option['value']}"
+        case 6:
+            resolved = data["resolved"]
+            user = resolved["users"][option["value"]]
+            if code:
+                return f" `{option['name']}: {user['username']} ({option["value"]})`"
+            return f" {option['name']}: {user['username']} ({option["value"]})"
+        case 7:
+            resolved = data["resolved"]
+            channel = resolved["channels"][option["value"]]
+            if code:
+                return f" `{option['name']}: {channel['name']} ({option["value"]})`"
+            return f" {option['name']}: {channel['name']} ({option["value"]})"
+        case 8:
+            resolved = data["resolved"]
+            role = resolved["roles"][option["value"]]
+            if code:
+                return f" `{option['name']}: {role['name']} ({option["value"]})`"
+            return f" {option['name']}: {role['name']} ({option["value"]})"
+        case 11:
+            if code:
+                return f" `{option['name']}: attachment`"
+            return f" {option['name']}: attachment"
+
+
 def options_to_string(interaction: discord.Interaction, code: bool = False):
     data = interaction.data
     pprint(data, indent=4)
     out = ""
     for option in data["options"]:
-        match option["type"]:
-            case 1 | 2 | 9:
-                continue
-            case 3 | 4 | 5 | 10:
-                if code:
-                    out += f" `{option['name']}: {option['value']}`"
-                else:
-                    out += f" {option['name']}: {option['value']}"
-            case 6:
-                resolved = data["resolved"]
-                user = resolved["users"][option["value"]]
-                if code:
-                    out += f" `{option['name']}: {user['username']} ({option["value"]})`"
-                else:
-                    out += f" {option['name']}: {user['username']} ({option["value"]})"
-            case 7:
-                resolved = data["resolved"]
-                channel = resolved["channels"][option["value"]]
-                if code:
-                    out += f" `{option['name']}: {channel['name']} ({option["value"]})`"
-                else:
-                    out += f" {option['name']}: {channel['name']} ({option["value"]})"
-            case 8:
-                resolved = data["resolved"]
-                role = resolved["roles"][option["value"]]
-                if code:
-                    out += f" `{option['name']}: {role['name']} ({option["value"]})`"
-                else:
-                    out += f" {option['name']}: {role['name']} ({option["value"]})"
-            case 11:
-                if code:
-                    out += f" `{option['name']}: attachment`"
-                else:
-                    out += f" {option['name']}: attachment"
+        out += string_from_type(data, code, option)
     return out
