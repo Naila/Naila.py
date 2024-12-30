@@ -42,7 +42,7 @@ class Errors(commands.Cog):
             scope.set_tag("channel", interaction.channel.id)
             scope.set_tag("command", interaction.command.name)
             scope.set_tag("user", interaction.user.id)
-            capture_exception(error, scope)
+            sentry_sdk.capture_exception(error)
 
         webhook = discord.Webhook.from_url(os.getenv("ERROR_WEBHOOK"), session=self.bot.session)
 
